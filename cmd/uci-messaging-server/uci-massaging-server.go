@@ -37,7 +37,7 @@ func main() {
 	})
 	r.GET("/", func(context *gin.Context) {
 
-		context.String(200, "hello world123")
+		context.String(200, "hello world!")
 	})
 	r.Run(":8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

@@ -32,6 +32,7 @@ function build_docker_image() {
         ${cur_dir}/Dockerfile \
         > ${cur_dir}/bin/Dockerfile.${module}
     docker build -t ${module}:${version_build} -t ${module}:latest -f ${cur_dir}/bin/Dockerfile.${module} ${cur_dir}/bin
+    status ${module}:${version_build}
 }
 
 
