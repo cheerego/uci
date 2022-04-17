@@ -35,5 +35,9 @@ func main() {
 		w.(http.Flusher).Flush()
 
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.GET("/", func(context *gin.Context) {
+
+		context.String(200, "hello world123")
+	})
+	r.Run(":8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

@@ -1,5 +1,4 @@
-version: "2"
-
+version: '2.2'
 
 services:
   redis:
@@ -26,6 +25,10 @@ services:
     ports:
       - "80:80"
   uci-messaging-server:
-    image: uci-messaging-server:latest
+    image: ${UCI_MESSAGING_SERVER:-uci-messaging-server:latest}
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
 volumes:
   redis-data: {}
