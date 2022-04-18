@@ -2,42 +2,44 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"time"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/name", func(c *gin.Context) {
-		w := c.Writer
-		header := w.Header()
+	r := echo.New()
+	r.GET("/name", func(c echo.Context) error {
+
+		header := c.Response().Header()
 		header.Set("Transfer-Encoding", "chunked")
 		header.Set("Content-Type", "text/html")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`
+		c.Response().WriteHeader(http.StatusOK)
+
+		c.Response().Write([]byte(`
 			<html>
 					<body>
 		`))
-		w.(http.Flusher).Flush()
+		c.Response().Flush()
+
 		for i := 0; i < 100; i++ {
-			w.Write([]byte(fmt.Sprintf(`
+			c.Response().Write([]byte(fmt.Sprintf(`
 				<h1>%d</h1>
 			`, i)))
-			w.(http.Flusher).Flush()
+			c.Response().Flush()
 			time.Sleep(time.Duration(1) * time.Second)
 		}
-		w.Write([]byte(`
+		c.Response().Write([]byte(`
 			
 					</body>
 			</html>
 		`))
-		w.(http.Flusher).Flush()
+		c.Response().Flush()
 
+		return nil
 	})
-	r.GET("/", func(context *gin.Context) {
-
-		context.String(200, "hello world!")
+	r.GET("/", func(c echo.Context) error {
+		return c.String(200, "hello world")
 	})
-	r.Run(":8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Start(":8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
