@@ -9,6 +9,7 @@ import (
 
 func main() {
 	r := echo.New()
+
 	r.GET("/name", func(c echo.Context) error {
 
 		header := c.Response().Header()
@@ -39,6 +40,7 @@ func main() {
 		return nil
 	})
 	r.GET("/", func(c echo.Context) error {
+		c.IsWebSocket()
 		return c.String(200, "hello world")
 	})
 	r.Start(":8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
