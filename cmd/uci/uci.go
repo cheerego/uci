@@ -17,7 +17,7 @@ func main() {
 	//	Timeout:       100 * time.Second,
 	//}
 
-	resp, err := http.Get("http://localhost:8080/name")
+	resp, err := http.Get("http://localhost:8080/describe/1/message?watch=true")
 	if err != nil {
 		log.Fatal(err)
 	}
