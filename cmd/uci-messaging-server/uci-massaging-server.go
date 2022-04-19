@@ -3,10 +3,15 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/cheerego/uci/pkg/banner"
+	http2 "github.com/cheerego/uci/pkg/http"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"sync"
 )
+
+var VERSION string
+var BUILD_TIME string
 
 type Listeners struct {
 	Workers map[string]chan string
@@ -40,10 +45,10 @@ func (l *Listeners) Unsubscribe(name string) {
 	}
 }
 func main() {
+	banner.Render("CI-AGENT-MGR", VERSION, BUILD_TIME)
 	listeners := NewListeners()
 
-	r := echo.New()
-
+	r := http2.NewEcho()
 	r.GET("/message/:name", func(c echo.Context) error {
 		name := c.Param("name")
 		watch := c.QueryParam("watch")
