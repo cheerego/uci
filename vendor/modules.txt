@@ -1,13 +1,44 @@
+# github.com/TheZeroSlave/zapsentry v1.10.0
+## explicit; go 1.17
+github.com/TheZeroSlave/zapsentry
 # github.com/beorn7/perks v1.0.1
 ## explicit; go 1.11
 # github.com/cespare/xxhash/v2 v2.1.2
 ## explicit; go 1.11
 # github.com/cockroachdb/errors v1.9.0
 ## explicit; go 1.13
+github.com/cockroachdb/errors
+github.com/cockroachdb/errors/assert
+github.com/cockroachdb/errors/barriers
+github.com/cockroachdb/errors/contexttags
+github.com/cockroachdb/errors/domains
+github.com/cockroachdb/errors/errbase
+github.com/cockroachdb/errors/errorspb
+github.com/cockroachdb/errors/errutil
+github.com/cockroachdb/errors/hintdetail
+github.com/cockroachdb/errors/issuelink
+github.com/cockroachdb/errors/markers
+github.com/cockroachdb/errors/report
+github.com/cockroachdb/errors/safedetails
+github.com/cockroachdb/errors/secondary
+github.com/cockroachdb/errors/stdstrings
+github.com/cockroachdb/errors/telemetrykeys
+github.com/cockroachdb/errors/withstack
 # github.com/cockroachdb/logtags v0.0.0-20211118104740-dabe8e521a4f
 ## explicit; go 1.16
+github.com/cockroachdb/logtags
 # github.com/cockroachdb/redact v1.1.3
 ## explicit; go 1.14
+github.com/cockroachdb/redact
+github.com/cockroachdb/redact/builder
+github.com/cockroachdb/redact/interfaces
+github.com/cockroachdb/redact/internal/buffer
+github.com/cockroachdb/redact/internal/escape
+github.com/cockroachdb/redact/internal/fmtforward
+github.com/cockroachdb/redact/internal/markers
+github.com/cockroachdb/redact/internal/redact
+github.com/cockroachdb/redact/internal/rfmt
+github.com/cockroachdb/redact/internal/rfmt/fmtsort
 # github.com/common-nighthawk/go-figure v0.0.0-20200609044655-c4b36f998cf2
 ## explicit
 github.com/common-nighthawk/go-figure
@@ -16,8 +47,17 @@ github.com/common-nighthawk/go-figure
 github.com/dimiro1/banner
 # github.com/getsentry/sentry-go v0.12.0
 ## explicit; go 1.15
+github.com/getsentry/sentry-go
+github.com/getsentry/sentry-go/internal/crypto/randutil
+github.com/getsentry/sentry-go/internal/debug
+github.com/getsentry/sentry-go/internal/ratelimit
 # github.com/gogo/protobuf v1.3.2
 ## explicit; go 1.15
+github.com/gogo/protobuf/gogoproto
+github.com/gogo/protobuf/proto
+github.com/gogo/protobuf/protoc-gen-gogo/descriptor
+github.com/gogo/protobuf/sortkeys
+github.com/gogo/protobuf/types
 # github.com/golang-jwt/jwt v3.2.2+incompatible
 ## explicit
 github.com/golang-jwt/jwt
@@ -29,8 +69,10 @@ github.com/golang-jwt/jwt
 ## explicit
 # github.com/kr/pretty v0.3.0
 ## explicit; go 1.12
+github.com/kr/pretty
 # github.com/kr/text v0.2.0
 ## explicit
+github.com/kr/text
 # github.com/labstack/echo/v4 v4.7.2
 ## explicit; go 1.17
 github.com/labstack/echo/v4
@@ -51,6 +93,7 @@ github.com/mattn/go-isatty
 ## explicit
 # github.com/pkg/errors v0.9.1
 ## explicit
+github.com/pkg/errors
 # github.com/prometheus/client_golang v1.12.1
 ## explicit; go 1.13
 # github.com/prometheus/client_model v0.2.0
@@ -61,12 +104,27 @@ github.com/mattn/go-isatty
 ## explicit; go 1.13
 # github.com/rogpeppe/go-internal v1.8.1
 ## explicit; go 1.16
+github.com/rogpeppe/go-internal/fmtsort
 # github.com/valyala/bytebufferpool v1.0.0
 ## explicit
 github.com/valyala/bytebufferpool
 # github.com/valyala/fasttemplate v1.2.1
 ## explicit; go 1.12
 github.com/valyala/fasttemplate
+# go.uber.org/atomic v1.7.0
+## explicit; go 1.13
+go.uber.org/atomic
+# go.uber.org/multierr v1.6.0
+## explicit; go 1.12
+go.uber.org/multierr
+# go.uber.org/zap v1.21.0
+## explicit; go 1.13
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/zapcore
 # golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 ## explicit; go 1.17
 golang.org/x/crypto/acme
@@ -80,6 +138,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 # golang.org/x/sys v0.0.0-20220412211240-33da011f77ad
 ## explicit; go 1.17
+golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.7
