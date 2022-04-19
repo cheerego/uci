@@ -36,7 +36,6 @@ func init() {
 	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.9999")
 	config.EncoderConfig.TimeKey = "time"
 	config.Level = zap.NewAtomicLevelAt(logLevelMap[logLevel])
-	config.OutputPaths
 	opts := []zap.Option{
 		zap.AddCaller(),
 		zap.AddCallerSkip(1),
