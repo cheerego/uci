@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 type ListWatch struct {
@@ -14,7 +15,12 @@ type ListWatch struct {
 }
 
 func NewListWatch() *ListWatch {
-	client := resty.New()
+	client := resty.NewWithClient(&http.Client{
+		Transport:     http.DefaultTransport,
+		CheckRedirect: nil,
+		Jar:           nil,
+		Timeout:       100 * time.Second,
+	})
 	return &ListWatch{
 		resty: client,
 	}
@@ -23,13 +29,6 @@ func NewListWatch() *ListWatch {
 var _ Daemoner = (*ListWatch)(nil)
 
 func (l *ListWatch) StartListener() error {
-
-	//client := &http.Client{
-	//	Transport:     http.DefaultTransport,
-	//	CheckRedirect: nil,
-	//	Jar:           nil,
-	//	Timeout:       100 * time.Second,
-	//}
 
 	resp, err := http.Get("http://localhost:8080/describe/1/message?watch=true")
 	if err != nil {
@@ -50,5 +49,5 @@ func (l *ListWatch) StartListener() error {
 			log.Fatal(err)
 		}
 	}
-
+	return nil
 }
