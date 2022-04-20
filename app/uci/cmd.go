@@ -21,3 +21,18 @@ func Execute() {
 		os.Exit(1)
 	}
 }
+
+type Uci struct {
+}
+
+func NewUci() *Uci {
+	return &Uci{}
+}
+
+func (u *Uci) PreCheck() {
+
+}
+
+func (u *Uci) StartListener() {
+
+}
