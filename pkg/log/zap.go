@@ -40,6 +40,7 @@ func modifyToSentryLogger(logger *zap.Logger, client *sentry.Client) (*zap.Logge
 func Console(logLevel string) (*zap.Logger, error) {
 	var encoderConfig = zap.NewDevelopmentEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.9999")
+	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	encoderConfig.TimeKey = "time"
 	opts := []zap.Option{
 		zap.AddCaller(),
