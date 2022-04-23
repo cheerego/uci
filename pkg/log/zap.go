@@ -1,17 +1,14 @@
 package log
 
 import (
-	"context"
 	"github.com/TheZeroSlave/zapsentry"
 	"github.com/getsentry/sentry-go"
+	"github.com/mitchellh/go-homedir"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"log"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
-)
-
-var (
-	logger *zap.Logger
+	"path"
 )
 
 var logLevelMap map[string]zapcore.Level = map[string]zapcore.Level{
@@ -26,93 +23,74 @@ var logLevelMap map[string]zapcore.Level = map[string]zapcore.Level{
 
 const XRequestId = "X-Request-ID"
 
-func init() {
-	logLevel := os.Getenv("LOG_LEVEL")
-	if logLevel == "" {
-		logLevel = "info"
-	}
-	var err error
-	var config = zap.NewProductionConfig()
-	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.9999")
-	config.EncoderConfig.TimeKey = "time"
-	config.Level = zap.NewAtomicLevelAt(logLevelMap[logLevel])
-	opts := []zap.Option{
-		zap.AddCaller(),
-		zap.AddCallerSkip(1),
-		zap.AddStacktrace(zapcore.ErrorLevel),
-	}
-	logger, err = config.Build(opts...)
-	if err != nil {
-		log.Fatalln("[ZAP] zap init failure")
-	}
-
-	sentryDsn := os.Getenv("SENTRY_DSN")
-	if sentryDsn != "" {
-		client, err := sentry.NewClient(sentry.ClientOptions{
-			Dsn: sentryDsn,
-		})
-		if err != nil {
-			logger.Fatal("[ZAP] SENTRY_DSN env error", zap.Error(err))
-		}
-		logger = modifyToSentryLogger(logger, client)
-	}
-
-}
-
-func modifyToSentryLogger(logger *zap.Logger, client *sentry.Client) *zap.Logger {
+func modifyToSentryLogger(logger *zap.Logger, client *sentry.Client) (*zap.Logger, error) {
 	if client == nil {
-		return logger
+		return logger, nil
 	}
 	cfg := zapsentry.Configuration{
 		Level: zap.ErrorLevel,
 	}
 	core, err := zapsentry.NewCore(cfg, zapsentry.NewSentryClientFromClient(client))
 	if err != nil {
-		logger.Error("FailedWithStatusCode to init zapsentry", zap.Error(err))
+		return nil, err
 	}
-	return zapsentry.AttachCoreToLogger(core, logger)
+	return zapsentry.AttachCoreToLogger(core, logger), nil
 }
 
-func Debug(msg string, fields ...zapcore.Field) {
-	logger.Debug(msg, fields...)
+func Console(logLevel string) (*zap.Logger, error) {
+	var encoderConfig = zap.NewDevelopmentEncoderConfig()
+	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.9999")
+	encoderConfig.TimeKey = "time"
+	opts := []zap.Option{
+		zap.AddCaller(),
+		zap.AddStacktrace(zapcore.ErrorLevel),
+	}
+
+	dir, _ := homedir.Dir()
+
+	fileWriteSyncer := zapcore.AddSync(&lumberjack.Logger{
+		Filename:   path.Join(dir, "uci.log"),
+		MaxSize:    500, // megabytes
+		MaxBackups: 3,
+		MaxAge:     15,   //days
+		Compress:   true, // disabled by default
+	})
+
+	//config.EncoderConfig,
+	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), zapcore.NewMultiWriteSyncer(fileWriteSyncer, zapcore.AddSync(os.Stdout)), logLevelMap[logLevel])
+	return zap.New(core, opts...), nil
+
+}
+func DefaultLogLevel() string {
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "info"
+	}
+	return logLevel
 }
 
-func Info(msg string, fields ...zapcore.Field) {
-	logger.Info(msg, fields...)
+func Backend(logLevel string) (*zap.Logger, error) {
+	var config = zap.NewProductionConfig()
+	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.9999")
+	config.EncoderConfig.TimeKey = "time"
+	config.Level = zap.NewAtomicLevelAt(logLevelMap[logLevel])
+	opts := []zap.Option{
+		zap.AddCaller(),
+		zap.AddStacktrace(zapcore.ErrorLevel),
+	}
+	return config.Build(opts...)
 }
 
-func Warn(msg string, fields ...zapcore.Field) {
-	logger.Warn(msg, fields...)
-}
-
-func Error(msg string, fields ...zapcore.Field) {
-	logger.Error(msg, fields...)
-}
-
-func Fatal(msg string, fields ...zapcore.Field) {
-	logger.Fatal(msg, fields...)
-}
-
-func Panic(msg string, fields ...zapcore.Field) {
-	logger.Panic(msg, fields...)
-}
-
-func DPanic(msg string, fields ...zapcore.Field) {
-	logger.DPanic(msg, fields...)
-}
-
-func With(fields ...zapcore.Field) *zap.Logger {
-	return logger.With(fields...)
-}
-
-func Named(s string) *zap.Logger {
-	return logger.Named(s)
-}
-
-func Instance() *zap.Logger {
-	return logger
-}
-
-func FromContext(ctx context.Context) *zap.Logger {
-	return logger.With(zap.Any(XRequestId, ctx.Value(XRequestId)))
+func WrapperSentry(l *zap.Logger) (*zap.Logger, error) {
+	sentryDsn := os.Getenv("SENTRY_DSN")
+	if sentryDsn == "" {
+		return l, nil
+	}
+	client, err := sentry.NewClient(sentry.ClientOptions{
+		Dsn: sentryDsn,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return modifyToSentryLogger(l, client)
 }

@@ -149,6 +149,9 @@ golang.org/x/text/unicode/norm
 # golang.org/x/time v0.0.0-20201208040808-7e3f01d25324
 ## explicit
 golang.org/x/time/rate
+# gopkg.in/natefinch/lumberjack.v2 v2.0.0
+## explicit
+gopkg.in/natefinch/lumberjack.v2
 # gopkg.in/olahol/melody.v1 v1.0.0-20170518105555-d52139073376
 ## explicit
 gopkg.in/olahol/melody.v1

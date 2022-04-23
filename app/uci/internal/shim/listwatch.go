@@ -1,16 +1,16 @@
-package daemon
+package shim
 
 import (
 	"bufio"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
 
 type ListWatch struct {
+	BaseShimer
 	resty *resty.Client
 }
 
@@ -22,17 +22,24 @@ func NewListWatch() *ListWatch {
 		Timeout:       100 * time.Second,
 	})
 	return &ListWatch{
-		resty: client,
+		resty:      client,
+		BaseShimer: BaseShimer{},
 	}
 }
 
-var _ Daemoner = (*ListWatch)(nil)
+var _ Shimer = (*ListWatch)(nil)
 
 func (l *ListWatch) StartListener() error {
+	for {
+		err := l.Watching()
+		fmt.Print(err)
+	}
+}
 
+func (l *ListWatch) Watching() error {
 	resp, err := http.Get("http://localhost:8080/describe/1/message?watch=true")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer resp.Body.Close()
 
@@ -46,7 +53,7 @@ func (l *ListWatch) StartListener() error {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 	return nil

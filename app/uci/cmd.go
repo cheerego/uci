@@ -2,6 +2,7 @@ package uci
 
 import (
 	"fmt"
+	"github.com/cheerego/uci/app/uci/internal/shim"
 	"os"
 )
 import "github.com/spf13/cobra"
@@ -23,16 +24,22 @@ func Execute() {
 }
 
 type Uci struct {
+	shim.Shimer
 }
 
-func NewUci() *Uci {
-	return &Uci{}
+func NewUci(shim shim.Shimer) *Uci {
+	return &Uci{
+		shim,
+	}
 }
 
-func (u *Uci) PreCheck() {
-
+// 检查 go 程序收存在
+// 检查监听的 URL 配置是否存在
+//
+func (u *Uci) PreCheck() error {
+	return nil
 }
 
-func (u *Uci) StartListener() {
-
+func (u *Uci) StartListener() error {
+	return u.Shimer.StartListener()
 }
