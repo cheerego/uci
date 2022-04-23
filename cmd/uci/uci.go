@@ -12,8 +12,6 @@ func main() {
 		panic(any(err))
 	}
 	zap.ReplaceGlobals(logger)
-
-	logger.Info("12312312312")
 	uci.Execute()
 }
 

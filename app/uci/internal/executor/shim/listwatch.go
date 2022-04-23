@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"time"
@@ -32,7 +33,11 @@ var _ Shimer = (*ListWatch)(nil)
 func (l *ListWatch) StartListener() error {
 	for {
 		err := l.Watching()
-		fmt.Print(err)
+		if err != nil {
+			zap.L().Error("ListWatch Mode, Watching err", zap.Error(err))
+			time.Sleep(2 * time.Second)
+		}
+
 	}
 }
 
