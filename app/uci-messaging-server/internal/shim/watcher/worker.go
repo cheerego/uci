@@ -1,7 +1,6 @@
 package watcher
 
 import (
-	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
 	"sync"
@@ -30,6 +29,6 @@ func Load(name string) (any, bool) {
 func Unsubscribe(name string) {
 	_, loaded := subscribers.LoadAndDelete(name)
 	if !loaded {
-		log.Warn("取消监听，但监听不存在", zap.String("Name", name))
+		zap.L().Warn("取消监听，但监听不存在", zap.String("Name", name))
 	}
 }
