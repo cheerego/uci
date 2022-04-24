@@ -10,14 +10,18 @@ import (
 func Subscribe(c echo.Context) error {
 	name := c.Param("name")
 	watch := c.QueryParam("watch")
-	fmt.Println(name, watch)
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	c.Response().Write([]byte("1\n"))
+	c.Response().Write([]byte("2\n"))
+	c.Response().Write([]byte("3\n"))
+	c.Response().Flush()
 	defer func() {
 		watcher.Unsubscribe(name)
 	}()
 	if watch == "true" {
 		header := c.Response().Header()
 		header.Set("Transfer-Encoding", "chunked")
-		header.Set("Content-Type", "text/html")
+
 		c.Response().WriteHeader(http.StatusOK)
 		c.Response().Flush()
 
@@ -28,7 +32,7 @@ func Subscribe(c echo.Context) error {
 		}
 		for str := range subscribe {
 			c.Logger().Info(str)
-			c.Response().Write([]byte(fmt.Sprintf("%s,%s", str, "<\br>")))
+			c.Response().Write([]byte(fmt.Sprintf("%s%s", str, "\n")))
 			c.Response().Flush()
 		}
 		return nil
