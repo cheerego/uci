@@ -14,7 +14,7 @@ func NewUci(shim shim.Shimer) *Uci {
 	}
 }
 
-// 检查 go 程序收存在
+// PreCheck 检查 go 程序收存在
 // 检查监听的 URL 配置是否存在
 //
 func (u *Uci) PreCheck() error {

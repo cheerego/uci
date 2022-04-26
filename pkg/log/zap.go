@@ -3,12 +3,10 @@ package log
 import (
 	"github.com/TheZeroSlave/zapsentry"
 	"github.com/getsentry/sentry-go"
-	"github.com/mitchellh/go-homedir"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
-	"path"
 )
 
 var logLevelMap map[string]zapcore.Level = map[string]zapcore.Level{
@@ -37,7 +35,7 @@ func modifyToSentryLogger(logger *zap.Logger, client *sentry.Client) (*zap.Logge
 	return zapsentry.AttachCoreToLogger(core, logger), nil
 }
 
-func Console(logLevel string) (*zap.Logger, error) {
+func Console(logLevel string, logPath string) (*zap.Logger, error) {
 	var encoderConfig = zap.NewDevelopmentEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.9999")
 	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
@@ -47,10 +45,8 @@ func Console(logLevel string) (*zap.Logger, error) {
 		zap.AddStacktrace(zapcore.ErrorLevel),
 	}
 
-	dir, _ := homedir.Dir()
-
 	fileWriteSyncer := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   path.Join(dir, "uci.log"),
+		Filename:   logPath,
 		MaxSize:    500, // megabytes
 		MaxBackups: 3,
 		MaxAge:     15,   //days

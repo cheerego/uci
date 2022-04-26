@@ -1,7 +1,7 @@
 package shim
 
 import (
-	"github.com/mitchellh/go-homedir"
+	"github.com/cheerego/uci/app/uci/internal/config"
 	"go.etcd.io/bbolt"
 	"path"
 )
@@ -10,13 +10,13 @@ type BaseShimer struct {
 	Bolt *bbolt.DB
 }
 
+var dbName = "uci.db"
+
 func NewBaseShimer() (*BaseShimer, error) {
-	dir, err := homedir.Dir()
+	db, err := bbolt.Open(path.Join(config.Configs.UciHomeDir, dbName), 0600, nil)
 	if err != nil {
 		return nil, err
 	}
-
-	db, err := bbolt.Open(path.Join(dir, "uci", "uci.db"), 0600, nil)
 	return &BaseShimer{
 		Bolt: db,
 	}, nil
