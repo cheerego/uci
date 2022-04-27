@@ -1,0 +1,55 @@
+#  curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+version: '2.2'
+
+services:
+  redis:
+    #    https://hub.docker.com/_/redis
+    image: redis:5.0.14
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    environment:
+      - TZ=Asia/Shanghai
+#  rabbitmq:
+#    image: rabbitmq:3.9
+#    expose:
+#      - "5672"
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    #    volumes:
+#    #      - ./infra/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+#    #      - ./infra/rabbitmq/auth.conf:/etc/rabbitmq/conf.d/auth.conf
+#    environment:
+#      - TZ=Asia/Shanghai
+  caddy:
+    image: caddy:2.4.6-alpine
+    expose:
+      - "80"
+      - "2019"
+    ports:
+      - "80:80"
+      - "2019:2019"
+    environment:
+      - TZ=Asia/Shanghai
+      - UCI_HTTP_DOMAIN=${UCI_HTTP_DOMAIN:-127.0.0.1}
+      - UCI_HTTP_PROTOCOL=${UCI_HTTP_PROTOCOL:-http}
+    volumes:
+      - "./infra/caddy:/etc/caddy"
+#  postgres:
+#    image: postgres:14.2
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - POSTGRES_USER=uci
+#      - POSTGRES_PASSWORD=uci123
+#      - PGDATA=/var/lib/postgresql/data/pgdata
+#    ports:
+#      - "5432:5432"
+#    expose:
+#      - "5432"
+#    volumes:
+#      - pg-data:/var/lib/postgresql/data/pgdata
+volumes:
+  redis-data: {}
+  pg-data: {}
