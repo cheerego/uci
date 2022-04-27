@@ -9,20 +9,10 @@
 
 :80 {
 
-   @hello host hello.{$UCI_HTTP_DOMAIN}
-   handle @hello {
-       respond "hello world!1"
-   }
+  import sites-enabled/*
 
-
-  @messaging host messaging.{$UCI_HTTP_DOMAIN}
-  handle @messaging {
-      reverse_proxy uci-messaging-server:8080
-  }
-
-
-   @static host static.{$UCI_HTTP_DOMAIN}
-   handle @static {
-       respond "hello world!2"
+   handle {
+        respond "not found"
    }
 }
+

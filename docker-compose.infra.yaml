@@ -35,8 +35,8 @@ services:
       - TZ=Asia/Shanghai
       - UCI_HTTP_DOMAIN=${UCI_HTTP_DOMAIN:-127.0.0.1}
       - UCI_HTTP_PROTOCOL=${UCI_HTTP_PROTOCOL:-http}
-    volumes:
-      - "./infra/caddy:/etc/caddy"
+#    volumes:
+#      - "./infra/caddy:/etc/caddy"
 #  postgres:
 #    image: postgres:14.2
 #    environment:
