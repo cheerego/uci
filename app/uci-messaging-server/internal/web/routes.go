@@ -1,15 +1,14 @@
 package web
 
 import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/index"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/messging"
 	"github.com/labstack/echo/v4"
 	"gopkg.in/olahol/melody.v1"
 )
 
 func Route(r *echo.Echo) {
-	r.GET("/", func(c echo.Context) error {
-		return c.String(200, "hello world")
-	})
+	r.GET("/", index.Index)
 	r.GET("/message/:name/subscribe", messging.Subscribe)
 	r.GET("/message/:name/publish", messging.Publish)
 

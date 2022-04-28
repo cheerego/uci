@@ -1,8 +1,11 @@
 package main
 
 import (
+	"github.com/cheerego/uci/app/cli"
 	"github.com/cheerego/uci/pkg/log"
+	"github.com/mitchellh/go-homedir"
 	"go.uber.org/zap"
+	"path"
 )
 
 func main() {
@@ -15,5 +18,6 @@ func main() {
 }
 
 func loggerInit() (*zap.Logger, error) {
-	return log.Console(log.DefaultLogLevel())
+	dir, _ := homedir.Dir()
+	return log.Console(log.DefaultLogLevel(), path.Join(dir, "uci", "uci.log"))
 }

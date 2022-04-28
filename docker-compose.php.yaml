@@ -10,10 +10,6 @@ services:
     image: caddy:2.4.6-alpine
     environment:
       - TZ=Asia/Shanghai
-    expose:
-      - "8081"
-    ports:
-      - "8081:80"
     volumes:
       - ./app/uci-admin:/var/www/html/
       - ./infra/caddy-php:/etc/caddy

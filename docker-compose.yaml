@@ -5,9 +5,7 @@ services:
   uci-messaging-server:
     image: ${UCI_MESSAGING_SERVER:-uci-messaging-server:latest}
     expose:
-      - "8080"
-    ports:
-      - "8080:8080"
+      - 8080
     environment:
       - TZ=Asia/Shanghai
 volumes:
