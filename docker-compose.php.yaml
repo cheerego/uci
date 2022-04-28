@@ -1,0 +1,19 @@
+#  curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+version: '2.2'
+
+services:
+  uci-admin-fpm:
+    image: php:8.0-fpm-bullseye
+    volumes:
+      - ./app/uci-admin:/var/www/html/
+  uci-admin-caddy:
+    image: caddy:2.4.6-alpine
+    environment:
+      - TZ=Asia/Shanghai
+    expose:
+      - "8081"
+    ports:
+      - "8081:80"
+    volumes:
+      - ./app/uci-admin:/var/www/html/
+      - ./infra/caddy-php:/etc/caddy

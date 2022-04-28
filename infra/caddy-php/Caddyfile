@@ -1,0 +1,11 @@
+{
+    auto_https off
+}
+
+
+:80 {
+    root * /var/www/html/public
+    php_fastcgi uci-admin-fpm:9000
+    file_server
+}
+
