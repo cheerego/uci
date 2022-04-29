@@ -3,7 +3,7 @@ version: '2.2'
 
 services:
   uci-admin-fpm:
-    image: php:8.0-fpm-bullseye
+    image: cheerego-docker.pkg.coding.net/registry/public/php:8-fpm-20220409
     volumes:
       - ./app/uci-admin:/var/www/html/
   uci-admin-caddy:

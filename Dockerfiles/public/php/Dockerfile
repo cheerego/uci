@@ -2,9 +2,6 @@ FROM php:8.0-fpm-bullseye
 
 COPY sources.list /etc/apt/sources.list
 
-
-
-
 RUN docker-php-source extract && \
     apt-get update && apt-get install -y \
     libfreetype6-dev \
@@ -13,7 +10,6 @@ RUN docker-php-source extract && \
     libpq-dev \
     libzip-dev \
     vim
-
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
