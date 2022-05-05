@@ -18,5 +18,5 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) zip
 
 
-RUN pecl install redis && \
+RUN pecl install redis-5.3.7 && \
     docker-php-ext-enable redis

@@ -11,9 +11,6 @@ class Trigger extends RowAction
 
     public function handle(Pipeline $model)
     {
-        // $model ...
-        var_dump($model);
-
         return $this->response()->success('Success message.')->refresh();
     }
 
