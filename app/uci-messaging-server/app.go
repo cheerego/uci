@@ -16,7 +16,6 @@ func NewApplication() *Application {
 
 func (a *Application) StartHttp() {
 	echo := http.NewEcho()
-	config.Configs.HttpPort = 8080
 	web.Route(echo)
 	echo.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
 }

@@ -1,6 +1,9 @@
 # github.com/TheZeroSlave/zapsentry v1.10.0
 ## explicit; go 1.17
 github.com/TheZeroSlave/zapsentry
+# github.com/caarlos0/env/v6 v6.9.1
+## explicit; go 1.17
+github.com/caarlos0/env/v6
 # github.com/cockroachdb/errors v1.9.0
 ## explicit; go 1.13
 github.com/cockroachdb/errors
@@ -41,6 +44,8 @@ github.com/common-nighthawk/go-figure
 # github.com/dimiro1/banner v1.1.0
 ## explicit; go 1.11
 github.com/dimiro1/banner
+# github.com/fsnotify/fsnotify v1.5.1
+## explicit; go 1.13
 # github.com/getsentry/sentry-go v0.12.0
 ## explicit; go 1.15
 github.com/getsentry/sentry-go
@@ -63,6 +68,8 @@ github.com/golang-jwt/jwt
 # github.com/gorilla/websocket v1.5.0
 ## explicit; go 1.12
 github.com/gorilla/websocket
+# github.com/hashicorp/hcl v1.0.0
+## explicit
 # github.com/inconshreveable/mousetrap v1.0.0
 ## explicit
 github.com/inconshreveable/mousetrap
@@ -116,7 +123,9 @@ github.com/labstack/gommon/bytes
 github.com/labstack/gommon/color
 github.com/labstack/gommon/log
 github.com/labstack/gommon/random
-# github.com/mattn/go-colorable v0.1.11
+# github.com/magiconair/properties v1.8.6
+## explicit; go 1.13
+# github.com/mattn/go-colorable v0.1.12
 ## explicit; go 1.13
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.14
@@ -125,18 +134,34 @@ github.com/mattn/go-isatty
 # github.com/mitchellh/go-homedir v1.1.0
 ## explicit
 github.com/mitchellh/go-homedir
+# github.com/mitchellh/mapstructure v1.4.3
+## explicit; go 1.14
+# github.com/pelletier/go-toml v1.9.4
+## explicit; go 1.12
+# github.com/pelletier/go-toml/v2 v2.0.0-beta.8
+## explicit; go 1.16
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
 # github.com/rogpeppe/go-internal v1.8.1
 ## explicit; go 1.16
 github.com/rogpeppe/go-internal/fmtsort
+# github.com/spf13/afero v1.8.2
+## explicit; go 1.13
+# github.com/spf13/cast v1.4.1
+## explicit
 # github.com/spf13/cobra v0.0.5
 ## explicit; go 1.12
 github.com/spf13/cobra
-# github.com/spf13/pflag v1.0.3
+# github.com/spf13/jwalterweatherman v1.1.0
 ## explicit
+# github.com/spf13/pflag v1.0.5
+## explicit; go 1.12
 github.com/spf13/pflag
+# github.com/spf13/viper v1.11.0
+## explicit; go 1.17
+# github.com/subosito/gotenv v1.2.0
+## explicit
 # github.com/valyala/bytebufferpool v1.0.0
 ## explicit
 github.com/valyala/bytebufferpool
@@ -160,12 +185,12 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+# golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 ## explicit; go 1.17
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/pbkdf2
-# golang.org/x/net v0.0.0-20211029224645-99673261e6eb
+# golang.org/x/net v0.0.0-20220412020605-290c469a71a5
 ## explicit; go 1.17
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -196,6 +221,8 @@ golang.org/x/text/width
 # golang.org/x/time v0.0.0-20201208040808-7e3f01d25324
 ## explicit
 golang.org/x/time/rate
+# gopkg.in/ini.v1 v1.66.4
+## explicit
 # gopkg.in/natefinch/lumberjack.v2 v2.0.0
 ## explicit
 gopkg.in/natefinch/lumberjack.v2
@@ -204,6 +231,8 @@ gopkg.in/natefinch/lumberjack.v2
 gopkg.in/olahol/melody.v1
 # gopkg.in/yaml.v2 v2.4.0
 ## explicit; go 1.15
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+## explicit
 # gorm.io/driver/postgres v1.3.5
 ## explicit; go 1.14
 gorm.io/driver/postgres
