@@ -16,6 +16,7 @@ func NewApplication() *Application {
 
 func (a *Application) StartHttp() {
 	echo := http.NewEcho()
+
 	web.Route(echo)
 	echo.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
 }
