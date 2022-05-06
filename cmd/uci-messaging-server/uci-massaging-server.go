@@ -22,6 +22,7 @@ func main() {
 	zap.ReplaceGlobals(logger)
 
 	go app.StartHttp()
+	go app.StartCron()
 
 	<-signal.KillSignal()
 	logger.Sync()
