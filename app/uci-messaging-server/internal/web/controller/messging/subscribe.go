@@ -38,7 +38,6 @@ func Subscribe(c echo.Context) error {
 		return nil
 	}
 
-	c.String(200, "message list")
-	return nil
+	return c.String(200, "message list")
 
 }
