@@ -1,11 +1,9 @@
-package repository
+package generic
 
 import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 )
-
-//https://github.com/Ompluscator/gorm-generics
 
 type BaseRepository[T any] struct {
 }

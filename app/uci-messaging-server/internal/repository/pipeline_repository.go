@@ -1,11 +1,13 @@
 package repository
 
+import "github.com/cheerego/uci/app/uci-messaging-server/internal/repository/generic"
+
 type PipelineRepository[T any] struct {
-	*BaseRepository[T]
+	*generic.BaseRepository[T]
 }
 
 func NewPipelineRepository[T any]() *PipelineRepository[T] {
 	return &PipelineRepository[T]{
-		NewBaseRepository[T](),
+		generic.NewBaseRepository[T](),
 	}
 }
