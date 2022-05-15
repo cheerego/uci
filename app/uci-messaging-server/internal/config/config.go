@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/caarlos0/env/v6"
 	"go.uber.org/zap"
+	"log"
 )
 
 var Configs Config
@@ -13,11 +14,12 @@ type Config struct {
 	GormMasterPoolConfig string `env:"GORM_MASTER_POOL_CONFIG" envDefault:MaxOpenConns=100&MaxIdleConns=50&ConnMaxIdleTime=1200&ConnMaxLifetime=1800`
 
 	//amqp://guest:guest@localhost
-	RabbitMQAddrUrl string `env:"GORM_MASTER_POOL_CONFIG,required"`
+	RabbitAddrUrl string `env:"RABBIT_ADDR_URL,required"`
 }
 
 func init() {
 	if err := env.Parse(&Configs); err != nil {
-		zap.L().Fatal("parse config err", zap.Error(err))
+		log.Fatalf("parse config err: %v", err)
 	}
+	zap.L().Info("config: ", zap.Any("Config", Configs))
 }

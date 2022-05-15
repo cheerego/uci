@@ -13,18 +13,18 @@ services:
       - "6379:6379"
     environment:
       - TZ=Asia/Shanghai
-#  rabbitmq:
-#    image: rabbitmq:3.9
-#    expose:
-#      - "5672"
-#    ports:
-#      - "5672:5672"
-#      - "15672:15672"
-#    #    volumes:
-#    #      - ./infra/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-#    #      - ./infra/rabbitmq/auth.conf:/etc/rabbitmq/conf.d/auth.conf
-#    environment:
-#      - TZ=Asia/Shanghai
+  rabbitmq:
+    image: rabbitmq:3.9
+    expose:
+      - "5672"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    #    volumes:
+    #      - ./infra/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+    #      - ./infra/rabbitmq/auth.conf:/etc/rabbitmq/conf.d/auth.conf
+    environment:
+      - TZ=Asia/Shanghai
   caddy:
     image: caddy:2.4.6-alpine
     expose:

@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server"
+	uci_messaging_server "github.com/cheerego/uci/app/uci-messaging-server"
 	"github.com/cheerego/uci/pkg/banner"
-	"github.com/cheerego/uci/pkg/log"
-	"github.com/cheerego/uci/pkg/signal"
-	"go.uber.org/zap"
+	"log"
 )
 
 var VERSION string
@@ -14,24 +12,8 @@ var BUILD_TIME string
 func main() {
 	banner.Render("UCI-MESSAGING-SERVER", VERSION, BUILD_TIME)
 	app := uci_messaging_server.NewApplication()
-
-	logger, err := loggerInit()
+	err := app.Start()
 	if err != nil {
-		panic(any(err))
+		log.Fatalln("app err", err)
 	}
-	zap.ReplaceGlobals(logger)
-
-	go app.StartHttp()
-	go app.StartCron()
-
-	<-signal.KillSignal()
-	logger.Sync()
-}
-
-func loggerInit() (*zap.Logger, error) {
-	backend, err := log.Backend(log.DefaultLogLevel())
-	if err != nil {
-		return nil, err
-	}
-	return log.WrapperSentry(backend)
 }
