@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
 	"github.com/cheerego/uci/pkg/db"
 	"go.uber.org/zap"
@@ -14,12 +13,12 @@ type Storage struct {
 	masterDB *gorm.DB
 }
 
-func NewStorage(masterDB *gorm.DB) *Storage {
-	return &Storage{masterDB: masterDB}
+func MasterDB() *gorm.DB {
+	return storages.masterDB
 }
 
-func FromContext(ctx context.Context) *gorm.DB {
-	return storages.masterDB
+func NewStorage(masterDB *gorm.DB) *Storage {
+	return &Storage{masterDB: masterDB}
 }
 
 func init() {

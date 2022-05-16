@@ -35,7 +35,7 @@ class PipelineController extends AdminController
 
 
         $grid->column("id", "Id");
-        $grid->column("content", "Content");
+        $grid->column("yaml", "Yaml");
         $grid->column("created_at", __("admin.created_at"));
         $grid->column("updated_at", __("admin.updated_at"));
 

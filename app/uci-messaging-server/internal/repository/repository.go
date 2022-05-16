@@ -1,16 +1,18 @@
 package repository
 
-import "github.com/cheerego/uci/app/uci-messaging-server/internal/model"
+import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
+)
 
 var Repositories *Repository
 
 type Repository struct {
-	PipelineRepository *PipelineRepository[model.Pipeline]
+	PipelineRepository *PipelineRepository
 }
 
-func NewRepository(pipelineRepository *PipelineRepository[model.Pipeline]) *Repository {
+func NewRepository(pipelineRepository *PipelineRepository) *Repository {
 	return &Repository{PipelineRepository: pipelineRepository}
 }
 func init() {
-	Repositories = NewRepository(NewPipelineRepository[model.Pipeline]())
+	Repositories = NewRepository(NewPipelineRepository(storage.MasterDB()))
 }
