@@ -1,4 +1,4 @@
-package db
+package orm
 
 import (
 	"database/sql"
@@ -24,7 +24,7 @@ func New(dsn string, dbPoolConfig string) (*gorm.DB, error) {
 		}),
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "dial db error, dsn %s", dsn)
+		return nil, errors.Wrapf(err, "dial orm error, dsn %s", dsn)
 	}
 	db, err := g.DB()
 	err = setDBPool(db, dbPoolConfig)
@@ -37,7 +37,7 @@ func New(dsn string, dbPoolConfig string) (*gorm.DB, error) {
 func setDBPool(db *sql.DB, dbPoolConfig string) error {
 	values, err := ParseDBPoolConfig(dbPoolConfig)
 	if err != nil {
-		return errors.Wrapf(err, "parse db pool config err, config: %s", dbPoolConfig)
+		return errors.Wrapf(err, "parse orm pool config err, config: %s", dbPoolConfig)
 	}
 	db.SetMaxOpenConns(GetOrDefault(values, "MaxOpenConns", 100))
 	db.SetMaxIdleConns(GetOrDefault(values, "MaxIdleConns", 50))

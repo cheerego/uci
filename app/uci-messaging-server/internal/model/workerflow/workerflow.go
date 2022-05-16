@@ -10,7 +10,7 @@ type Workerflow struct {
 	RepoId uint32
 	Yaml   string
 	Enable bool
-	Envs   []*Env
+	//Envs   []*Env
 }
 
 func NewWorkerflow(name string, repoId uint32, yaml string, enable bool) *Workerflow {

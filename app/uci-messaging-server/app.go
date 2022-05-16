@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web"
 	"github.com/cheerego/uci/pkg/http"
 	_ "github.com/cheerego/uci/pkg/log/backend"
@@ -31,7 +30,6 @@ func (a *Application) Start() error {
 func (a *Application) startHttp() error {
 	echo := http.NewEcho()
 	web.Route(echo)
-	storage.FromContext(context.TODO())
 	return echo.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
 }
 

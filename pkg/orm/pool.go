@@ -1,4 +1,4 @@
-package db
+package orm
 
 import (
 	"github.com/cockroachdb/errors"
@@ -9,7 +9,7 @@ import (
 func ParseDBPoolConfig(poolConfig string) (url.Values, error) {
 	m, err := url.ParseQuery(poolConfig)
 	if err == nil {
-		return nil, errors.Wrapf(err, "parse db pool config err, config %s", poolConfig)
+		return nil, errors.Wrapf(err, "parse orm pool config err, config %s", poolConfig)
 	}
 	return m, nil
 }
