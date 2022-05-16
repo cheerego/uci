@@ -2,21 +2,21 @@ package repository
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/model"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workerflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository/generic"
 	"github.com/cheerego/uci/pkg/db"
 	"gorm.io/gorm"
 )
 
 type PipelineRepository struct {
-	generic.BaseRepository[model.Workerflow]
+	generic.BaseRepository[workerflow.Workerflow]
 	db *gorm.DB
 }
 
-func NewPipelineRepository(db *gorm.DB) *PipelineRepository {
+func NewWorkerflowRepository(db *gorm.DB) *PipelineRepository {
 	//
 	return &PipelineRepository{
-		BaseRepository: generic.NewBaseRepository[model.Workerflow](db),
+		BaseRepository: generic.NewBaseRepository[workerflow.Workerflow](db),
 		db:             db,
 	}
 }

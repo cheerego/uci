@@ -7,12 +7,12 @@ import (
 var Repositories *Repository
 
 type Repository struct {
-	PipelineRepository *PipelineRepository
+	WorkerflowRepository *PipelineRepository
 }
 
-func NewRepository(pipelineRepository *PipelineRepository) *Repository {
-	return &Repository{PipelineRepository: pipelineRepository}
+func NewRepository(workerflow *PipelineRepository) *Repository {
+	return &Repository{WorkerflowRepository: workerflow}
 }
 func init() {
-	Repositories = NewRepository(NewPipelineRepository(storage.MasterDB()))
+	Repositories = NewRepository(NewWorkerflowRepository(storage.MasterDB()))
 }
