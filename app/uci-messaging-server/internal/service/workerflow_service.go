@@ -13,8 +13,15 @@ func NewWorkerflowService() *WorkerflowService {
 	return &WorkerflowService{}
 }
 
-func (w *WorkerflowService) Trigger(ctx context.Context, workerFlowId int32, customEnvs []workerflow.Env) {
+func (w *WorkerflowService) FindById(ctx context.Context, workerflowId int32) (*workerflow.Workerflow, error) {
+	return repository.Repositories.WorkerflowRepository.FindById(ctx, workerflowId)
+}
 
-	workerflow, err := repository.Repositories.WorkerflowRepository.FindById(ctx, workerFlowId)
+func (w *WorkerflowService) Trigger(ctx context.Context, workerFlowId int32, customEnvs []*workerflow.Env) error {
+	workerflow, err := w.FindById(ctx, workerFlowId)
+	if err != nil {
+		return err
+	}
 
+	return nil
 }

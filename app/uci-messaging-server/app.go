@@ -6,6 +6,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web"
 	"github.com/cheerego/uci/pkg/http"
+	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	_ "github.com/cheerego/uci/pkg/log/backend"
 	"github.com/go-co-op/gocron"
 	"golang.org/x/sync/errgroup"
@@ -29,7 +30,9 @@ func (a *Application) Start() error {
 
 func (a *Application) startHttp() error {
 	echo := http.NewEcho()
+	echo.Use(uctx.UCtx)
 	web.Route(echo)
+
 	return echo.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
 }
 

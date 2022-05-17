@@ -2,16 +2,44 @@ package web
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/index"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/inner/workerflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/messging"
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"gopkg.in/olahol/melody.v1"
+	"net/http"
 )
 
-func Route(r *echo.Echo) {
-	r.GET("/", index.Index)
-	r.GET("/message/:name/subscribe", messging.Subscribe)
-	r.GET("/message/:name/publish", messging.Publish)
+type RequestValidator struct {
+	validator *validator.Validate
+}
 
+func NewRequestValidator() *RequestValidator {
+	return &RequestValidator{validator: validator.New()}
+}
+
+func (cv *RequestValidator) Validate(i interface{}) error {
+	if err := cv.validator.Struct(i); err != nil {
+		// Optionally, you could return the error to give each route more control over the status code
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	return nil
+}
+
+func Route(r *echo.Echo) {
+	r.Validator = NewRequestValidator()
+	r.GET("/", index.Index)
+	api := r.Group("/api/v1")
+	{
+		api.GET("/message/:name/subscribe", messging.Subscribe)
+		api.GET("/message/:name/publish", messging.Publish)
+		api.POST("/inner/workerflow/trigger", workerflow.Trigger)
+	}
+
+	ws(r)
+}
+
+func ws(r *echo.Echo) {
 	m := melody.New()
 
 	r.GET("/uci/ws", func(c echo.Context) error {
