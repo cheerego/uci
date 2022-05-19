@@ -1,4 +1,4 @@
-package uctx
+package ectx
 
 import "github.com/labstack/echo/v4"
 
@@ -20,7 +20,7 @@ func (c *Context) Success() error {
 	return c.JSON(200, NewResult(0, "success", nil))
 }
 
-func UCtx(next echo.HandlerFunc) echo.HandlerFunc {
+func ContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cc := &Context{c}
 		return next(cc)

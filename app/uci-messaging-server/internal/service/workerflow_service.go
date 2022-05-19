@@ -18,10 +18,10 @@ func (w *WorkerflowService) FindById(ctx context.Context, workerflowId int32) (*
 }
 
 func (w *WorkerflowService) Trigger(ctx context.Context, workerFlowId int32, customEnvs []*workerflow.Env) error {
-	workerflow, err := w.FindById(ctx, workerFlowId)
-	if err != nil {
-		return err
-	}
+	//workerflow, err := w.FindById(ctx, workerFlowId)
+	//if err != nil {
+	//	return err
+	//}
 
 	return nil
 }

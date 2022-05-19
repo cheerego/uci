@@ -6,7 +6,6 @@ import (
 )
 
 func Publish(c echo.Context) error {
-	c.Request().WithContext()
 	payload := c.QueryParam("payload")
 	name := c.Param("name")
 	if ch, load := watcher.Load(name); load {
