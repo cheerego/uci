@@ -8,9 +8,11 @@ import (
 type UError struct {
 	HttpCode int
 
-	ErrorCode string
+	Code string
 
 	Message string
+
+	Data any
 }
 
 func (e *UError) Is(err error) bool {
@@ -21,7 +23,7 @@ func (e *UError) Is(err error) bool {
 }
 
 func (e *UError) Error() string {
-	return e.ErrorCode
+	return e.Code
 }
 
 func (e *UError) WithMessage(msg string) *UError {

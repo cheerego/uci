@@ -2,6 +2,7 @@ package workerflow
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
+	"github.com/cheerego/uci/pkg/http/middleware/ectx"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )

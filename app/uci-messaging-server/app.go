@@ -9,7 +9,6 @@ import (
 	"github.com/cheerego/uci/pkg/http/middleware/ectx"
 	_ "github.com/cheerego/uci/pkg/log/backend"
 	"github.com/go-co-op/gocron"
-	"github.com/labstack/echo/v4"
 	"golang.org/x/sync/errgroup"
 	"time"
 )
@@ -33,9 +32,7 @@ func (a *Application) startHttp() error {
 	o := http.NewEcho()
 	o.Use(ectx.ContextMiddleware)
 
-	o.HTTPErrorHandler = func(err error, c echo.Context) {
-
-	}
+	o.HTTPErrorHandler = web.JSONHttpErrorHandler(o)
 	web.Route(o)
 	return o.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
 }
