@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -27,6 +28,10 @@ func NewEcho() *echo.Echo {
 	e.Use(middleware.RequestIDWithConfig(middleware.RequestIDConfig{
 		Generator: func() string {
 			return uuid.NewV4().String()
+		},
+		RequestIDHandler: func(c echo.Context, s string) {
+			r := c.Request().WithContext(context.WithValue(c.Request().Context(), echo.HeaderXRequestID, c.Request().Header.Get(echo.HeaderXRequestID)))
+			c.SetRequest(r)
 		},
 	}))
 	return e
