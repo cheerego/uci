@@ -16,7 +16,10 @@ type UError struct {
 }
 
 func (e *UError) Is(err error) bool {
-	if e.HttpCode == 404 && err.Error() == "record not found" {
+	if err == nil {
+		return false
+	}
+	if e.HttpCode == 404 && errors.Cause(err).Error() == "record not found" {
 		return true
 	}
 	return errors.Is(err, e)
