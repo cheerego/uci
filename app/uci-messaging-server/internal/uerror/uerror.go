@@ -11,8 +11,10 @@ type UError struct {
 	Code string
 
 	Message string
+}
 
-	Data any
+func NewUError(httpCode int, code string, message string) *UError {
+	return &UError{HttpCode: httpCode, Code: code, Message: message}
 }
 
 func (e *UError) Is(err error) bool {

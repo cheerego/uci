@@ -2,6 +2,7 @@ package messging
 
 import (
 	"fmt"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -25,7 +26,7 @@ func Subscribe(c echo.Context) error {
 		c.Response().WriteHeader(http.StatusOK)
 		c.Response().Flush()
 
-		subscribe, err := watcher.Subscribe(name)
+		subscribe, err := service.Services.MessagingService.Subscribe(name)
 		if err != nil {
 			c.Error(err)
 			return nil
@@ -38,6 +39,5 @@ func Subscribe(c echo.Context) error {
 		return nil
 	}
 
-	return c.String(200, "message list")
-
+	return c.NoContent(200)
 }

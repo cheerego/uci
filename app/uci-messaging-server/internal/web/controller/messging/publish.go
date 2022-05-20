@@ -1,17 +1,18 @@
 package messging
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
+	"github.com/cheerego/uci/pkg/http/middleware/ectx"
 	"github.com/labstack/echo/v4"
 )
 
 func Publish(c echo.Context) error {
 	payload := c.QueryParam("payload")
 	name := c.Param("name")
-	if ch, load := watcher.Load(name); load {
-		ch.(chan string) <- payload
-		return c.String(200, "ok")
-	} else {
-		return c.String(200, "no subscribe")
+
+	err := service.Services.MessagingService.Publish(name, payload)
+	if err != nil {
+		return err
 	}
+	return ectx.FromContext(c).Success()
 }

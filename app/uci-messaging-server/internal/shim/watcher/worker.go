@@ -1,6 +1,7 @@
 package watcher
 
 import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/uerror"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
 	"sync"
@@ -31,4 +32,12 @@ func Unsubscribe(name string) {
 	if !loaded {
 		zap.L().Warn("取消监听，但监听不存在", zap.String("Name", name))
 	}
+}
+
+func Publish(clientId, payload string) error {
+	ch, load := Load(clientId)
+	if load {
+		ch.(chan string) <- payload
+	}
+	return uerror.ErrClientOffline.WithStack()
 }
