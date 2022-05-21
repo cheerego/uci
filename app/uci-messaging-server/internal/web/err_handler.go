@@ -8,43 +8,62 @@ import (
 )
 
 func JSONHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
-	return func(err error, c echo.Context) {
+	return func(er error, c echo.Context) {
 		if c.Response().Committed {
 			return
 		}
 
-		var httpCode int
-		var message string
+		var httpCode int = http.StatusInternalServerError
+		var message string = http.StatusText(http.StatusInternalServerError)
 		var code string = http.StatusText(http.StatusInternalServerError)
-		switch err.(type) {
+
+		cause := errors.Cause(er)
+
+		switch cause.(type) {
 		case *echo.HTTPError:
-			httpCode = http.StatusInternalServerError
-			message = http.StatusText(http.StatusInternalServerError)
+			he := cause.(*echo.HTTPError)
+			httpCode = he.Code
+			if m, ok := he.Message.(string); ok {
+				message = m
+			} else {
+				message = he.Error()
+			}
+			code = message
 		case *uerror.UError:
-			u := err.(*uerror.UError)
-			if u.HttpCode == 0 {
+
+			u := cause.(*uerror.UError)
+			if u.HttpCode != 0 {
 				httpCode = u.HttpCode
 				message = u.Message
+				code = u.Code
 			}
-
+		default:
+			httpCode = http.StatusInternalServerError
+			message = http.StatusText(httpCode)
+			code = message
 		}
 
 		var resp echo.Map
-		rid := c.Request().Header.Get(echo.HeaderXRequestID)
+
 		if e.Debug {
-			resp = echo.Map{"message": message, "XRequestId": rid, "code": code, "error": errors.GetAllDetails(err)}
+			resp = echo.Map{"message": message, "code": code, "error": errors.GetAllDetails(er)}
 		} else {
-			resp = echo.Map{"message": message, "XRequestId": rid, "code": code}
+			resp = echo.Map{"message": message, "code": code}
 		}
 
-		// Send response
-		if c.Request().Method == http.MethodHead { // Issue #608
-			err = c.NoContent(httpCode)
-		} else {
-			err = c.JSON(httpCode, resp)
+		rid := c.Request().Header.Get(echo.HeaderXRequestID)
+		if rid != "" {
+			resp["XRequestId"] = rid
 		}
-		if err != nil {
-			e.Logger.Error(err)
+		// Send response
+		var rerr error
+		if c.Request().Method == http.MethodHead { // Issue #608
+			rerr = c.NoContent(httpCode)
+		} else {
+			rerr = c.JSON(httpCode, resp)
+		}
+		if rerr != nil {
+			e.Logger.Error(rerr)
 		}
 	}
 }

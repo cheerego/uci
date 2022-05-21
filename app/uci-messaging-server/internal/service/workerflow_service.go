@@ -24,10 +24,10 @@ func (w *WorkerflowService) Trigger(ctx context.Context, workerFlowId int32, cus
 	// 下发指令 同步
 	// 借机器
 
-	workerflow, err := w.FindById(ctx, workerFlowId)
-	if err != nil {
-		return err
-	}
+	//workerflow, err := w.FindById(ctx, workerFlowId)
+	//if err != nil {
+	//	return err
+	//}
 	// 借在线机器机器
 	// 下发指令
 	// 第一次下发时间
