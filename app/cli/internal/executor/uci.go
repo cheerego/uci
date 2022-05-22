@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	"github.com/cheerego/uci/app/cli/internal/executor/shim"
 )
 
@@ -21,6 +22,6 @@ func (u *Uci) PreCheck() error {
 	return nil
 }
 
-func (u *Uci) Start() error {
-	return u.shim.StartListener()
+func (u *Uci) Start(ctx context.Context) error {
+	return u.shim.StartListener(ctx)
 }
