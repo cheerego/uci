@@ -6,10 +6,10 @@ services:
     image: cheerego-docker.pkg.coding.net/registry/public/php:8-fpm-20220409
     volumes:
       - ./app/uci-admin:/var/www/html/
-  uci-admin-caddy:
-    image: caddy:2.4.6-alpine
+  uci-admin-server:
+    image: nginx
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - ./app/uci-admin:/var/www/html/
-      - ./infra/caddy-php:/etc/caddy
+      - ./infra/nginx-php/nginx.conf:/etc/nginx/nginx.conf

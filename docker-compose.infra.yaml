@@ -25,19 +25,18 @@ services:
     #      - ./infra/rabbitmq/auth.conf:/etc/rabbitmq/conf.d/auth.conf
     environment:
       - TZ=Asia/Shanghai
-  caddy:
-    image: caddy:2.4.6-alpine
+  nginx:
+    image: nginx:1.21.6
     expose:
       - "80"
-      - "2019"
     ports:
       - "80:80"
     environment:
       - TZ=Asia/Shanghai
-      - UCI_HTTP_DOMAIN=${UCI_HTTP_DOMAIN:-127.0.0.1}
-      - UCI_HTTP_PROTOCOL=${UCI_HTTP_PROTOCOL:-http}
     volumes:
-      - "./infra/caddy:/etc/caddy"
+      - "./infra/nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./infra/nginx/proxy.conf:/etc/nginx/proxy.conf"
+      - "./infra/nginx/conf.d:/etc/nginx/conf.d"
   postgres:
     image: postgres:14.2
     environment:

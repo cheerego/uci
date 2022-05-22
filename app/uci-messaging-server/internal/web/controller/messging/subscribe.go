@@ -5,6 +5,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -31,12 +32,25 @@ func Subscribe(c echo.Context) error {
 			c.Error(err)
 			return nil
 		}
-		for str := range subscribe {
-			c.Logger().Info(str)
-			c.Response().Write([]byte(fmt.Sprintf("%s%s", str, "\n")))
-			c.Response().Flush()
+		for {
+			select {
+
+			case str, ok := <-subscribe:
+				if !ok {
+					zap.L().Info("chan not ok return")
+					return nil
+				}
+				c.Logger().Info(str)
+				c.Response().Write([]byte(fmt.Sprintf("%s%s", str, "\n")))
+				c.Response().Flush()
+			case <-c.Request().Context().Done():
+				zap.L().Info("request context done")
+				return nil
+			case <-c.Response().Writer.(http.CloseNotifier).CloseNotify():
+				zap.L().Info("CloseNotifier ")
+				return nil
+			}
 		}
-		return nil
 	}
 
 	return c.NoContent(200)

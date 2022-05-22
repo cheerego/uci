@@ -42,7 +42,7 @@ func (l *ListWatch) StartListener() error {
 }
 
 func (l *ListWatch) Watching() error {
-	resp, err := http.Get("http://localhost:8080/describe/1/message?watch=true")
+	resp, err := http.Get("http://messaging.uci.127.0.0.1.nip.io/api/v1/message/1/subscribe?watch=true")
 	if err != nil {
 		return err
 	}

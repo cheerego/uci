@@ -33,6 +33,7 @@ func Route(r *echo.Echo) {
 	{
 		api.GET("/message/:name/subscribe", messging.Subscribe)
 		api.GET("/message/:name/publish", messging.Publish)
+		api.GET("/message/subscribers", messging.Subscribers)
 		api.POST("/inner/workerflow/trigger", workerflow.Trigger)
 	}
 

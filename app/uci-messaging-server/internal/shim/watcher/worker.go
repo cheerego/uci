@@ -7,10 +7,15 @@ import (
 	"sync"
 )
 
-var subscribers sync.Map
+var subscribers = sync.Map{}
 
-func Subscriber() sync.Map {
-	return subscribers
+func Subscribers() []string {
+	m := make([]string, 0)
+	subscribers.Range(func(key, value any) bool {
+		m = append(m, key.(string))
+		return true
+	})
+	return m
 }
 
 func Subscribe(name string) (chan string, error) {
@@ -38,6 +43,7 @@ func Publish(clientId, payload string) error {
 	ch, load := Load(clientId)
 	if load {
 		ch.(chan string) <- payload
+		return nil
 	}
 	return uerror.ErrClientOffline.WithStack()
 }
