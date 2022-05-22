@@ -12,6 +12,7 @@ func NewEcho() *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Skipper: middleware.DefaultSkipper,
+
 		Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}",` +
 			`"method":"${method}","uri":"${uri}",` +
 			`"status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"` +
@@ -32,6 +33,7 @@ func NewEcho() *echo.Echo {
 		RequestIDHandler: func(c echo.Context, s string) {
 			c.Response().Header().Set(echo.HeaderXRequestID, s)
 			c.Request().Header.Set(echo.HeaderXRequestID, s)
+			c.Set(echo.HeaderXRequestID, s)
 			r := c.Request().WithContext(context.WithValue(c.Request().Context(), echo.HeaderXRequestID, s))
 			c.SetRequest(r)
 		},

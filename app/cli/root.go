@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/cheerego/uci/app/cli/internal/executor"
-	"github.com/cheerego/uci/app/cli/internal/executor/shim"
+	"github.com/cheerego/uci/app/cli/internal/executor/shim/listwatch"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/mitchellh/go-homedir"
 	"go.uber.org/zap"
@@ -19,5 +19,5 @@ func init() {
 }
 
 func Execute() {
-	executor.NewUci(shim.NewListWatch()).Root().Execute()
+	executor.NewUci(listwatch.NewListWatch()).Root().Execute()
 }
