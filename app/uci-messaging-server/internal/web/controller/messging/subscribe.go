@@ -13,9 +13,6 @@ func Subscribe(c echo.Context) error {
 	name := c.Param("name")
 	watch := c.QueryParam("watch")
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	c.Response().Write([]byte("1\n"))
-	c.Response().Write([]byte("2\n"))
-	c.Response().Write([]byte("3\n"))
 	c.Response().Flush()
 	defer func() {
 		watcher.Unsubscribe(name)

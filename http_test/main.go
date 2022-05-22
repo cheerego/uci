@@ -8,7 +8,7 @@ import (
 
 func main() {
 	e := echo.New()
-	e.Use(ectx.ContextMiddleware)
+	e.Use(uctx.ContextMiddleware)
 
 	e.GET("/message/:clientId/subscribe", Subscribe)
 	e.Start(":8001")

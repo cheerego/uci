@@ -1,4 +1,4 @@
-package ectx
+package uctx
 
 import "github.com/labstack/echo/v4"
 
@@ -25,12 +25,13 @@ func ContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func (c *Context) Success() error {
-
-	return c.JSON(200, NewResult("SUCCESS", "", nil, c.Request().Header.Get(echo.HeaderXRequestID)))
+	rid := c.Request().Context().Value(echo.HeaderXRequestID).(string)
+	return c.JSON(200, NewResult("SUCCESS", "", nil, rid))
 }
 
 func (c *Context) Data(data any) error {
-	return c.JSON(200, NewResult("SUCCESS", "", data, c.Request().Header.Get(echo.HeaderXRequestID)))
+	rid := c.Request().Context().Value(echo.HeaderXRequestID).(string)
+	return c.JSON(200, NewResult("SUCCESS", "", data, rid))
 }
 
 func FromContext(c echo.Context) *Context {

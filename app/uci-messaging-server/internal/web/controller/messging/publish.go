@@ -14,5 +14,5 @@ func Publish(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return ectx.FromContext(c).Success()
+	return uctx.FromContext(c).Success()
 }

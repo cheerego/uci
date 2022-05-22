@@ -7,5 +7,5 @@ import (
 )
 
 func Subscribers(c echo.Context) error {
-	return ectx.FromContext(c).Data(watcher.Subscribers())
+	return uctx.FromContext(c).Data(watcher.Subscribers())
 }

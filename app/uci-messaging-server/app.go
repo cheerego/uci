@@ -30,7 +30,7 @@ func (a *Application) Start() error {
 
 func (a *Application) startHttp() error {
 	o := http.NewEcho()
-	o.Use(ectx.ContextMiddleware)
+	o.Use(uctx.ContextMiddleware)
 
 	o.HTTPErrorHandler = web.JSONHttpErrorHandler(o)
 	web.Route(o)

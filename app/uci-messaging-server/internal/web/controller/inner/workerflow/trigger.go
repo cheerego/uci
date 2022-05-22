@@ -2,13 +2,13 @@ package workerflow
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/pkg/http/middleware/ectx"
+	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 func Trigger(c echo.Context) error {
-	cc := ectx.FromContext(c)
+	cc := uctx.FromContext(c)
 	f := new(TriggerWorkflowForm)
 	if err := c.Bind(f); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
