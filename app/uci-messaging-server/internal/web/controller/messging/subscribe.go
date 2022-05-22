@@ -14,17 +14,20 @@ func Subscribe(c echo.Context) error {
 	watch := c.QueryParam("watch")
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	c.Response().Flush()
-	defer func() {
-		watcher.Unsubscribe(name)
-	}()
+
 	if watch == "true" {
+		defer func() {
+			zap.S().Infof("client %s subscribe cancel", name)
+			watcher.Unsubscribe(name)
+		}()
 		header := c.Response().Header()
 		header.Set("Transfer-Encoding", "chunked")
 
-		c.Response().WriteHeader(http.StatusOK)
 		c.Response().Flush()
 
+		zap.S().Infof("client %s subscribe ing", name)
 		subscribe, err := service.Services.MessagingService.Subscribe(name)
+		zap.S().Infof("client %s subscribe ed", name)
 		if err != nil {
 			c.Error(err)
 			return nil
@@ -34,17 +37,15 @@ func Subscribe(c echo.Context) error {
 
 			case str, ok := <-subscribe:
 				if !ok {
-					zap.L().Info("chan not ok return")
+					zap.L().Info("chan not ok return", zap.String("clientId", name))
 					return nil
 				}
 				c.Logger().Info(str)
 				c.Response().Write([]byte(fmt.Sprintf("%s%s", str, "\n")))
 				c.Response().Flush()
 			case <-c.Request().Context().Done():
-				zap.L().Info("request context done")
 				return nil
 			case <-c.Response().Writer.(http.CloseNotifier).CloseNotify():
-				zap.L().Info("CloseNotifier ")
 				return nil
 			}
 		}

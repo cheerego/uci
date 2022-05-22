@@ -30,7 +30,9 @@ func NewEcho() *echo.Echo {
 			return uuid.NewV4().String()
 		},
 		RequestIDHandler: func(c echo.Context, s string) {
-			r := c.Request().WithContext(context.WithValue(c.Request().Context(), echo.HeaderXRequestID, c.Request().Header.Get(echo.HeaderXRequestID)))
+			c.Response().Header().Set(echo.HeaderXRequestID, s)
+			c.Request().Header.Set(echo.HeaderXRequestID, s)
+			r := c.Request().WithContext(context.WithValue(c.Request().Context(), echo.HeaderXRequestID, s))
 			c.SetRequest(r)
 		},
 	}))

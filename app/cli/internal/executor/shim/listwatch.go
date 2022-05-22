@@ -2,8 +2,7 @@ package shim
 
 import (
 	"bufio"
-	"fmt"
-	"github.com/go-resty/resty/v2"
+	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"io"
 	"net/http"
@@ -12,18 +11,16 @@ import (
 
 type ListWatch struct {
 	BaseShimer
-	resty *resty.Client
+	client *http.Client
 }
 
 func NewListWatch() *ListWatch {
-	client := resty.NewWithClient(&http.Client{
-		Transport:     http.DefaultTransport,
-		CheckRedirect: nil,
-		Jar:           nil,
-		Timeout:       100 * time.Second,
-	})
+	client := &http.Client{
+		Transport: http.DefaultTransport,
+		Timeout:   100 * time.Second,
+	}
 	return &ListWatch{
-		resty:      client,
+		client:     client,
 		BaseShimer: BaseShimer{},
 	}
 }
@@ -32,27 +29,33 @@ var _ Shimer = (*ListWatch)(nil)
 
 func (l *ListWatch) StartListener() error {
 	for {
+		zap.S().Info("list watch start ")
 		err := l.Watching()
+		zap.S().Info("list watch end ")
 		if err != nil {
-			zap.L().Error("ListWatch Mode, Watching err", zap.Error(err))
+			zap.S().Info("list watch err, %v", err)
 			time.Sleep(2 * time.Second)
 		}
-
 	}
 }
 
 func (l *ListWatch) Watching() error {
-	resp, err := http.Get("http://messaging.uci.127.0.0.1.nip.io/api/v1/message/1/subscribe?watch=true")
+	resp, err := l.client.Get("http://messaging.uci.127.0.0.1.nip.io/api/v1/message/1/subscribe?watch=true")
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
+	rid := resp.Header.Get(echo.HeaderXRequestID)
+	if rid != "" {
+		zap.L().Info("list and watch success", zap.String("requestId", rid))
+	}
+
 	reader := bufio.NewReader(resp.Body)
 	for {
 		line, err := reader.ReadString('\n')
 		if len(line) > 0 {
-			fmt.Print(line)
+			zap.L().Info("list watch receive message", zap.String("line", line))
 		}
 		if err == io.EOF {
 			break

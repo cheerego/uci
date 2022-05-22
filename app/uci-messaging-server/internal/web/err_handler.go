@@ -51,7 +51,7 @@ func JSONHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 			resp = echo.Map{"message": message, "code": code}
 		}
 
-		rid := c.Request().Context().Value(echo.HeaderXRequestID).(string)
+		var rid = c.Request().Header.Get(echo.HeaderXRequestID)
 		if rid != "" {
 			resp["RequestId"] = rid
 		}

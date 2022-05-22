@@ -2,7 +2,7 @@ package messging
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
-	"github.com/cheerego/uci/pkg/http/middleware/ectx"
+	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/labstack/echo/v4"
 )
 
