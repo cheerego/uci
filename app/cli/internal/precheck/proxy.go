@@ -6,11 +6,11 @@ type Dns struct {
 var _ PreCheck = (*Dns)(nil)
 
 func (d Dns) CheckName() string {
-	panic("implement me")
+	return "HTTP/HTTPS Proxy"
 }
 
 func (d Dns) CheckDescription() string {
-	panic("implement me")
+	return "Check HTTP/HTTPS Proxy"
 }
 
 func (d Dns) CheckLog() string {

@@ -24,6 +24,8 @@ func Subscribe(c echo.Context) error {
 		header := c.Response().Header()
 		header.Set("Transfer-Encoding", "chunked")
 
+		c.Response().Write([]byte("🎉\n"))
+
 		c.Response().Flush()
 
 		zap.S().Infof("requestId %s client %s subscribe ing", rid, name)

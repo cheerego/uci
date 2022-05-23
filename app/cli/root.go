@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/cheerego/uci/app/cli/internal/executor"
-	"github.com/cheerego/uci/app/cli/internal/executor/shim/listwatch"
+	"github.com/cheerego/uci/app/cli/internal"
+	"github.com/cheerego/uci/app/cli/internal/messaging/shim/listwatch"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/mitchellh/go-homedir"
 	"go.uber.org/zap"
@@ -19,5 +19,5 @@ func init() {
 }
 
 func Execute() {
-	executor.NewUci(listwatch.NewListWatch()).Root().Execute()
+	internal.NewUci(listwatch.NewShimer()).Root().Execute()
 }
