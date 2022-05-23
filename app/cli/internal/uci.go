@@ -3,6 +3,8 @@ package internal
 import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/messaging"
+	"github.com/cheerego/uci/app/cli/internal/precheck"
+	"github.com/cockroachdb/errors"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -40,9 +42,16 @@ func (u *Uci) Up() *cobra.Command {
 		Use:   "up",
 		Short: "start a shim for messaging",
 		Long:  "start a shim for messaging",
+		PreRun: func(cmd *cobra.Command, args []string) {
+			err := u.Check()
+			if err != nil {
+				zap.S()
+				zap.S().Fatalf("PreRun Check err %s", err.Error())
+			}
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := u.BaseShimer.Run(u.Context); err != nil {
-				zap.L().Error("shimer run err", zap.Error(err))
+				zap.L().Error("runner shimer run err", zap.Error(err))
 			}
 		},
 	}
@@ -66,5 +75,8 @@ func (u *Uci) Stop() *cobra.Command {
 // 检查监听的 URL 配置是否存在
 //
 func (u *Uci) Check() error {
-	return nil
+	return errors.CombineErrors(
+		precheck.NewProxy().RunCheck(),
+		precheck.NewGit().RunCheck(),
+	)
 }

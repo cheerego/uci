@@ -23,12 +23,12 @@ func NewBaseShimer(shimer Shimer) *BaseShimer {
 var dbName = "uci-runner.db"
 
 func (b *BaseShimer) Run(ctx context.Context) error {
-	g, _ := errgroup.WithContext(ctx)
+	g, gctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
-		return b.Shimer.Listening(ctx)
+		return b.Shimer.Listening(gctx)
 	})
 	g.Go(func() error {
-		return b.Shimer.Consuming(ctx)
+		return b.Shimer.Consuming(gctx)
 	})
 
 	if err := g.Wait(); err != nil {

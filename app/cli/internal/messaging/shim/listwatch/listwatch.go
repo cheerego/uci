@@ -3,7 +3,6 @@ package listwatch
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/messaging"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
 	"github.com/labstack/echo/v4"
@@ -15,7 +14,8 @@ import (
 )
 
 type ListWatch struct {
-	client *http.Client
+	messagingCh chan string
+	client      *http.Client
 }
 
 var _ messaging.Shimer = (*ListWatch)(nil)
@@ -26,7 +26,8 @@ func NewShimer() *ListWatch {
 		Timeout:   100 * time.Second,
 	}
 	return &ListWatch{
-		client: client,
+		messagingCh: make(chan string),
+		client:      client,
 	}
 }
 
@@ -34,7 +35,7 @@ func (l *ListWatch) Listening(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
-			zap.L().Info("Listening canceled")
+			zap.L().Info("list watch listening canceled")
 			return uerror.ErrContextCanceled.WithStack()
 		default:
 			zap.S().Info("list watch start ...")
@@ -48,8 +49,20 @@ func (l *ListWatch) Listening(ctx context.Context) error {
 }
 
 func (l *ListWatch) Consuming(ctx context.Context) error {
-	fmt.Printf("start consuming")
-	return nil
+
+	for {
+		select {
+		case <-ctx.Done():
+			zap.L().Info("list watch consuming canceled")
+			return uerror.ErrContextCanceled.WithStack()
+		case line, ok := <-l.messagingCh:
+			if !ok {
+				return errors.New("list watch consuming select chan return no ok")
+			}
+			zap.L().Info("list watch consuming receive message from chan ", zap.String("line", line))
+		}
+
+	}
 }
 
 func (l *ListWatch) Watching(ctx context.Context) (string, error) {
@@ -75,7 +88,8 @@ func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 	for {
 		line, err := reader.ReadString('\n')
 		if len(line) > 0 {
-			zap.L().Info("list watch receive message", zap.String("line", line), zap.String("requestId", rid))
+			zap.L().Info("list watch watching receive message", zap.String("line", line), zap.String("requestId", rid))
+			l.messagingCh <- line
 		}
 		if err == io.EOF {
 			break

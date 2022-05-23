@@ -1,26 +1,42 @@
 package precheck
 
-type Dns struct {
+import (
+	"go.uber.org/zap"
+	"golang.org/x/net/http/httpproxy"
+)
+
+type Proxy struct {
 }
 
-var _ PreCheck = (*Dns)(nil)
+func NewProxy() *Proxy {
+	return &Proxy{}
+}
 
-func (d Dns) CheckName() string {
+var _ PreCheck = (*Proxy)(nil)
+
+func (d Proxy) CheckName() string {
 	return "HTTP/HTTPS Proxy"
 }
 
-func (d Dns) CheckDescription() string {
+func (d Proxy) CheckDescription() string {
 	return "Check HTTP/HTTPS Proxy"
 }
 
-func (d Dns) CheckLog() string {
-	panic("implement me")
+func (d Proxy) RunCheck() error {
+	config := httpproxy.FromEnvironment()
+	if config.HTTPProxy != "" || config.HTTPSProxy != "" {
+		zap.S().Infof("***************************************************************************************************************")
+		zap.S().Infof("****  %s                                                                                                   ", d.CheckDescription())
+		zap.S().Infof("***************************************************************************************************************")
+		zap.S().Infof("****                                                                                                       ****")
+		zap.S().Infof("****     UCI Runner web proxy check                                                                                ")
+		zap.S().Infof("****     http_proxy: %s   https_proxy: %s   no_proxy: %s                                    ", config.HTTPProxy, config.HTTPSProxy, config.NoProxy)
+		zap.S().Infof("****                                                                                                       ****")
+		zap.S().Infof("***************************************************************************************************************")
+	}
+	return nil
 }
 
-func (d Dns) HelpLink() string {
-	panic("implement me")
-}
-
-func (d Dns) RunCheck() error {
-	panic("implement me")
+func (d Proxy) HelpLink() string {
+	return ""
 }

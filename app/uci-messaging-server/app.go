@@ -34,6 +34,7 @@ func (a *Application) startHttp() error {
 
 	o.HTTPErrorHandler = web.JSONHttpErrorHandler(o)
 	web.Route(o)
+	web.WS(o)
 	return o.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
 }
 
