@@ -71,6 +71,18 @@ func (u *Uci) Stop() *cobra.Command {
 	return up
 }
 
+func (u *Uci) Config() *cobra.Command {
+	up := &cobra.Command{
+		Use:   "config",
+		Short: "Manage the uci configuration files",
+		Long:  "Manage the uci configuration files",
+		Run: func(cmd *cobra.Command, args []string) {
+			zap.L().Info("stop uci runner")
+		},
+	}
+	return up
+}
+
 // Check 检查 go 程序收存在
 // 检查监听的 URL 配置是否存在
 //

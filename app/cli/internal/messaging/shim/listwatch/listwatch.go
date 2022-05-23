@@ -78,7 +78,7 @@ func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 	defer resp.Body.Close()
 
 	rid := resp.Header.Get(echo.HeaderXRequestID)
-	zap.L().Info("list and watch success! 🎉", zap.String("requestId", rid))
+	zap.L().Info("list watch success! 🎉", zap.String("requestId", rid))
 
 	defer func() {
 		zap.L().Info("list and watch end", zap.String("requestId", rid))
