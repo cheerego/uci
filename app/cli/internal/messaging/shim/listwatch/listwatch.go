@@ -37,9 +37,8 @@ func (l *ListWatch) Listening(ctx context.Context) error {
 			zap.L().Info("Listening canceled")
 			return uerror.ErrContextCanceled.WithStack()
 		default:
-			zap.S().Info("list watch start ")
+			zap.S().Info("list watch start ...")
 			rid, err := l.Watching(ctx)
-			zap.S().Info("list watch end ")
 			if err != nil {
 				zap.S().Infof("%s list watch err, %v", rid, err)
 				time.Sleep(2 * time.Second)
