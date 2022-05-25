@@ -2,25 +2,62 @@ package messaging
 
 import (
 	"context"
+	"github.com/cheerego/uci/app/cli/internal/config"
+	"github.com/cheerego/uci/app/cli/internal/config/home_dir"
+	"github.com/cheerego/uci/app/cli/internal/uerror"
+	"github.com/cockroachdb/errors"
 	"go.etcd.io/bbolt"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
+	"path"
+	"time"
 )
 
 type Shimer interface {
 	Listening(ctx context.Context) error
-	Consuming(ctx context.Context) error
+	MessageChan(ctx context.Context) <-chan string
 }
 
 type BaseShimer struct {
-	_ *bbolt.DB
+	Bbolt *bbolt.DB
 	Shimer
 }
 
 func NewBaseShimer(shimer Shimer) *BaseShimer {
-	return &BaseShimer{Shimer: shimer}
+	bbolt.Open(path.Join(home_dir.Default(), config.Name, "uci.db"),0666,)
+	return &BaseShimer{
+		Bbolt: Shimer, : shimer
+	}
 }
 
 var dbName = "uci-runner.db"
+
+func (b *BaseShimer) Pinging(ctx context.Context) error {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			zap.L().Info("pinging")
+		case <-ctx.Done():
+			return uerror.ErrContextCanceledOrTimeout.WithStack()
+		}
+	}
+}
+func (b *BaseShimer) Consuming(ctx context.Context) error {
+	for {
+		select {
+		case <-ctx.Done():
+			zap.L().Info("base shimer consuming canceled")
+			return uerror.ErrContextCanceledOrTimeout.WithStack()
+		case line, ok := <-b.Shimer.MessageChan(ctx):
+			if !ok {
+				return errors.New("list watch consuming select chan return no ok")
+			}
+			zap.L().Info("list watch consuming receive message from chan ", zap.String("line", line))
+		}
+	}
+}
 
 func (b *BaseShimer) Run(ctx context.Context) error {
 	g, gctx := errgroup.WithContext(ctx)
@@ -28,7 +65,10 @@ func (b *BaseShimer) Run(ctx context.Context) error {
 		return b.Shimer.Listening(gctx)
 	})
 	g.Go(func() error {
-		return b.Shimer.Consuming(gctx)
+		return b.Consuming(gctx)
+	})
+	g.Go(func() error {
+		return b.Pinging(gctx)
 	})
 
 	if err := g.Wait(); err != nil {

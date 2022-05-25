@@ -36,7 +36,7 @@ func (l *ListWatch) Listening(ctx context.Context) error {
 		select {
 		case <-ctx.Done():
 			zap.L().Info("list watch listening canceled")
-			return uerror.ErrContextCanceled.WithStack()
+			return uerror.ErrContextCanceledOrTimeout.WithStack()
 		default:
 			zap.S().Info("list watch start ...")
 			rid, err := l.Watching(ctx)
@@ -48,21 +48,8 @@ func (l *ListWatch) Listening(ctx context.Context) error {
 	}
 }
 
-func (l *ListWatch) Consuming(ctx context.Context) error {
-
-	for {
-		select {
-		case <-ctx.Done():
-			zap.L().Info("list watch consuming canceled")
-			return uerror.ErrContextCanceled.WithStack()
-		case line, ok := <-l.messagingCh:
-			if !ok {
-				return errors.New("list watch consuming select chan return no ok")
-			}
-			zap.L().Info("list watch consuming receive message from chan ", zap.String("line", line))
-		}
-
-	}
+func (l *ListWatch) MessageChan(ctx context.Context) <-chan string {
+	return l.messagingCh
 }
 
 func (l *ListWatch) Watching(ctx context.Context) (string, error) {
