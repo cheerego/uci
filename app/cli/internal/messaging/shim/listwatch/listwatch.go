@@ -10,12 +10,17 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
 type ListWatch struct {
 	messagingCh chan string
 	client      *http.Client
+}
+
+func (l *ListWatch) MessageChan(ctx context.Context) <-chan string {
+	return l.messagingCh
 }
 
 var _ messaging.Shimer = (*ListWatch)(nil)
@@ -48,10 +53,6 @@ func (l *ListWatch) Listening(ctx context.Context) error {
 	}
 }
 
-func (l *ListWatch) MessageChan(ctx context.Context) <-chan string {
-	return l.messagingCh
-}
-
 func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 	url := "http://messaging.uci.127.0.0.1.nip.io/api/v1/message/1/subscribe?watch=true"
 	r, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -76,7 +77,10 @@ func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 		line, err := reader.ReadString('\n')
 		if len(line) > 0 {
 			zap.L().Info("list watch watching receive message", zap.String("line", line), zap.String("requestId", rid))
-			l.messagingCh <- line
+			line = strings.TrimRight(line, "\n")
+			if line != "" {
+				l.messagingCh <- line
+			}
 		}
 		if err == io.EOF {
 			break

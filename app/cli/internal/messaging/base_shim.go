@@ -2,14 +2,11 @@ package messaging
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/cli/internal/config"
-	"github.com/cheerego/uci/app/cli/internal/config/home_dir"
+	"github.com/cheerego/uci/app/cli/internal/executor"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
 	"github.com/cockroachdb/errors"
-	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
-	"path"
 	"time"
 )
 
@@ -19,14 +16,14 @@ type Shimer interface {
 }
 
 type BaseShimer struct {
-	Bbolt *bbolt.DB
+	//Bbolt *bbolt.DB
 	Shimer
 }
 
 func NewBaseShimer(shimer Shimer) *BaseShimer {
-	bbolt.Open(path.Join(home_dir.Default(), config.Name, "uci.db"),0666,)
+	//bbolt.Open(path.Join(dir.HomeDir(), config.Name, "uci.db"), 0666)
 	return &BaseShimer{
-		Bbolt: Shimer, : shimer
+		shimer,
 	}
 }
 
@@ -55,6 +52,8 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 				return errors.New("list watch consuming select chan return no ok")
 			}
 			zap.L().Info("list watch consuming receive message from chan ", zap.String("line", line))
+			hostExecutor := executor.NewHostExecutor()
+			go hostExecutor.Start("1", line)
 		}
 	}
 }
@@ -67,9 +66,9 @@ func (b *BaseShimer) Run(ctx context.Context) error {
 	g.Go(func() error {
 		return b.Consuming(gctx)
 	})
-	g.Go(func() error {
-		return b.Pinging(gctx)
-	})
+	//g.Go(func() error {
+	//	return b.Pinging(gctx)
+	//})
 
 	if err := g.Wait(); err != nil {
 		return err
