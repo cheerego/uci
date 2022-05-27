@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use App\Services\PipelineService;
-use App\Services\PipelineTaskService;
+use App\Rpcs\UciMessaingRpcClient;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,14 +16,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
         //
-        $this->app->singleton(PipelineService::class,function ($app){
+        $this->app->singleton(PipelineService::class, function ($app) {
             return new PipelineService();
         });
-
-
-        $this->app->singleton(PipelineTaskService::class,function ($app){
-            return new PipelineTaskService();
+        $this->app->singleton(UciMessaingRpcClient::class, function ($app) {
+            config("")
+            return new UciMessaingRpcClient()
         });
     }
 

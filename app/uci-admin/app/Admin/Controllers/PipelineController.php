@@ -4,7 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Pipeline\Trigger;
 use App\Models\Pipeline;
-use App\Services\PipelineService;
+use App\Services\UciMessaingRpcClient;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -40,7 +40,7 @@ class PipelineController extends AdminController
         $grid->column("updated_at", __("admin.updated_at"));
 
         $grid->column("adf")->display(function () {
-            return app(PipelineService::class)->echo();
+            return app(UciMessaingRpcClient::class)->echo();
         });
 
 

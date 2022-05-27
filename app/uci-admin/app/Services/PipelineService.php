@@ -3,17 +3,17 @@
 namespace App\Services;
 
 
+use GuzzleHttp\Client;
+
 class PipelineService
 {
-    private $pipelineTaskService;
     public function __construct()
     {
-        $this->pipelineTaskService = app(PipelineTaskService::class);
     }
 
-    public function echo(): string
+    public function triggerBuild($pipelineId): string
     {
-        return $this->pipelineTaskService->echo();
+        app(Client::class)->request("GET", "http://uci-messaging-server:8080");
     }
 }
 
