@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\WorkerflowService;
+use App\Services\WorkflowService;
 use App\Rpcs\UciMessaingRpcClient;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
@@ -16,14 +16,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
-        //
-        $this->app->singleton(WorkerflowService::class, function ($app) {
-            return new WorkerflowService();
-        });
         $this->app->singleton(UciMessaingRpcClient::class, function ($app) {
             return new UciMessaingRpcClient(config("rpc.uci_messaging_server_http"));
         });
+        //
+
     }
 
     /**
@@ -33,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->singleton(WorkflowService::class, function (\Illuminate\Contracts\Foundation\Application $app) {
+            return new WorkflowService($app[UciMessaingRpcClient::class]);
+        });
+
     }
 }

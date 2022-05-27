@@ -3,21 +3,20 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Pipeline\Trigger;
-use App\Models\Pipeline;
-use App\Services\UciMessaingRpcClient;
+use App\Models\Workflow;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class PipelineController extends AdminController
+class WorkflowController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Pipeline';
+    protected $title = 'Workflow';
 
     /**
      * Make a grid builder.
@@ -26,7 +25,7 @@ class PipelineController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new Pipeline());
+        $grid = new Grid(new Workflow());
 
 
         $grid->actions(function (Grid\Displayers\Actions $actions) {
@@ -39,9 +38,9 @@ class PipelineController extends AdminController
         $grid->column("created_at", __("admin.created_at"));
         $grid->column("updated_at", __("admin.updated_at"));
 
-        $grid->column("adf")->display(function () {
-            return app(UciMessaingRpcClient::class)->echo();
-        });
+//        $grid->column("adf")->display(function () {
+//            return app(UciMessaingRpcClient::class)->echo();
+//        });
 
 
         return $grid;
@@ -55,7 +54,7 @@ class PipelineController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Pipeline::query()->findOrFail($id));
+        $show = new Show(Workflow::query()->findOrFail($id));
         $show->field('id', 'ID');
         $show->field('name', '名称');
         $show->field("content", "编排内容");
@@ -71,10 +70,11 @@ class PipelineController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Pipeline());
+        $form = new Form(new Workflow());
         $form->display('id', 'ID');
         $form->text('name', '名称');
         $form->textarea("content", "编排内容");
+        $form->keyValue("param_envs", "环境变量");
         return $form;
     }
 }

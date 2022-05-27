@@ -5,7 +5,7 @@ namespace App\Services;
 
 use App\Rpcs\UciMessaingRpcClient;
 
-class WorkerflowService
+class WorkflowService
 {
     /**
      * @var UciMessaingRpcClient
@@ -17,9 +17,9 @@ class WorkerflowService
         $this->uciMessagingClient = $uciMessagingClient;
     }
 
-    public function triggerBuild($pipelineId): string
+    public function triggerBuild($workflowId): \Psr\Http\Message\ResponseInterface
     {
-        app(UciMessaingRpcClient::class)->request("POST", "/api/vi/inner/workerflow/trigger");
+        return app(UciMessaingRpcClient::class)->request("POST", "/api/v1/inner/workflow/" . $workflowId . "/trigger");
     }
 }
 

@@ -21,10 +21,14 @@ func (e *UError) Is(err error) bool {
 	if err == nil {
 		return false
 	}
-	if e.HttpCode == 404 && errors.Cause(err).Error() == "record not found" {
+	if e.HttpCode == 404 && IsRecordNotFoundErr(err) {
 		return true
 	}
 	return errors.Is(err, e)
+}
+
+func IsRecordNotFoundErr(err error) bool {
+	return errors.Cause(err).Error() == "record not found"
 }
 
 func (e *UError) Error() string {

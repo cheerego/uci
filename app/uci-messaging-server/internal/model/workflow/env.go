@@ -1,4 +1,4 @@
-package workerflow
+package workflow
 
 type Env struct {
 	Name      string

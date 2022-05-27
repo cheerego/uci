@@ -1,4 +1,4 @@
-package task
+package pipeline
 
 //UCI 流水线状态设计
 //
@@ -15,18 +15,17 @@ package task
 type Status string
 
 const (
-	PreCheckSucceed Status = "PreCheckSucceed"
-	PreCheckFailed  Status = "PreCheckFailed"
+	PreCheckFailed Status = "PreCheckFailed"
 )
 
 const Queuing Status = "Queuing"
 
 const (
-	Issuing Status = "Issuing"
+	Dispatching Status = "Dispatching"
 
-	IssueSucceed Status = "IssueSucceed"
-	IssueFailed  Status = "IssueFailed"
-	IssueTimeout Status = "IssueTimeout"
+	DispatchSuccess Status = "DispatchSuccess"
+	DispatchFailed  Status = "DispatchFailed"
+	DispatchTimeout Status = "DispatchTimeout"
 )
 
 const (

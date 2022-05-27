@@ -1,17 +1,17 @@
 package service
 
 var Services *Service = NewService(
-	NewWorkerflowService(),
-	NewTaskService(),
+	NewWorkflowService(),
 	NewMessagingService(),
+	NewPipelineService(),
 )
 
 type Service struct {
-	WorkerflowService *WorkerflowService
-	TaskService       *TaskService
-	MessagingService  *MessagingService
+	WorkflowService  *WorkflowService
+	MessagingService *MessagingService
+	PipelineService  *PipelineService
 }
 
-func NewService(workerflowService *WorkerflowService, taskService *TaskService, messagingService *MessagingService) *Service {
-	return &Service{WorkerflowService: workerflowService, TaskService: taskService, MessagingService: messagingService}
+func NewService(workflowService *WorkflowService, messagingService *MessagingService, pipelineService *PipelineService) *Service {
+	return &Service{WorkflowService: workflowService, MessagingService: messagingService, PipelineService: pipelineService}
 }

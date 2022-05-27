@@ -4,15 +4,16 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 )
 
-var Repositories *Repository
+var Repositories *Repository = NewRepository(
+	NewWorkflowRepository(storage.MasterDB()),
+	NewPipelineRepository(storage.MasterDB()),
+)
 
 type Repository struct {
-	WorkerflowRepository *WorkerflowRepository
+	WorkflowRepository *WorkflowRepository
+	PipelineRepository *PipelineRepository
 }
 
-func NewRepository(workerflow *WorkerflowRepository) *Repository {
-	return &Repository{WorkerflowRepository: workerflow}
-}
-func init() {
-	Repositories = NewRepository(NewWorkerflowRepository(storage.MasterDB()))
+func NewRepository(workflowRepository *WorkflowRepository, pipelineRepository *PipelineRepository) *Repository {
+	return &Repository{WorkflowRepository: workflowRepository, PipelineRepository: pipelineRepository}
 }

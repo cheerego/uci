@@ -9,7 +9,7 @@ import (
 
 func Trigger(c echo.Context) error {
 	cc := uctx.FromContext(c)
-	workerflowId, err := cc.ParamInt32("id")
+	workflowId, err := cc.ParamUint32("id")
 	if err != nil {
 		return err
 	}
@@ -19,11 +19,10 @@ func Trigger(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	_, err = service.Services.WorkerflowService.FindById(cc.Request().Context(), workerflowId)
+	workflow, err := service.Services.WorkflowService.FindById(cc.Request().Context(), workflowId)
 	if err != nil {
 		return err
 	}
 
-	_ = service.Services.WorkerflowService.Trigger(cc.Request().Context(), workerflowId, f.Env)
-	return nil
+	return service.Services.WorkflowService.Trigger(cc.Request().Context(), workflow, f.Env)
 }

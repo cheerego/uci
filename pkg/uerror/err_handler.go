@@ -37,9 +37,15 @@ func JSONHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 			message = u.Message
 			code = u.Code
 		default:
-			httpCode = http.StatusInternalServerError
-			message = cause.Error()
-			code = http.StatusText(httpCode)
+			if IsRecordNotFoundErr(cause) {
+				httpCode = http.StatusNotFound
+				message = http.StatusText(httpCode)
+				code = http.StatusText(httpCode)
+			} else {
+				httpCode = http.StatusInternalServerError
+				message = cause.Error()
+				code = http.StatusText(httpCode)
+			}
 		}
 
 		var resp echo.Map

@@ -9,7 +9,7 @@ import (
 )
 
 func Index(ctx echo.Context) error {
-	id, err := repository.Repositories.WorkerflowRepository.FindById(context.TODO(), 1)
+	id, err := repository.Repositories.WorkflowRepository.FindById(context.TODO(), 1)
 	zap.L().Info("123", zap.Any("123", id), zap.Error(err))
 	zap.L().Info("123123", zap.Any("config", config.Configs))
 	return ctx.String(200, "Hello World, UCI MESSAGING SERVER")

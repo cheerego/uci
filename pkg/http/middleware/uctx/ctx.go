@@ -36,24 +36,6 @@ func (c *Context) ParamInt(name string) (int, error) {
 	return strconv.Atoi(param)
 }
 
-func (c *Context) ParamInt32(name string) (int32, error) {
-	param := c.Param(name)
-	atoi, err := strconv.Atoi(param)
-	if err != nil {
-		return 0, err
-	}
-	return int32(atoi), nil
-}
-
-func (c *Context) ParamUint(name string) (uint, error) {
-	param := c.Param(name)
-	atoi, err := strconv.Atoi(param)
-	if err != nil {
-		return 0, err
-	}
-	return uint(atoi), nil
-}
-
 func (c *Context) ParamUint32(name string) (uint32, error) {
 	param := c.Param(name)
 	atoi, err := strconv.Atoi(param)

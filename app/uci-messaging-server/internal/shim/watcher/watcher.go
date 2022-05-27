@@ -1,7 +1,7 @@
 package watcher
 
 import (
-	"github.com/cheerego/uci/pkg/uerror"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
 	"sync"
@@ -45,5 +45,5 @@ func Publish(clientId, payload string) error {
 		ch.(chan string) <- payload
 		return nil
 	}
-	return uerror.ErrClientOffline.WithStack()
+	return e.ErrClientOffline.WithStack()
 }

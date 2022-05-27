@@ -1,20 +1,40 @@
 package repository
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workerflow"
+	"context"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/pkg/orm"
 	"gorm.io/gorm"
+	"time"
 )
 
-type WorkerflowRepository struct {
-	orm.BaseRepository[workerflow.Workerflow]
+type PipelineRepository struct {
+	orm.BaseRepository[pipeline.Pipeline]
 	db *gorm.DB
 }
 
-func NewWorkerflowRepository(db *gorm.DB) *WorkerflowRepository {
-	//
-	return &WorkerflowRepository{
-		BaseRepository: orm.NewBaseRepository[workerflow.Workerflow](db),
+func NewPipelineRepository(db *gorm.DB) *PipelineRepository {
+	return &PipelineRepository{
 		db:             db,
+		BaseRepository: orm.NewBaseRepository[pipeline.Pipeline](db),
 	}
+}
+
+func (p *PipelineRepository) IncreaseDispatchTimes(ctx context.Context, id uint32) (int64, error) {
+	var m pipeline.Pipeline
+	tx := orm.FromContext(ctx, p.db).Model(&m).Where(id).Updates(map[string]interface{}{
+		"dispatch_times": gorm.Expr("dispatch_times + ?", 1),
+		"dispatch_time":  time.Now(),
+	})
+	return tx.RowsAffected, tx.Error
+
+}
+
+func (p *PipelineRepository) UpdateStatus(ctx context.Context, id uint32, status pipeline.Status) (int64, error) {
+	var m pipeline.Pipeline
+
+	tx := orm.FromContext(ctx, p.db).Model(&m).Where(id).Select("status").Updates(map[string]interface{}{
+		"status": status,
+	})
+	return tx.RowsAffected, tx.Error
 }

@@ -21,6 +21,9 @@ class UciMessaingRpcClient
     }
 
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function request(string $method, $uri = '', array $options = []): \Psr\Http\Message\ResponseInterface
     {
         return $this->client->request($method, $uri, $options);
