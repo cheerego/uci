@@ -5,10 +5,11 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/messaging"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
+	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -65,6 +66,14 @@ func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return "", errors.Wrapf(err, "read http response body err")
+		}
+		return "", errors.Newf("http response status code != 200, body is %s", string(b))
+	}
+
 	rid := resp.Header.Get(echo.HeaderXRequestID)
 	zap.L().Info("list watch success! 🎉", zap.String("requestId", rid))
 
@@ -73,6 +82,7 @@ func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 	}()
 
 	reader := bufio.NewReader(resp.Body)
+
 	for {
 		line, err := reader.ReadString('\n')
 		if len(line) > 0 {

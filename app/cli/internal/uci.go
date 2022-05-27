@@ -45,7 +45,6 @@ func (u *Uci) Up() *cobra.Command {
 		PreRun: func(cmd *cobra.Command, args []string) {
 			err := u.Check()
 			if err != nil {
-				zap.S()
 				zap.S().Fatalf("PreRun Check err %s", err.Error())
 			}
 		},

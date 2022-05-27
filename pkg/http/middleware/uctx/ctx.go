@@ -1,6 +1,9 @@
 package uctx
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+	"strconv"
+)
 
 type Result struct {
 	Code      string      `json:"code"`
@@ -27,6 +30,37 @@ func ContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 func (c *Context) Success() error {
 	rid := c.Request().Header.Get(echo.HeaderXRequestID)
 	return c.JSON(200, NewResult("SUCCESS", "SUCCESS", nil, rid))
+}
+func (c *Context) ParamInt(name string) (int, error) {
+	param := c.Param(name)
+	return strconv.Atoi(param)
+}
+
+func (c *Context) ParamInt32(name string) (int32, error) {
+	param := c.Param(name)
+	atoi, err := strconv.Atoi(param)
+	if err != nil {
+		return 0, err
+	}
+	return int32(atoi), nil
+}
+
+func (c *Context) ParamUint(name string) (uint, error) {
+	param := c.Param(name)
+	atoi, err := strconv.Atoi(param)
+	if err != nil {
+		return 0, err
+	}
+	return uint(atoi), nil
+}
+
+func (c *Context) ParamUint32(name string) (uint32, error) {
+	param := c.Param(name)
+	atoi, err := strconv.Atoi(param)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(atoi), nil
 }
 
 func (c *Context) Data(data any) error {

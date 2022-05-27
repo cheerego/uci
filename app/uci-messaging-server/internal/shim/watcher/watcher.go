@@ -1,7 +1,7 @@
 package watcher
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/uerror"
+	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
 	"sync"

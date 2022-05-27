@@ -1,7 +1,6 @@
-package web
+package uerror
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/uerror"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -29,18 +28,18 @@ func JSONHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 				message = he.Error()
 			}
 			code = message
-		case *uerror.UError:
+		case *UError:
 
-			u := cause.(*uerror.UError)
+			u := cause.(*UError)
 			if u.HttpCode != 0 {
 				httpCode = u.HttpCode
-				message = u.Message
-				code = u.Code
 			}
+			message = u.Message
+			code = u.Code
 		default:
 			httpCode = http.StatusInternalServerError
-			message = http.StatusText(httpCode)
-			code = message
+			message = cause.Error()
+			code = http.StatusText(httpCode)
 		}
 
 		var resp echo.Map

@@ -12,28 +12,28 @@ import (
 func Subscribe(c echo.Context) error {
 	name := c.Param("name")
 	watch := c.QueryParam("watch")
-	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	c.Response().Flush()
+
 	rid := c.Get(echo.HeaderXRequestID)
 
 	if watch == "true" {
-		defer func() {
-			zap.S().Infof("requestId %s client %s subscribe cancel", rid, name)
-			watcher.Unsubscribe(name)
-		}()
-		header := c.Response().Header()
-		header.Set("Transfer-Encoding", "chunked")
 
-		c.Response().Write([]byte("🎉\n"))
-
-		c.Response().Flush()
-
-		zap.S().Infof("requestId %s client %s subscribe ing", rid, name)
 		subscribe, err := service.Services.MessagingService.Subscribe(name)
 		if err != nil {
 			c.Error(err)
 			return nil
 		}
+		defer func() {
+			zap.S().Infof("requestId %s client %s subscribe cancel", rid, name)
+			watcher.Unsubscribe(name)
+		}()
+		c.Response().Flush()
+		c.Response().Header().Set("Transfer-Encoding", "chunked")
+
+		c.Response().Write([]byte("\n"))
+		c.Response().Flush()
+
+		zap.S().Infof("requestId %s client %s subscribe ing", rid, name)
+
 		zap.S().Infof("requestId %s client %s subscribe success", rid, name)
 		for {
 			select {

@@ -10,6 +10,7 @@ import (
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	_ "github.com/cheerego/uci/pkg/log/backend"
 	"github.com/cheerego/uci/pkg/signal"
+	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/go-co-op/gocron"
 	"golang.org/x/sync/errgroup"
 	"time"
@@ -39,7 +40,7 @@ func (a *Application) startHttp() error {
 	o := http.NewEcho()
 	o.Use(uctx.ContextMiddleware)
 
-	o.HTTPErrorHandler = web.JSONHttpErrorHandler(o)
+	o.HTTPErrorHandler = uerror.JSONHttpErrorHandler(o)
 	web.Route(o)
 	web.WS(o)
 	return o.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
