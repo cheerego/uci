@@ -5,9 +5,11 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Pipeline\Trigger;
 use App\Models\Workflow;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Encore\Admin\Widgets\Table;
 
 class WorkflowController extends AdminController
 {
@@ -27,20 +29,22 @@ class WorkflowController extends AdminController
     {
         $grid = new Grid(new Workflow());
 
+        $grid->column('id', __('Id'));
+        $grid->column('name', __('Name'));
+        $grid->column('yaml', __('Yaml'));
+        $grid->column('creator_id', __('Creator id'));
+//        $grid->column('param_envs', __('Param envs'));
 
+        $grid->column('envs', __('Param envs'))->expand(function ($model) {
+            return new Table(['Key', 'Value', ], collect($model->param_envs)->toArray());
+        });
+
+        $grid->column('created_at', __('Created at'));
+        $grid->column('updated_at', __('Updated at'));
+        $grid->column('deleted_at', __('Deleted at'));
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->add(new Trigger());
         });
-
-
-        $grid->column("id", "Id");
-        $grid->column("yaml", "Yaml");
-        $grid->column("created_at", __("admin.created_at"));
-        $grid->column("updated_at", __("admin.updated_at"));
-
-//        $grid->column("adf")->display(function () {
-//            return app(UciMessaingRpcClient::class)->echo();
-//        });
 
 
         return $grid;
@@ -54,11 +58,16 @@ class WorkflowController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Workflow::query()->findOrFail($id));
-        $show->field('id', 'ID');
-        $show->field('name', '名称');
-        $show->field("content", "编排内容");
+        $show = new Show(Workflow::findOrFail($id));
 
+        $show->field('id', __('Id'));
+        $show->field('name', __('Name'));
+        $show->field('yaml', __('Yaml'));
+        $show->field('creator_id', __('Creator id'));
+        $show->field('param_envs', __('Param envs'));
+        $show->field('created_at', __('Created at'));
+        $show->field('updated_at', __('Updated at'));
+        $show->field('deleted_at', __('Deleted at'));
 
         return $show;
     }
@@ -71,10 +80,21 @@ class WorkflowController extends AdminController
     protected function form()
     {
         $form = new Form(new Workflow());
-        $form->display('id', 'ID');
-        $form->text('name', '名称');
-        $form->textarea("content", "编排内容");
-        $form->keyValue("param_envs", "环境变量");
+
+        $form->text('name', __('Name'));
+        $form->textarea('yaml', __('Yaml'));
+        $form->hidden('creator_id', __('Creator id'));
+        $form->table('param_envs', __('Param envs'), function ($table) {
+            $table->text('key');
+            $table->text('value');
+        });
+
+
+        $form->saving(function (Form $form) {
+            if ($form->isCreating()) {
+                $form->creator_id = Admin::user()->id;
+            }
+        });
         return $form;
     }
 }

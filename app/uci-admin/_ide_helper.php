@@ -16285,8 +16285,7 @@
          */ 
         public static function favicon($favicon = null)
         {
-                        /** @var \Encore\Admin\Admin $instance */
-                        return $instance->favicon($favicon);
+                        return \Encore\Admin\Admin::favicon($favicon);
         }
                     /**
          * Get the currently authenticated user.

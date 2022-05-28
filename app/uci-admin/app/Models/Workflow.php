@@ -18,4 +18,14 @@ class Workflow extends Model
     ];
 
 
+    public function getParamEnvsAttribute($value)
+    {
+        return array_values(json_decode($value, true) ?: []);
+    }
+
+    public function setParamEnvsAttribute($value)
+    {
+        $this->attributes['param_envs'] = json_encode(array_values($value));
+    }
+
 }

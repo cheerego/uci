@@ -26,9 +26,8 @@ func Subscribe(c echo.Context) error {
 			zap.S().Infof("requestId %s client %s subscribe cancel", rid, name)
 			watcher.Unsubscribe(name)
 		}()
-		c.Response().Flush()
-		c.Response().Header().Set("Transfer-Encoding", "chunked")
 
+		c.Response().Header().Set("Transfer-Encoding", "chunked")
 		c.Response().Write([]byte("\n"))
 		c.Response().Flush()
 

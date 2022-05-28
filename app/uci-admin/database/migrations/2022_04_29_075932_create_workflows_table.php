@@ -16,8 +16,8 @@ class CreateWorkflowsTable extends Migration
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->text("content");
-//            $table->integer("creator_id");
+            $table->text("yaml");
+            $table->integer("creator_id");
 //            $table->text("trigger_method");
 //            $table->text("scheduler");
             $table->json("param_envs");

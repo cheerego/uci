@@ -22,7 +22,7 @@ func (w *WorkflowService) FindById(ctx context.Context, workerflowId uint32) (*w
 func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*workflow.Env) error {
 	// 创建 Pipeline
 
-	p := pipeline.NewPipeline(workflow.ID, workflow.Content)
+	p := pipeline.NewPipeline(workflow.ID, workflow.Yaml)
 
 	err := Services.PipelineService.Create(ctx, p)
 	if err != nil {

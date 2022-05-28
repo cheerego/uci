@@ -39,6 +39,7 @@ func (a *Application) Start() error {
 func (a *Application) startHttp() error {
 	o := http.NewEcho()
 	o.Use(uctx.ContextMiddleware)
+	o.Debug = true
 
 	o.HTTPErrorHandler = uerror.JSONHttpErrorHandler(o)
 	web.Route(o)

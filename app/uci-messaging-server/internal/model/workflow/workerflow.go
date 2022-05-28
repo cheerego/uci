@@ -8,7 +8,7 @@ type Workflow struct {
 	orm.Model
 	Name string
 	//RepoId uint32
-	Content string
+	Yaml string
 	//Enable bool
 	//ParamEnv map[string]string
 }
