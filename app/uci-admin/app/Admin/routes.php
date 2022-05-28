@@ -12,6 +12,7 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
-    $router->resource("/workflow", WorkflowController::class);
+    $router->resource("workflows", WorkflowController::class);
+    $router->resource('pipelines', PipelineController::class);
 
 });

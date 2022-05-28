@@ -995,16 +995,16 @@
         },
         {
             "name": "encore/laravel-admin",
-            "version": "v1.8.17",
+            "version": "v1.8.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/z-song/laravel-admin.git",
-                "reference": "45c58c656fcc6a8c57423d2256f3b7a73e783441"
+                "reference": "6c292ebb5efa886fa4776d86e975180608505946"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/z-song/laravel-admin/zipball/45c58c656fcc6a8c57423d2256f3b7a73e783441",
-                "reference": "45c58c656fcc6a8c57423d2256f3b7a73e783441",
+                "url": "https://api.github.com/repos/z-song/laravel-admin/zipball/6c292ebb5efa886fa4776d86e975180608505946",
+                "reference": "6c292ebb5efa886fa4776d86e975180608505946",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1069,9 +1069,9 @@
             ],
             "support": {
                 "issues": "https://github.com/z-song/laravel-admin/issues",
-                "source": "https://github.com/z-song/laravel-admin/tree/v1.8.17"
+                "source": "https://github.com/z-song/laravel-admin/tree/v1.8.19"
             },
-            "time": "2021-12-31T08:36:33+00:00"
+            "time": "2022-05-24T03:49:38+00:00"
         },
         {
             "name": "fruitcake/laravel-cors",
