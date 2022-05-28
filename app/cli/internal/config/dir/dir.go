@@ -13,17 +13,17 @@ func HomeDir() string {
 }
 
 func UciDir() string {
-	return path.Join(HomeDir(), config.Name)
+	return path.Join(HomeDir(), fmt.Sprintf(".%s", config.Name))
 }
 
-func UciTaskDir(taskName string) string {
-	return path.Join(UciDir(), fmt.Sprintf("task-%s", taskName))
+func UciPipelineDir(workflowId uint32, pipelineId uint32, salt string) string {
+	return path.Join(UciDir(), fmt.Sprintf("workflow-%d-pipeline-%d-%s", workflowId, pipelineId, salt))
 }
 
-func UciTaskWorkspaceDir(taskName string) string {
-	return path.Join(UciTaskDir(taskName), "workspace")
+func UciTaskWorkspaceDir(workflowId uint32, pipelineId uint32, salt string) string {
+	return path.Join(UciPipelineDir(workflowId, pipelineId, salt), "workspace")
 }
 
-func UciTaskLogPath(taskName string) string {
-	return path.Join(UciTaskDir(taskName), "task.log")
+func UciTaskLogPath(workflowId uint32, pipelineId uint32, salt string) string {
+	return path.Join(UciPipelineDir(workflowId, pipelineId, salt), "raw.log")
 }

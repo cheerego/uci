@@ -47,13 +47,12 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 		case <-ctx.Done():
 			zap.L().Info("base shimer consuming canceled")
 			return uerror.ErrContextCanceledOrTimeout.WithStack()
-		case line, ok := <-b.Shimer.MessageChan(ctx):
+		case dispatchMessage, ok := <-b.Shimer.MessageChan(ctx):
 			if !ok {
 				return errors.New("list watch consuming select chan return no ok")
 			}
-			zap.L().Info("list watch consuming receive message from chan ", zap.String("line", line))
-			hostExecutor := executor.NewHostExecutor()
-			go hostExecutor.Start("1", line)
+			zap.L().Info("list watch consuming receive message from chan ", zap.String("dispatchMessage", dispatchMessage))
+			executor.E.Exec(dispatchMessage)
 		}
 	}
 }

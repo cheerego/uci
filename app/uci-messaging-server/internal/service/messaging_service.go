@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
+	"github.com/cheerego/uci/protocol/letter"
 )
 
 type MessagingService struct {
@@ -11,8 +12,8 @@ func NewMessagingService() *MessagingService {
 	return &MessagingService{}
 }
 
-func (m *MessagingService) Publish(clientId string, payload string) error {
-	return watcher.Publish(clientId, payload)
+func (m *MessagingService) Publish(clientId string, l *letter.Letter) error {
+	return watcher.Publish(clientId, l)
 
 }
 

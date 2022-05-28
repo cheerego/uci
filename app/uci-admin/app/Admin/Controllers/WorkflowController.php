@@ -33,7 +33,7 @@ class WorkflowController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('yaml', __('Yaml'));
         $grid->column('creator_id', __('Creator id'));
-//        $grid->column('param_envs', __('Param envs'));
+//        $grid->column('param_envs', __('Param envs'))
 
         $grid->column('envs', __('Param envs'))->expand(function ($model) {
             return new Table(['Key', 'Value', ], collect($model->param_envs)->toArray());

@@ -5,7 +5,10 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
+	"github.com/cheerego/uci/protocol/letter"
+	"github.com/cheerego/uci/protocol/letter/payload"
 	"go.uber.org/zap"
+	"time"
 )
 
 type WorkflowService struct {
@@ -46,7 +49,19 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 	// 借不到机器就还是等待
 
 	Services.PipelineService.IncreaseDispatchTimes(ctx, p.ID)
-	err = Services.MessagingService.Publish("1", p.Yaml)
+
+	l := &letter.Letter{
+		Action: letter.StartAction,
+		Payload: payload.StartPipelinePayload{
+			WorkflowId: workflow.ID,
+			PipelineId: p.ID,
+			Yaml:       p.Yaml,
+			Salt:       p.Salt,
+		},
+		Timestamp: time.Now(),
+	}
+
+	err = Services.MessagingService.Publish("1", l)
 	if err != nil {
 		zap.L().Error("dispatch err", zap.Uint32("workflowId", workflow.ID), zap.Uint32("pipelineId", p.ID), zap.Error(err))
 		return nil
