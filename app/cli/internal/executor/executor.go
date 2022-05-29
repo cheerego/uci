@@ -3,15 +3,15 @@ package executor
 import (
 	"encoding/json"
 	"github.com/cheerego/uci/protocol/letter"
-	"github.com/cheerego/uci/protocol/letter/payload"
+	"github.com/go-resty/resty/v2"
 	"go.uber.org/zap"
 )
 
 var E = NewExecutor()
 
 type IExecutor interface {
-	Start(payload *payload.StartPipelinePayload)
-	PrepareWorkspace(payload *payload.StartPipelinePayload) error
+	Start(payload *letter.StartPipelinePayload) (string, error)
+	//PrepareWorkspace(payload *payload.StartPipelinePayload) error
 }
 
 type Executor struct {
@@ -39,7 +39,33 @@ func (o *Executor) Exec(dispatchMessage string) {
 			zap.L().Error("parse start pipeline payload err", zap.Error(err))
 			return
 		}
-		go o.HostExecutor.Start(p)
+		go func() {
+			raw, err := o.HostExecutor.Start(p)
+			if err != nil {
+				zap.L().Error("after start", zap.Error(err))
+				return
+			}
+			zap.L().Info("raw", zap.String("raw", raw))
+			client := resty.New()
+
+			var result = make(map[string]interface{})
+			resp, err := client.R().
+				SetHeader("Content-Type", "application/json").
+				SetBody(map[string]interface{}{
+					"uuid": p.Uuid,
+					"raw":  raw,
+				}).
+				SetResult(result).
+				Post("http://messaging.uci.127.0.0.1.nip.io/api/v1/pipeline/report/log/raw")
+			if err != nil {
+				zap.L().Error("report raw log err", zap.Error(err))
+				return
+			}
+			if resp.StatusCode() != 200 {
+				zap.L().Error("report log raw status code != 200", zap.Any("result", result))
+			}
+		}()
+
 	case letter.StopAction:
 	default:
 		zap.L().Error("无效的 action 类型", zap.String("dispatchMessage", dispatchMessage), zap.String("action", string(l.Action)))

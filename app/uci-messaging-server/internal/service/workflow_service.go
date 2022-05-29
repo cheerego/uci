@@ -6,7 +6,6 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
 	"github.com/cheerego/uci/protocol/letter"
-	"github.com/cheerego/uci/protocol/letter/payload"
 	"go.uber.org/zap"
 	"time"
 )
@@ -52,11 +51,12 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 
 	l := &letter.Letter{
 		Action: letter.StartAction,
-		Payload: payload.StartPipelinePayload{
+		Payload: letter.StartPipelinePayload{
 			WorkflowId: workflow.ID,
 			PipelineId: p.ID,
 			Yaml:       p.Yaml,
 			Salt:       p.Salt,
+			Uuid:       p.Uuid,
 		},
 		Timestamp: time.Now(),
 	}

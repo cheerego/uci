@@ -1,9 +1,10 @@
 package web
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/index"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/inner/workerflow"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/controller/messging"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/internal/controller/index"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/internal/controller/messging"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/internal/controller/pipeline/report"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/internal/controller/workflow"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -28,12 +29,17 @@ func (cv *RequestValidator) Validate(i interface{}) error {
 func Route(r *echo.Echo) {
 	r.Validator = NewRequestValidator()
 	r.GET("/", index.Index)
-	api := r.Group("/api/v1")
+	v1 := r.Group("/api/v1")
 	{
-		api.GET("/message/:name/subscribe", messging.Subscribe)
-		//api.GET("/message/:name/publish", messging.Publish)
-		api.GET("/message/subscribers", messging.Subscribers)
-		api.POST("/inner/workflow/:id/trigger", workerflow.Trigger)
+		v1.GET("/message/:name/subscribe", messging.Subscribe)
+		v1.GET("/message/subscribers", messging.Subscribers)
+	}
+	{
+		// inner
+		v1.POST("/inner/workflow/:id/trigger", workflow.Trigger)
+	}
+	{
+		v1.POST("/pipeline/report/log/raw", report.Raw)
 	}
 
 }

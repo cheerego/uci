@@ -2,7 +2,6 @@ package letter
 
 import (
 	"encoding/json"
-	"github.com/cheerego/uci/protocol/letter/payload"
 	"time"
 )
 
@@ -12,18 +11,27 @@ type Letter struct {
 	Timestamp time.Time   `json:"timestamp"`
 }
 
+type StartPipelinePayload struct {
+	WorkflowId uint32 `json:"workflowId"`
+	PipelineId uint32 `json:"pipelineId"`
+	Yaml       string `json:"yaml"`
+	Salt       string `json:"salt"`
+	Uuid       string `json:"uuid"`
+	//Envs       map[string]string `json:"envs"`
+}
+
 type Action string
 
 const StartAction = "start"
 const StopAction = "stop"
 
-func (l *Letter) StartPipelinePayload() (*payload.StartPipelinePayload, error) {
+func (l *Letter) StartPipelinePayload() (*StartPipelinePayload, error) {
 	marshal, err := json.Marshal(l.Payload)
 	if err != nil {
 		return nil, err
 	}
 
-	var p payload.StartPipelinePayload
+	var p StartPipelinePayload
 
 	err = json.Unmarshal(marshal, &p)
 	if err != nil {
