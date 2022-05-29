@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config/dir"
 	"github.com/cheerego/uci/protocol/letter/payload"
+	"github.com/shirou/gopsutil/process"
 	"go.uber.org/zap"
 	"os"
 	"os/exec"
@@ -54,7 +55,12 @@ func (h *HostExecutor) PrepareEnviron(payload *payload.StartPipelinePayload) []s
 	//t := make([]string, len(se)+len(pe))
 	//t = append(t, se...)
 	//t = append(t, pe...)
-	return se
+
+	pe := make([]string, 0)
+	pe = append(pe, se...)
+	pe = append(pe, "CI=true")
+	pe = append(pe, "WORKSPACE="+dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt))
+	return pe
 }
 
 func (h *HostExecutor) Start(payload *payload.StartPipelinePayload) {
@@ -66,7 +72,8 @@ func (h *HostExecutor) Start(payload *payload.StartPipelinePayload) {
 	}
 
 	workspaceDir := dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt)
-	cmd := exec.Command("sh", "-c", fmt.Sprintf("UCI=UCI && WORKSPACE=%s &&  %s", workspaceDir, payload.Yaml))
+	cmd := exec.Command("sh", "-c", fmt.Sprintf("$SHELL -c 'PIPELINE_DIR=%s' %s", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt), payload.Yaml))
+
 	cmd.Env = h.PrepareEnviron(payload)
 	cmd.Dir = workspaceDir
 	file, err := h.PrepareRawLog(payload)
@@ -74,14 +81,19 @@ func (h *HostExecutor) Start(payload *payload.StartPipelinePayload) {
 		return
 	}
 	defer file.Close()
-	writer := bufio.NewWriter(file)
-	cmd.Stdout = writer
-	cmd.Stderr = writer
 
+	w := bufio.NewWriter(file)
+	cmd.Stdout = w
+	cmd.Stderr = w
+
+	zap.L().Info("pipeline dir", zap.String("dir", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt)))
 	err = cmd.Start()
 	if err != nil {
 		zap.S().Error("exec start err", zap.Error(err))
 		return
 	}
+	newProcess, err := process.NewProcess(int32(cmd.Process.Pid))
+	cmdline, err := newProcess.Cmdline()
+	zap.S().Infof("dispatch pipeline process pid %d, cmdline %s ", cmd.Process.Pid, cmdline)
 	cmd.Wait()
 }

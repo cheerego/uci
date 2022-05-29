@@ -25,6 +25,7 @@ class PipelineController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Pipeline());
+        $grid->model()->orderByDesc("id");
 
         $grid->column('id', __('Id'));
         $grid->column('workflow_id', __('Workflow id'));
@@ -39,6 +40,12 @@ class PipelineController extends AdminController
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
         $grid->column('deleted_at', __('Deleted at'));
+
+
+
+        $grid->filter(function (Grid\Filter $filter){
+            $filter->equal('workflow_id', 'workflow_id');
+        });
 
         return $grid;
     }

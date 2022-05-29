@@ -36,7 +36,12 @@ class WorkflowController extends AdminController
 //        $grid->column('param_envs', __('Param envs'))
 
         $grid->column('envs', __('Param envs'))->expand(function ($model) {
-            return new Table(['Key', 'Value', ], collect($model->param_envs)->toArray());
+            return new Table(['Key', 'Value',], collect($model->param_envs)->toArray());
+        });
+
+        $grid->column("pipelines", __("Pipelines"))->display(function () {
+            $route = route("admin.pipelines.index", ["workflow_id" => $this->id]);
+            return "<a class='label label-default' href='{$route}'>Pipelines</a>";
         });
 
         $grid->column('created_at', __('Created at'));
@@ -58,13 +63,13 @@ class WorkflowController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Workflow::findOrFail($id));
+        $show = new Show(Workflow::query()->findOrFail($id));
 
         $show->field('id', __('Id'));
         $show->field('name', __('Name'));
         $show->field('yaml', __('Yaml'));
         $show->field('creator_id', __('Creator id'));
-        $show->field('param_envs', __('Param envs'));
+//        $show->field('param_envs', __('Param envs'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->field('deleted_at', __('Deleted at'));
