@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/executor"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -35,7 +36,7 @@ func (b *BaseShimer) Pinging(ctx context.Context) error {
 	for {
 		select {
 		case <-ticker.C:
-			zap.L().Info("pinging")
+			log.L().Info("pinging")
 		case <-ctx.Done():
 			return uerror.ErrContextCanceledOrTimeout.WithStack()
 		}
@@ -45,13 +46,13 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
-			zap.L().Info("base shimer consuming canceled")
+			log.L().Info("base shimer consuming canceled")
 			return uerror.ErrContextCanceledOrTimeout.WithStack()
 		case dispatchMessage, ok := <-b.Shimer.MessageChan(ctx):
 			if !ok {
 				return errors.New("list watch consuming select chan return no ok")
 			}
-			zap.L().Info("list watch consuming receive message from chan ", zap.String("dispatchMessage", dispatchMessage))
+			log.L().Info("list watch consuming receive message from chan ", zap.String("dispatchMessage", dispatchMessage))
 			executor.E.Exec(dispatchMessage)
 		}
 	}

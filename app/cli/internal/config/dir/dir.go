@@ -12,6 +12,10 @@ func HomeDir() string {
 	return dir
 }
 
+func UciConfigPath() string {
+	return path.Join(HomeDir(), "uci.conf")
+}
+
 func UciDir() string {
 	return path.Join(HomeDir(), fmt.Sprintf(".%s", config.Name))
 }

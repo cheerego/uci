@@ -2,8 +2,8 @@ package config
 
 import (
 	"github.com/caarlos0/env/v6"
+	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
-	"log"
 )
 
 var Configs Config
@@ -19,7 +19,8 @@ type Config struct {
 
 func init() {
 	if err := env.Parse(&Configs); err != nil {
-		log.Fatalf("parse config err: %v", err)
+		//log.Fatalf("parse config err: %v", err)
+		log.L().Fatal("parse config err", zap.Error(err))
 	}
-	zap.L().Info("config: ", zap.Any("Config", Configs))
+	log.L().Info("config: ", zap.Any("Config", Configs))
 }

@@ -8,13 +8,22 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
-	_ "github.com/cheerego/uci/pkg/log/backend"
+	"github.com/cheerego/uci/pkg/log/backend"
 	"github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/go-co-op/gocron"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"time"
 )
+
+func init() {
+	configuration, err := backend.Configuration()
+	if err != nil {
+		panic(any(err))
+	}
+	zap.ReplaceGlobals(configuration)
+}
 
 type Application struct {
 }

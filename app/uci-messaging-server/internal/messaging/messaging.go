@@ -22,7 +22,6 @@ package messaging
 //		config.Configs.RabbitAddrUrl, rabbitmq.Config{},
 //	)
 //	if err != nil {
-//		zap.L().Fatal("connect rabbitmq, new publisher err", zap.Error(err))
 //	}
 //	Messagings = NewMessaging(publisher)
 //}

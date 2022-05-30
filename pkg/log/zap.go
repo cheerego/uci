@@ -35,7 +35,7 @@ func modifyToSentryLogger(logger *zap.Logger, client *sentry.Client) (*zap.Logge
 	return zapsentry.AttachCoreToLogger(core, logger), nil
 }
 
-func Cli(logLevel string, logPath string) (*zap.Logger, error) {
+func Console(logLevel string, logPath string) (*zap.Logger, error) {
 	var encoderConfig = zap.NewDevelopmentEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.99")
 	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
@@ -90,4 +90,12 @@ func WrapperSentry(l *zap.Logger) (*zap.Logger, error) {
 		return nil, err
 	}
 	return modifyToSentryLogger(l, client)
+}
+
+func S() *zap.SugaredLogger {
+	return zap.S()
+}
+
+func L() *zap.Logger {
+	return zap.L()
 }

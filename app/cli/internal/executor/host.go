@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config/dir"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"github.com/shirou/gopsutil/process"
 	"go.uber.org/zap"
@@ -25,14 +26,14 @@ var _ IExecutor = (*HostExecutor)(nil)
 func (h *HostExecutor) PrepareWorkspace(payload *letter.StartPipelinePayload) error {
 	err := os.MkdirAll(dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt), 0755)
 	if err != nil {
-		zap.S().Error("mkdir workspace dir err", zap.Error(err))
+		log.S().Error("mkdir workspace dir err", zap.Error(err))
 		return err
 	}
 
 	p := dir.UciTaskLogPath(payload.WorkflowId, payload.PipelineId, payload.Salt)
 	err = os.MkdirAll(path.Dir(p), 0755)
 	if err != nil {
-		zap.L().Error("mkdir err", zap.String("path", path.Dir(p)), zap.Error(err))
+		log.L().Error("mkdir err", zap.String("path", path.Dir(p)), zap.Error(err))
 		return err
 	}
 	return nil
@@ -41,7 +42,7 @@ func (h *HostExecutor) PrepareRawLog(payload *letter.StartPipelinePayload) (*os.
 	p := dir.UciTaskLogPath(payload.WorkflowId, payload.PipelineId, payload.Salt)
 	file, err := os.OpenFile(p, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
-		zap.S().Error("openfile err", zap.Error(err))
+		log.S().Error("openfile err", zap.Error(err))
 		return nil, err
 	}
 	return file, nil
@@ -68,7 +69,7 @@ func (h *HostExecutor) Start(payload *letter.StartPipelinePayload) (string, erro
 
 	err := h.PrepareWorkspace(payload)
 	if err != nil {
-		zap.L().Error("prepare workspace err", zap.Error(err))
+		log.L().Error("prepare workspace err", zap.Error(err))
 		return "", err
 	}
 
@@ -86,15 +87,15 @@ func (h *HostExecutor) Start(payload *letter.StartPipelinePayload) (string, erro
 	cmd.Stdout = io.MultiWriter(file, bufferString)
 	cmd.Stderr = io.MultiWriter(file, bufferString)
 
-	zap.L().Info("pipeline dir", zap.String("dir", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt)))
+	log.L().Info("pipeline dir", zap.String("dir", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt)))
 	err = cmd.Start()
 	if err != nil {
-		zap.S().Error("exec start err", zap.Error(err))
+		log.S().Error("exec start err", zap.Error(err))
 		return "", err
 	}
 	newProcess, err := process.NewProcess(int32(cmd.Process.Pid))
 	cmdline, err := newProcess.Cmdline()
-	zap.S().Infof("dispatch pipeline process pid %d, cmdline %s ", cmd.Process.Pid, cmdline)
+	log.S().Infof("dispatch pipeline process pid %d, cmdline %s ", cmd.Process.Pid, cmdline)
 	err = cmd.Wait()
 	if err != nil {
 		return "", err

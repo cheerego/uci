@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func loggerInit() (*zap.Logger, error) {
+func Configuration() (*zap.Logger, error) {
 	backend, err := log.Backend(log.DefaultLogLevel())
 	if err != nil {
 		return nil, err
@@ -13,10 +13,10 @@ func loggerInit() (*zap.Logger, error) {
 	return log.WrapperSentry(backend)
 }
 
-func init() {
-	logger, err := loggerInit()
-	if err != nil {
-		panic(any(err))
-	}
-	zap.ReplaceGlobals(logger)
-}
+//func init() {
+//	logger, err := loggerInit()
+//	if err != nil {
+//		panic(any(err))
+//	}
+//	zap.ReplaceGlobals(logger)
+//}

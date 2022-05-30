@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/messaging"
 	"github.com/cheerego/uci/app/cli/internal/precheck"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -45,12 +46,12 @@ func (u *Uci) Up() *cobra.Command {
 		PreRun: func(cmd *cobra.Command, args []string) {
 			err := u.Check()
 			if err != nil {
-				zap.S().Fatalf("PreRun Check err %s", err.Error())
+				log.S().Fatalf("PreRun Check err %s", err.Error())
 			}
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := u.BaseShimer.Run(u.Context); err != nil {
-				zap.L().Error("runner shimer run err", zap.Error(err))
+				log.L().Error("runner shimer run err", zap.Error(err))
 			}
 		},
 	}
@@ -63,7 +64,7 @@ func (u *Uci) Stop() *cobra.Command {
 		Short: "Stop UCI runner",
 		Long:  "Stop UCI runner",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			zap.L().Info("stop uci runner")
+			log.L().Info("stop uci runner")
 			return nil
 		},
 	}
@@ -76,7 +77,7 @@ func (u *Uci) Config() *cobra.Command {
 		Short: "Manage the uci configuration files",
 		Long:  "Manage the uci configuration files",
 		Run: func(cmd *cobra.Command, args []string) {
-			zap.L().Info("stop uci runner")
+			log.L().Info("stop uci runner")
 		},
 	}
 	return up

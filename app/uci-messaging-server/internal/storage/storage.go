@@ -2,6 +2,7 @@ package storage
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/orm"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -22,10 +23,10 @@ func NewStorage(masterDB *gorm.DB) *Storage {
 }
 
 func init() {
-	zap.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
+	log.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
 	g, err := orm.New(config.Configs.GormMasterDSN, config.Configs.GormMasterPoolConfig)
 	if err != nil {
-		zap.L().Fatal("new orm err connect err", zap.Error(err))
+		log.L().Fatal("new orm err connect err", zap.Error(err))
 	}
 
 	storages = NewStorage(g)

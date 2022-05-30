@@ -5,6 +5,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
 	"time"
@@ -63,7 +64,7 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 
 	err = Services.MessagingService.Publish("1", l)
 	if err != nil {
-		zap.L().Error("dispatch err", zap.Uint32("workflowId", workflow.ID), zap.Uint32("pipelineId", p.ID), zap.Error(err))
+		log.L().Error("dispatch err", zap.Uint32("workflowId", workflow.ID), zap.Uint32("pipelineId", p.ID), zap.Error(err))
 		return nil
 	}
 

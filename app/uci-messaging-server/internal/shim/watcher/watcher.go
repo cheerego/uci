@@ -3,6 +3,7 @@ package watcher
 import (
 	"encoding/json"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
@@ -37,7 +38,7 @@ func Load(name string) (any, bool) {
 func Unsubscribe(name string) {
 	_, loaded := subscribers.LoadAndDelete(name)
 	if !loaded {
-		zap.L().Warn("取消监听，但监听不存在", zap.String("Name", name))
+		log.L().Warn("取消监听，但监听不存在", zap.String("Name", name))
 	}
 }
 
