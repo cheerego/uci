@@ -12,7 +12,12 @@ import (
 	"github.com/cheerego/uci/pkg/tracing"
 	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/go-co-op/gocron"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	uuid "github.com/satori/go.uuid"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
+	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"time"
 )
@@ -49,6 +54,23 @@ func (a *Application) startHttp() error {
 	if tracing.EnableTracing() {
 		o.Use(otelecho.Middleware("uci-messaging-server"))
 	}
+	o.Use(middleware.RequestIDWithConfig(middleware.RequestIDConfig{
+		Generator: func() string {
+			return uuid.NewV4().String()
+		},
+		RequestIDHandler: func(c echo.Context, s string) {
+			span := trace.SpanFromContext(c.Request().Context())
+			if span.SpanContext().IsValid() && span.SpanContext().HasTraceID() {
+				zap.L().Info("has traceid")
+				s = span.SpanContext().TraceID().String()
+			}
+			c.Response().Header().Set(echo.HeaderXRequestID, s)
+			c.Request().Header.Set(echo.HeaderXRequestID, s)
+			c.Set(echo.HeaderXRequestID, s)
+			r := c.Request().WithContext(context.WithValue(c.Request().Context(), echo.HeaderXRequestID, s))
+			c.SetRequest(r)
+		},
+	}))
 	o.Debug = true
 	o.HTTPErrorHandler = uerror.JSONHttpErrorHandler(o)
 	web.Route(o)

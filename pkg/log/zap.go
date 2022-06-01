@@ -93,18 +93,10 @@ func WrapperSentry(l *zap.Logger) (*zap.Logger, error) {
 	return modifyToSentryLogger(l, client)
 }
 
-func S() *zap.SugaredLogger {
-	return zap.S()
-}
-
-func L() *zap.Logger {
-	return zap.L()
-}
-
-func TS() *otelzap.SugaredLogger {
+func S() *otelzap.SugaredLogger {
 	return otelzap.S()
 }
 
-func TL() *otelzap.Logger {
+func L() *otelzap.Logger {
 	return otelzap.L()
 }

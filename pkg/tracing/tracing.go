@@ -62,8 +62,7 @@ func Trace(ctx context.Context, name string) (*otlptrace.Exporter, error) {
 
 	res, err := resource.New(ctx,
 		resource.WithFromEnv(),
-		resource.WithProcess(),
-		resource.WithTelemetrySDK(),
+		//resource.WithProcess(),
 		resource.WithHost(),
 		resource.WithAttributes(
 			// the service name used to display traces in backends

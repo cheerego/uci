@@ -24,17 +24,5 @@ func NewEcho() *echo.Echo {
 		DisableStackAll: true,
 	}))
 
-	//e.Use(middleware.RequestIDWithConfig(middleware.RequestIDConfig{
-	//	Generator: func() string {
-	//		return uuid.NewV4().String()
-	//	},
-	//	RequestIDHandler: func(c echo.Context, s string) {
-	//		c.Response().Header().Set(echo.HeaderXRequestID, s)
-	//		c.Request().Header.Set(echo.HeaderXRequestID, s)
-	//		c.Set(echo.HeaderXRequestID, s)
-	//		r := c.Request().WithContext(context.WithValue(c.Request().Context(), echo.HeaderXRequestID, s))
-	//		c.SetRequest(r)
-	//	},
-	//}))
 	return e
 }

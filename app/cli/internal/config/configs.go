@@ -23,7 +23,7 @@ func init() {
 	config := NewConfig()
 	homeDir, err := homedir.Dir()
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 	config.HomeDir = homeDir
 	config.UciHomeDir = path.Join(homeDir, Name)
