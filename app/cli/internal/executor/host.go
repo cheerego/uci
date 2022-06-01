@@ -74,7 +74,7 @@ func (h *HostExecutor) Start(payload *letter.StartPipelinePayload) (string, erro
 	}
 
 	workspaceDir := dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt)
-	cmd := exec.Command("sh", "-c", fmt.Sprintf("$SHELL -c 'PIPELINE_DIR=%s' %s", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt), payload.Yaml))
+	cmd := exec.Command("sh", "-c", fmt.Sprintf("sh -c 'PIPELINE_DIR=%s' %s", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt), payload.Yaml))
 
 	cmd.Env = h.PrepareEnviron(payload)
 	cmd.Dir = workspaceDir

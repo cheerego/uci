@@ -26,6 +26,11 @@ func New(dsn string, dbPoolConfig string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "dial orm error, dsn %s", dsn)
 	}
+
+	//if err := g.Use(otelgorm.NewPlugin());err!=nil{
+	//	log2.
+	//}
+
 	db, err := g.DB()
 	err = setDBPool(db, dbPoolConfig)
 	if err != nil {

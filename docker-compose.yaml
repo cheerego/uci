@@ -11,6 +11,8 @@ services:
       - GORM_MASTER_DSN=postgresql://uci:uci123@postgres:5432/uci?sslmode=disable&TimeZone=Asia/Shanghai
       - HTTP_PORT=8080
       - RABBIT_ADDR_URL=amqp://guest:guest@localhost
+      - ENABLE_TRACING=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
     depends_on:
       - postgres
       - redis
