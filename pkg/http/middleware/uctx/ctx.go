@@ -20,6 +20,10 @@ type Context struct {
 	echo.Context
 }
 
+func NewContext(context echo.Context) *Context {
+	return &Context{Context: context}
+}
+
 func ContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cc := &Context{c}
@@ -51,5 +55,5 @@ func (c *Context) Data(data any) error {
 }
 
 func FromContext(c echo.Context) *Context {
-	return c.(*Context)
+	return NewContext(c)
 }

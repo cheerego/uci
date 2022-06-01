@@ -7,26 +7,15 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web"
 	"github.com/cheerego/uci/pkg/http"
-	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/cheerego/uci/pkg/log"
-	"github.com/cheerego/uci/pkg/log/backend"
 	"github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/tracing"
 	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/go-co-op/gocron"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
-	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"time"
 )
-
-func init() {
-	configuration, err := backend.Configuration()
-	if err != nil {
-		panic(any(err))
-	}
-	zap.ReplaceGlobals(configuration)
-}
 
 type Application struct {
 }
@@ -60,7 +49,6 @@ func (a *Application) startHttp() error {
 	if tracing.EnableTracing() {
 		o.Use(otelecho.Middleware("uci-messaging-server"))
 	}
-	o.Use(uctx.ContextMiddleware)
 	o.Debug = true
 	o.HTTPErrorHandler = uerror.JSONHttpErrorHandler(o)
 	web.Route(o)
@@ -96,7 +84,6 @@ func (a *Application) startTracing(ctx context.Context) func() error {
 		if err != nil {
 			return err
 		}
-
 		go func() {
 			killSignal := signal.KillSignal()
 			<-killSignal

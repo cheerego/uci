@@ -3,6 +3,7 @@ package log
 import (
 	"github.com/TheZeroSlave/zapsentry"
 	"github.com/getsentry/sentry-go"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -98,4 +99,12 @@ func S() *zap.SugaredLogger {
 
 func L() *zap.Logger {
 	return zap.L()
+}
+
+func TS() *otelzap.SugaredLogger {
+	return otelzap.S()
+}
+
+func TL() *otelzap.Logger {
+	return otelzap.L()
 }
