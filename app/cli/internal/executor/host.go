@@ -2,11 +2,9 @@ package executor
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config/dir"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
-	"github.com/shirou/gopsutil/process"
 	"go.uber.org/zap"
 	"io"
 	"os"
@@ -74,7 +72,7 @@ func (h *HostExecutor) Start(payload *letter.StartPipelinePayload) (string, erro
 	}
 
 	workspaceDir := dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt)
-	cmd := exec.Command("sh", "-c", fmt.Sprintf("$SHELL -c 'PIPELINE_DIR=%s' %s", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt), payload.Yaml))
+	cmd := exec.Command("sh", "-c", payload.Yaml)
 
 	cmd.Env = h.PrepareEnviron(payload)
 	cmd.Dir = workspaceDir
@@ -93,9 +91,6 @@ func (h *HostExecutor) Start(payload *letter.StartPipelinePayload) (string, erro
 		log.S().Error("exec start err", zap.Error(err))
 		return "", err
 	}
-	newProcess, err := process.NewProcess(int32(cmd.Process.Pid))
-	cmdline, err := newProcess.Cmdline()
-	log.S().Infof("dispatch pipeline process pid %d, cmdline %s ", cmd.Process.Pid, cmdline)
 	err = cmd.Wait()
 	if err != nil {
 		return "", err

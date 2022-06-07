@@ -7,6 +7,7 @@ import (
 	"github.com/cheerego/uci/app/cli/internal/messaging/shim/listwatch"
 	"github.com/cheerego/uci/pkg/log/console"
 	"github.com/mitchellh/go-homedir"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 	"go.uber.org/zap"
 	"path"
 )
@@ -18,6 +19,7 @@ func init() {
 		panic(any(err))
 	}
 	zap.ReplaceGlobals(cli)
+	otelzap.ReplaceGlobals(otelzap.New(cli))
 }
 
 func Execute() {
