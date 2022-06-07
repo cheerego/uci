@@ -35,6 +35,7 @@ func (u *Uci) Root() *cobra.Command {
 		},
 	}
 	root.AddCommand(u.Up())
+	root.AddCommand(u.Config())
 	return root
 }
 
@@ -76,8 +77,11 @@ func (u *Uci) Config() *cobra.Command {
 		Use:   "config",
 		Short: "Manage the uci configuration files",
 		Long:  "Manage the uci configuration files",
+		Args: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
 		Run: func(cmd *cobra.Command, args []string) {
-			log.L().Info("stop uci runner")
+			log.L().Info("stop uci runner", zap.Any("args", args))
 		},
 	}
 	return up
