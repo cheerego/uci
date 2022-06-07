@@ -35,7 +35,10 @@ func (u *Uci) Root() *cobra.Command {
 		},
 	}
 	root.AddCommand(u.Up())
-	root.AddCommand(u.Config())
+	config := u.Config()
+	config.AddCommand(u.ConfigSet())
+	config.AddCommand(u.ConfigGet())
+	root.AddCommand(config)
 	return root
 }
 
@@ -74,9 +77,40 @@ func (u *Uci) Stop() *cobra.Command {
 
 func (u *Uci) Config() *cobra.Command {
 	up := &cobra.Command{
-		Use:   "config",
-		Short: "Manage the uci configuration files",
-		Long:  "Manage the uci configuration files",
+		Use:     "config",
+		Short:   "manage the uci configurations",
+		Long:    "manage the uci configurations",
+		Example: "",
+		Args: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+			log.L().Info("stop uci runner", zap.Any("args", args))
+		},
+	}
+	return up
+}
+
+func (u *Uci) ConfigSet() *cobra.Command {
+	up := &cobra.Command{
+		Use:   "set",
+		Short: "set file",
+		Long:  "set file",
+		Args: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+			log.L().Info("stop uci runner", zap.Any("args", args))
+		},
+	}
+	return up
+}
+
+func (u *Uci) ConfigGet() *cobra.Command {
+	up := &cobra.Command{
+		Use:   "get",
+		Short: "get file",
+		Long:  "get file",
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
