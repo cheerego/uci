@@ -30,7 +30,7 @@ var _ messaging.Shimer = (*ListWatch)(nil)
 func NewShimer() *ListWatch {
 	client := &http.Client{
 		Transport: http.DefaultTransport,
-		Timeout:   100 * time.Second,
+		Timeout:   10 * time.Second,
 	}
 	return &ListWatch{
 		messagingCh: make(chan string),

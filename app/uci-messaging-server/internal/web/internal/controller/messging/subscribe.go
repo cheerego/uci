@@ -3,10 +3,8 @@ package messging
 import (
 	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 func Subscribe(c echo.Context) error {
@@ -19,12 +17,12 @@ func Subscribe(c echo.Context) error {
 
 		subscribe, err := service.Services.MessagingService.Subscribe(name)
 		if err != nil {
-			c.Error(err)
-			return nil
+			return err
 		}
 		defer func() {
-			log.S().Infof("requestId %s client %s subscribe cancel", rid, name)
-			watcher.Unsubscribe(name)
+			log.S().Infof("requestId %s client %s subscribe canceling", rid, name)
+			service.Services.MessagingService.Unsubscribe(name)
+			log.S().Infof("requestId %s client %s subscribe canceled", rid, name)
 		}()
 
 		c.Response().Header().Set("Transfer-Encoding", "chunked")
@@ -48,9 +46,11 @@ func Subscribe(c echo.Context) error {
 				c.Response().Flush()
 				log.S().Infof("requestId %s client %s subscribe write message", rid, name)
 			case <-c.Request().Context().Done():
-				return c.NoContent(200)
-			case <-c.Response().Writer.(http.CloseNotifier).CloseNotify():
-				return c.NoContent(200)
+				log.S().Infof("requestId %s client %s request done", rid, name)
+				return nil
+				//case <-c.Response().Writer.(http.CloseNotifier).CloseNotify():
+				//	log.S().Infof("requestId %s client %s request CloseNotifier", rid, name)
+				//	return nil
 			}
 		}
 	}
