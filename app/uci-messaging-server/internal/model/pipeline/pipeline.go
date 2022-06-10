@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/pkg/orm"
 	uuid "github.com/satori/go.uuid"
 	"time"
@@ -13,7 +14,7 @@ type Pipeline struct {
 	Salt       string
 
 	LastDispatchTime *time.Time
-	Envs             []*Env
+	Envs             Envs
 	Status           Status
 	StatusMessage    string
 	RawLog           string
@@ -23,23 +24,19 @@ type Pipeline struct {
 	//CurrentStep      string
 }
 
-func (p Pipeline) PK() uint32 {
-	return p.ID
-}
-
-func NewPipeline(workflowId uint32, yaml string, envs []*Env) *Pipeline {
+func NewPipeline(workflow *workflow.Workflow) *Pipeline {
 	uid := uuid.NewV4().String()
 	salt := uid[0:8]
 	return &Pipeline{
 		Model:            orm.Model{},
-		WorkflowId:       workflowId,
-		Yaml:             yaml,
+		WorkflowId:       workflow.ID,
+		Yaml:             workflow.Yaml,
 		Salt:             salt,
 		LastDispatchTime: nil,
 		Status:           Queuing,
 		RawLog:           "",
 		Uuid:             uid,
 		DispatchTimes:    0,
-		Envs:             envs,
+		Envs:             []*Env{},
 	}
 }

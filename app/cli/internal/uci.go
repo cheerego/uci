@@ -45,7 +45,7 @@ func (u *Uci) Root() *cobra.Command {
 }
 
 func (u *Uci) Up() *cobra.Command {
-	up := &cobra.Command{
+	return &cobra.Command{
 		Use:   "up",
 		Short: "start a shim for messaging",
 		Long:  "start a shim for messaging",
@@ -61,11 +61,10 @@ func (u *Uci) Up() *cobra.Command {
 			}
 		},
 	}
-	return up
 }
 
 func (u *Uci) Stop() *cobra.Command {
-	up := &cobra.Command{
+	return &cobra.Command{
 		Use:   "stop",
 		Short: "Stop UCI runner",
 		Long:  "Stop UCI runner",
@@ -74,11 +73,10 @@ func (u *Uci) Stop() *cobra.Command {
 			return nil
 		},
 	}
-	return up
 }
 
 func (u *Uci) Config() *cobra.Command {
-	up := &cobra.Command{
+	return &cobra.Command{
 		Use:  "config",
 		Long: "Manage the npm configuration files",
 		Example: `
@@ -94,7 +92,6 @@ uci config list [--json]
 			log.L().Info("stop uci runner", zap.Any("args", args))
 		},
 	}
-	return up
 }
 
 func (u *Uci) ConfigSet() *cobra.Command {

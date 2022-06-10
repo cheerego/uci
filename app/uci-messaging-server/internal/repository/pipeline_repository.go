@@ -55,3 +55,8 @@ func (p *PipelineRepository) UpdateRawlog(ctx context.Context, id uint32, raw st
 	})
 	return tx.RowsAffected, tx.Error
 }
+
+func (p *PipelineRepository) UpdateEnvs(ctx context.Context, pl *pipeline.Pipeline) (int64, error) {
+	tx := orm.FromContext(ctx, p.db).Select("Envs").Updates(pl)
+	return tx.RowsAffected, tx.Error
+}

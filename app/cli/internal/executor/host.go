@@ -2,6 +2,7 @@ package executor
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config/dir"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
@@ -47,19 +48,16 @@ func (h *HostExecutor) PrepareRawLog(payload *letter.StartPipelinePayload) (*os.
 }
 
 func (h *HostExecutor) PrepareEnviron(payload *letter.StartPipelinePayload) []string {
+	// 操作系统变量
 	se := os.Environ()
-	//pe := make([]string, len(payload.Envs))
-	//for key, value := range payload.Envs {
-	//	pe = append(pe, fmt.Sprintf("%s=%s", key, value))
-	//}
-	//t := make([]string, len(se)+len(pe))
-	//t = append(t, se...)
-	//t = append(t, pe...)
-
-	pe := make([]string, 0)
-	pe = append(pe, se...)
-	pe = append(pe, "CI=true")
-	pe = append(pe, "WORKSPACE="+dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt))
+	// 下发下来的变量
+	pe := make([]string, len(payload.Envs))
+	for key, value := range payload.Envs {
+		pe = append(pe, fmt.Sprintf("%s=%s", key, value))
+	}
+	t := make([]string, len(se)+len(pe))
+	t = append(t, se...)
+	t = append(t, pe...)
 	return pe
 }
 

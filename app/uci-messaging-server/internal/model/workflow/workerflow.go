@@ -10,11 +10,7 @@ type Workflow struct {
 	//RepoId uint32
 	Yaml string
 	//Enable bool
-	Envs map[string]string
-}
-
-func (p Workflow) PK() uint32 {
-	return p.ID
+	Envs Envs
 }
 
 //func NewWorkflow(name string, repoId uint32, yaml string, enable bool) *Workflow {

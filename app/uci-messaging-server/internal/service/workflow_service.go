@@ -25,15 +25,21 @@ func (w *WorkflowService) FindById(ctx context.Context, workerflowId uint32) (*w
 func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*workflow.Env) error {
 	// 创建 Pipeline
 
-	Services.PipelineService.MergeEnvs(workflow.)
-
-	p := pipeline.NewPipeline(workflow.ID, workflow.Yaml,)
-
+	p := pipeline.NewPipeline(workflow)
 	err := Services.PipelineService.Create(ctx, p)
+	log.L().Info("pipelineid", zap.Any("id", p.ID))
 	if err != nil {
 		return err
 	}
 
+	systemEnv := Services.PipelineEnvService.CollectSystemEnvs(p)
+	mergeEnvs := Services.PipelineEnvService.MergeEnvs(systemEnv, workflow.Envs, customEnvs)
+	p.Envs = mergeEnvs
+
+	_, err = Services.PipelineService.UpdateEnvs(ctx, p)
+	if err != nil {
+		return err
+	}
 	// 收集环境变量
 	// 写入数据
 	// 下发指令 同步
@@ -60,6 +66,7 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 			Yaml:       p.Yaml,
 			Salt:       p.Salt,
 			Uuid:       p.Uuid,
+			Envs:       Services.PipelineEnvService.EnvsToMap(mergeEnvs),
 		},
 		Timestamp: time.Now(),
 	}
@@ -69,7 +76,6 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 		log.L().Error("dispatch err", zap.Uint32("workflowId", workflow.ID), zap.Uint32("pipelineId", p.ID), zap.Error(err))
 		return nil
 	}
-
 	_, err = Services.PipelineService.UpdateStatus(ctx, p.ID, pipeline.DispatchSuccess)
 	return err
 }

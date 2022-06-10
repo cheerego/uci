@@ -24,6 +24,7 @@ class CreatePipelinesTable extends Migration
             $table->string("status_message")->default("");
             $table->string("uuid")->default("");
             $table->text("raw_log")->default("");
+            $table->json("envs");
             $table->timestamps();
             $table->softDeletes();
 
