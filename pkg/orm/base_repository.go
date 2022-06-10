@@ -5,11 +5,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type BaseRepository[T PK] struct {
+type BaseRepository[T any] struct {
 	db *gorm.DB
 }
 
-func NewBaseRepository[T PK](db *gorm.DB) BaseRepository[T] {
+func NewBaseRepository[T any](db *gorm.DB) BaseRepository[T] {
 	return BaseRepository[T]{db: db}
 }
 
@@ -66,7 +66,7 @@ func (b *BaseRepository[T]) DeleteById(ctx context.Context, id uint32) (int64, e
 	return tx.RowsAffected, tx.Error
 }
 
-func (b *BaseRepository[T]) DeleteByIds(ctx context.Context, ids ...uint32) (int64, error) {
+func (b *BaseRepository[T]) DeleteByIds(ctx context.Context, ids uint32) (int64, error) {
 	var m T
 	tx := FromContext(ctx, b.db).Delete(&m, ids)
 	return tx.RowsAffected, tx.Error
@@ -83,14 +83,3 @@ func (b *BaseRepository[T]) ForceDeleteByIds(ctx context.Context, ids ...uint32)
 	tx := FromContext(ctx, b.db).Unscoped().Delete(&m, ids)
 	return tx.RowsAffected, tx.Error
 }
-
-//func (b *BaseRepository[T]) Update(ctx context.Context, m T, selected ...string) (int64, error) {
-//	s0 := selected[0]
-//	ss := selected[1 : len(selected)-1]
-//	s1 := make([]interface{}, 0)
-//	for _, s := range ss {
-//		s1 = append(s1, s)
-//	}
-//	tx := FromContext(ctx, b.db).Model(&m).Where(m.PK()).Select(s0, s1...).Updates(m)
-//	return tx.RowsAffected, tx.Error
-//}

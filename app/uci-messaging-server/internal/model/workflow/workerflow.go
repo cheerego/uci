@@ -10,7 +10,7 @@ type Workflow struct {
 	//RepoId uint32
 	Yaml string
 	//Enable bool
-	//ParamEnv map[string]string
+	Envs map[string]string
 }
 
 func (p Workflow) PK() uint32 {

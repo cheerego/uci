@@ -20,7 +20,7 @@ class CreateWorkflowsTable extends Migration
             $table->integer("creator_id");
 //            $table->text("trigger_method");
 //            $table->text("scheduler");
-            $table->json("param_envs");
+            $table->json("envs");
             $table->timestamps();
             $table->softDeletes();
         });

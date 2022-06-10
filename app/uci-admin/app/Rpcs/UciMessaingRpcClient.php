@@ -11,11 +11,11 @@ class UciMessaingRpcClient
     private $addr;
     private $client;
 
-    public function __construct($addr)
+    public function __construct()
     {
-        $this->addr = $addr;
+        $this->addr = config("rpc.uci_messaging_server_http");
         $this->client = new Client([
-            'base_uri' => $addr,
+            'base_uri' => $this->addr,
             'timeout' => 0,
         ]);
     }

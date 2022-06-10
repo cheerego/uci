@@ -13,6 +13,7 @@ type Pipeline struct {
 	Salt       string
 
 	LastDispatchTime *time.Time
+	Envs             []*Env
 	Status           Status
 	StatusMessage    string
 	RawLog           string
@@ -26,7 +27,7 @@ func (p Pipeline) PK() uint32 {
 	return p.ID
 }
 
-func NewPipeline(workflowId uint32, yaml string) *Pipeline {
+func NewPipeline(workflowId uint32, yaml string, envs []*Env) *Pipeline {
 	uid := uuid.NewV4().String()
 	salt := uid[0:8]
 	return &Pipeline{
@@ -39,5 +40,6 @@ func NewPipeline(workflowId uint32, yaml string) *Pipeline {
 		RawLog:           "",
 		Uuid:             uid,
 		DispatchTimes:    0,
+		Envs:             envs,
 	}
 }

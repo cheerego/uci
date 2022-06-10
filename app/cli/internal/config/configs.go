@@ -1,30 +1,14 @@
 package config
 
-import (
-	"github.com/mitchellh/go-homedir"
-	"path"
+import "fmt"
+
+type UciConfigItem string
+
+const (
+	UciHomeDir      UciConfigItem = "UCI_HOME_DIR"
+	UciDispatchMode UciConfigItem = "UCI_DISPATCH_MODE"
 )
 
-const UciEnvHomeDir = "UCI_ENV_HOME_DIR"
-const UciEnvDispatchMode = "UCI_ENV_DISPATCH_MODE"
-
-var Configs Config
-
-type Config struct {
-	HomeDir    string
-	UciHomeDir string
-}
-
-func NewConfig() *Config {
-	return &Config{}
-}
-
-func init() {
-	config := NewConfig()
-	homeDir, err := homedir.Dir()
-	if err != nil {
-		panic(err)
-	}
-	config.HomeDir = homeDir
-	config.UciHomeDir = path.Join(homeDir, Name)
+func (u UciConfigItem) EnvName() string {
+	return fmt.Sprintf("%s_%s", "ENV_", u)
 }

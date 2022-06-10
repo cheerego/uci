@@ -14,18 +14,18 @@ class Workflow extends Model
     protected $table = "workflows";
 
     protected $casts = [
-        'param_envs' => 'json',
+        'envs' => 'json',
     ];
 
 
-    public function getParamEnvsAttribute($value)
+    public function getEnvsAttribute($value)
     {
         return array_values(json_decode($value, true) ?: []);
     }
 
-    public function setParamEnvsAttribute($value)
+    public function setEnvsAttribute($value)
     {
-        $this->attributes['param_envs'] = json_encode(array_values($value));
+        $this->attributes['envs'] = json_encode(array_values($value));
     }
 
 }

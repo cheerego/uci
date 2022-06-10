@@ -6,17 +6,15 @@
 -- Database: uci
 -- Generation Time: 2022-06-02 12:01:05.5090
 -- -------------------------------------------------------------
-create
-DATABASE "uci";
 
-DROP TABLE IF EXISTS "uci"."admin_menu";
+DROP TABLE IF EXISTS "admin_menu";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS admin_menu_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."admin_menu"
+CREATE TABLE "admin_menu"
 (
     "id"         int4        NOT NULL DEFAULT nextval('admin_menu_id_seq'::regclass),
     "parent_id"  int4        NOT NULL DEFAULT 0,
@@ -30,14 +28,14 @@ CREATE TABLE "uci"."admin_menu"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."admin_operation_log";
+DROP TABLE IF EXISTS "admin_operation_log";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS admin_operation_log_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."admin_operation_log"
+CREATE TABLE "admin_operation_log"
 (
     "id"         int4         NOT NULL DEFAULT nextval('admin_operation_log_id_seq'::regclass),
     "user_id"    int4         NOT NULL,
@@ -50,14 +48,14 @@ CREATE TABLE "uci"."admin_operation_log"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."admin_permissions";
+DROP TABLE IF EXISTS "admin_permissions";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS admin_permissions_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."admin_permissions"
+CREATE TABLE "admin_permissions"
 (
     "id"          int4        NOT NULL DEFAULT nextval('admin_permissions_id_seq'::regclass),
     "name"        varchar(50) NOT NULL,
@@ -69,11 +67,11 @@ CREATE TABLE "uci"."admin_permissions"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."admin_role_menu";
+DROP TABLE IF EXISTS "admin_role_menu";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Table Definition
-CREATE TABLE "uci"."admin_role_menu"
+CREATE TABLE "admin_role_menu"
 (
     "role_id"    int4 NOT NULL,
     "menu_id"    int4 NOT NULL,
@@ -81,11 +79,11 @@ CREATE TABLE "uci"."admin_role_menu"
     "updated_at" timestamp(0)
 );
 
-DROP TABLE IF EXISTS "uci"."admin_role_permissions";
+DROP TABLE IF EXISTS "admin_role_permissions";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Table Definition
-CREATE TABLE "uci"."admin_role_permissions"
+CREATE TABLE "admin_role_permissions"
 (
     "role_id"       int4 NOT NULL,
     "permission_id" int4 NOT NULL,
@@ -93,11 +91,11 @@ CREATE TABLE "uci"."admin_role_permissions"
     "updated_at"    timestamp(0)
 );
 
-DROP TABLE IF EXISTS "uci"."admin_role_users";
+DROP TABLE IF EXISTS "admin_role_users";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Table Definition
-CREATE TABLE "uci"."admin_role_users"
+CREATE TABLE "admin_role_users"
 (
     "role_id"    int4 NOT NULL,
     "user_id"    int4 NOT NULL,
@@ -105,14 +103,14 @@ CREATE TABLE "uci"."admin_role_users"
     "updated_at" timestamp(0)
 );
 
-DROP TABLE IF EXISTS "uci"."admin_roles";
+DROP TABLE IF EXISTS "admin_roles";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS admin_roles_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."admin_roles"
+CREATE TABLE "admin_roles"
 (
     "id"         int4        NOT NULL DEFAULT nextval('admin_roles_id_seq'::regclass),
     "name"       varchar(50) NOT NULL,
@@ -122,11 +120,11 @@ CREATE TABLE "uci"."admin_roles"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."admin_user_permissions";
+DROP TABLE IF EXISTS "admin_user_permissions";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Table Definition
-CREATE TABLE "uci"."admin_user_permissions"
+CREATE TABLE "admin_user_permissions"
 (
     "user_id"       int4 NOT NULL,
     "permission_id" int4 NOT NULL,
@@ -134,14 +132,14 @@ CREATE TABLE "uci"."admin_user_permissions"
     "updated_at"    timestamp(0)
 );
 
-DROP TABLE IF EXISTS "uci"."admin_users";
+DROP TABLE IF EXISTS "admin_users";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS admin_users_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."admin_users"
+CREATE TABLE "admin_users"
 (
     "id"             int4         NOT NULL DEFAULT nextval('admin_users_id_seq'::regclass),
     "username"       varchar(190) NOT NULL,
@@ -154,14 +152,14 @@ CREATE TABLE "uci"."admin_users"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."failed_jobs";
+DROP TABLE IF EXISTS "failed_jobs";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS failed_jobs_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."failed_jobs"
+CREATE TABLE "failed_jobs"
 (
     "id"         int8         NOT NULL DEFAULT nextval('failed_jobs_id_seq'::regclass),
     "uuid"       varchar(255) NOT NULL,
@@ -173,14 +171,14 @@ CREATE TABLE "uci"."failed_jobs"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."migrations";
+DROP TABLE IF EXISTS "migrations";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS migrations_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."migrations"
+CREATE TABLE "migrations"
 (
     "id"        int4         NOT NULL DEFAULT nextval('migrations_id_seq'::regclass),
     "migration" varchar(255) NOT NULL,
@@ -188,25 +186,25 @@ CREATE TABLE "uci"."migrations"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."password_resets";
+DROP TABLE IF EXISTS "password_resets";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Table Definition
-CREATE TABLE "uci"."password_resets"
+CREATE TABLE "password_resets"
 (
     "email"      varchar(255) NOT NULL,
     "token"      varchar(255) NOT NULL,
     "created_at" timestamp(0)
 );
 
-DROP TABLE IF EXISTS "uci"."personal_access_tokens";
+DROP TABLE IF EXISTS "personal_access_tokens";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS personal_access_tokens_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."personal_access_tokens"
+CREATE TABLE "personal_access_tokens"
 (
     "id"             int8         NOT NULL DEFAULT nextval('personal_access_tokens_id_seq'::regclass),
     "tokenable_type" varchar(255) NOT NULL,
@@ -220,14 +218,14 @@ CREATE TABLE "uci"."personal_access_tokens"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."pipelines";
+DROP TABLE IF EXISTS "pipelines";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS pipelines_id_seq1;
 
 -- Table Definition
-CREATE TABLE "uci"."pipelines"
+CREATE TABLE "pipelines"
 (
     "id"                 int8         NOT NULL DEFAULT nextval('pipelines_id_seq1'::regclass),
     "workflow_id"        int4         NOT NULL,
@@ -245,14 +243,14 @@ CREATE TABLE "uci"."pipelines"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."users";
+DROP TABLE IF EXISTS "users";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS users_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."users"
+CREATE TABLE "users"
 (
     "id"                int8         NOT NULL DEFAULT nextval('users_id_seq'::regclass),
     "name"              varchar(255) NOT NULL,
@@ -265,14 +263,14 @@ CREATE TABLE "uci"."users"
     PRIMARY KEY ("id")
 );
 
-DROP TABLE IF EXISTS "uci"."workflows";
+DROP TABLE IF EXISTS "workflows";
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
 
 -- Sequence and defined type
 CREATE SEQUENCE IF NOT EXISTS workflows_id_seq;
 
 -- Table Definition
-CREATE TABLE "uci"."workflows"
+CREATE TABLE "workflows"
 (
     "id"         int8         NOT NULL DEFAULT nextval('workflows_id_seq'::regclass),
     "name"       varchar(255) NOT NULL,
@@ -285,7 +283,7 @@ CREATE TABLE "uci"."workflows"
     PRIMARY KEY ("id")
 );
 
-INSERT INTO "uci"."admin_menu" ("id", "parent_id", "order", "title", "icon", "uri", "permission", "created_at",
+INSERT INTO "admin_menu" ("id", "parent_id", "order", "title", "icon", "uri", "permission", "created_at",
                                 "updated_at")
 VALUES (1, 0, 1, 'Dashboard', 'fa-bar-chart', '/', NULL, NULL, NULL),
        (2, 0, 2, 'Admin', 'fa-tasks', '', NULL, NULL, NULL),
@@ -298,7 +296,7 @@ VALUES (1, 0, 1, 'Dashboard', 'fa-bar-chart', '/', NULL, NULL, NULL),
        (9, 0, 0, 'Pipeline', 'fa-bars', '/pipelines', NULL, '2022-05-28 15:13:45', '2022-05-28 15:13:45');
 
 
-INSERT INTO "uci"."admin_permissions" ("id", "name", "slug", "http_method", "http_path", "created_at", "updated_at")
+INSERT INTO "admin_permissions" ("id", "name", "slug", "http_method", "http_path", "created_at", "updated_at")
 VALUES (1, 'All permission', '*', '', '*', NULL, NULL),
        (2, 'Dashboard', 'dashboard', 'GET', '/', NULL, NULL),
        (3, 'Login', 'auth.login', '', '/auth/login
@@ -309,24 +307,24 @@ VALUES (1, 'All permission', '*', '', '*', NULL, NULL),
 /auth/menu
 /auth/logs', NULL, NULL);
 
-INSERT INTO "uci"."admin_role_menu" ("role_id", "menu_id", "created_at", "updated_at")
+INSERT INTO "admin_role_menu" ("role_id", "menu_id", "created_at", "updated_at")
 VALUES (1, 2, NULL, NULL);
 
-INSERT INTO "uci"."admin_role_permissions" ("role_id", "permission_id", "created_at", "updated_at")
+INSERT INTO "admin_role_permissions" ("role_id", "permission_id", "created_at", "updated_at")
 VALUES (1, 1, NULL, NULL);
 
-INSERT INTO "uci"."admin_role_users" ("role_id", "user_id", "created_at", "updated_at")
+INSERT INTO "admin_role_users" ("role_id", "user_id", "created_at", "updated_at")
 VALUES (1, 1, NULL, NULL);
 
-INSERT INTO "uci"."admin_roles" ("id", "name", "slug", "created_at", "updated_at")
+INSERT INTO "admin_roles" ("id", "name", "slug", "created_at", "updated_at")
 VALUES (1, 'Administrator', 'administrator', '2022-04-29 07:13:39', '2022-04-29 07:13:39');
 
-INSERT INTO "uci"."admin_users" ("id", "username", "password", "name", "avatar", "remember_token", "created_at",
+INSERT INTO "admin_users" ("id", "username", "password", "name", "avatar", "remember_token", "created_at",
                                  "updated_at")
 VALUES (1, 'admin', '$2y$10$AntT1paDRQloknWVmYVlbOwVfONtykUpGKD47rFvaWVl59gF2xFze', 'Administrator', NULL,
         'glpMT06BrU36BMzpCwjhIuSVwr8zN9kwe47LfGw4oNuCnNqo10nLoBCHlANZ', '2022-04-29 07:13:39', '2022-04-29 07:19:33');
 
-INSERT INTO "uci"."migrations" ("id", "migration", "batch")
+INSERT INTO "migrations" ("id", "migration", "batch")
 VALUES (1, '2014_10_12_000000_create_users_table', 1),
        (2, '2014_10_12_100000_create_password_resets_table', 1),
        (3, '2016_01_04_173148_create_admin_tables', 1),

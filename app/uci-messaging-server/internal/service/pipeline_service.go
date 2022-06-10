@@ -37,3 +37,19 @@ func (p *PipelineService) UpdateRawlog(ctx context.Context, id uint32, raw strin
 	return repository.Repositories.PipelineRepository.UpdateRawlog(ctx, id, raw)
 
 }
+
+// MergeEnvs 参数列表越前面优先级越低
+func (p *PipelineService) MergeEnvs(e1 []*pipeline.Env, e2 ...[]*pipeline.Env) map[string]string {
+	m := make(map[string]string)
+
+	for _, env := range e1 {
+		m[env.Key] = env.Value
+	}
+
+	for _, envs := range e2 {
+		for _, env := range envs {
+			m[env.Key] = env.Value
+		}
+	}
+	return m
+}

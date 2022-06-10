@@ -38,6 +38,8 @@ func (u *Uci) Root() *cobra.Command {
 	config := u.Config()
 	config.AddCommand(u.ConfigSet())
 	config.AddCommand(u.ConfigGet())
+	config.AddCommand(u.ConfigList())
+	config.AddCommand(u.ConfigDelete())
 	root.AddCommand(config)
 	return root
 }
@@ -77,10 +79,14 @@ func (u *Uci) Stop() *cobra.Command {
 
 func (u *Uci) Config() *cobra.Command {
 	up := &cobra.Command{
-		Use:     "config",
-		Short:   "manage the uci configurations",
-		Long:    "manage the uci configurations",
-		Example: "",
+		Use:  "config",
+		Long: "Manage the npm configuration files",
+		Example: `
+uci config set <key>=<value> [<key>=<value> ...]
+uci config get [<key> [<key> ...]]
+uci config delete <key> [<key> ...]
+uci config list [--json]
+`,
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
@@ -92,25 +98,32 @@ func (u *Uci) Config() *cobra.Command {
 }
 
 func (u *Uci) ConfigSet() *cobra.Command {
-	up := &cobra.Command{
+	return &cobra.Command{
 		Use:   "set",
-		Short: "set file",
-		Long:  "set file",
-		Args: func(cmd *cobra.Command, args []string) error {
+		Short: "set uci config item",
+		Args:  cobra.MinimumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			log.L().Info("stop uci runner", zap.Any("args", args))
 			return nil
 		},
-		Run: func(cmd *cobra.Command, args []string) {
-			log.L().Info("stop uci runner", zap.Any("args", args))
-		},
 	}
-	return up
 }
 
 func (u *Uci) ConfigGet() *cobra.Command {
-	up := &cobra.Command{
-		Use:   "get",
-		Short: "get file",
-		Long:  "get file",
+	return &cobra.Command{
+		Use:   "get [<key> [<key> ...]]",
+		Short: "get uci config item",
+		Args:  cobra.MinimumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+	}
+}
+
+func (u *Uci) ConfigList() *cobra.Command {
+	return &cobra.Command{
+		Use:   "list",
+		Short: "list uci config items",
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
@@ -118,7 +131,19 @@ func (u *Uci) ConfigGet() *cobra.Command {
 			log.L().Info("stop uci runner", zap.Any("args", args))
 		},
 	}
-	return up
+}
+
+func (u *Uci) ConfigDelete() *cobra.Command {
+	return &cobra.Command{
+		Use:   "delete",
+		Short: "delete uci config item",
+		Args: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+			log.L().Info("stop uci runner", zap.Any("args", args))
+		},
+	}
 }
 
 // Check 检查 go 程序收存在

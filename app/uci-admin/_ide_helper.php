@@ -16829,6 +16829,68 @@
      
 }
 
+    namespace Encore\ModalForm\Facades { 
+            /**
+     * Class Modal
+     *
+     * @package Encore\ModalForm\Facades
+     */ 
+        class Modal {
+                    /**
+         * 
+         *
+         * @param string $script
+         * @param bool $deferred
+         * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string|string[]|void 
+         * @static 
+         */ 
+        public static function script($script = '')
+        {
+                        /** @var \Encore\ModalForm\Modal $instance */
+                        return $instance->script($script);
+        }
+                    /**
+         * 
+         *
+         * @param string $style
+         * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|void 
+         * @static 
+         */ 
+        public static function style($style = '')
+        {
+                        /** @var \Encore\ModalForm\Modal $instance */
+                        return $instance->style($style);
+        }
+                    /**
+         * 
+         *
+         * @param $model
+         * @param \Closure $callable
+         * @return \Encore\Admin\Form|\Encore\ModalForm\Form\ModalForm 
+         * @static 
+         */ 
+        public static function form($model, $callable)
+        {
+                        /** @var \Encore\ModalForm\Modal $instance */
+                        return $instance->form($model, $callable);
+        }
+                    /**
+         * 
+         *
+         * @param $model
+         * @return mixed 
+         * @static 
+         */ 
+        public static function getModel($model)
+        {
+                        /** @var \Encore\ModalForm\Modal $instance */
+                        return $instance->getModel($model);
+        }
+         
+    }
+     
+}
+
     namespace Illuminate\Http { 
             /**
      * 
@@ -20405,6 +20467,7 @@ namespace  {
             class View extends \Illuminate\Support\Facades\View {}
             class Admin extends \Encore\Admin\Facades\Admin {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
+            class Modal extends \Encore\ModalForm\Facades\Modal {}
      
 }
 

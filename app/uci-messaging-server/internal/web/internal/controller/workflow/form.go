@@ -7,6 +7,6 @@ type (
 	// 出发构建
 	TriggerWorkflowForm struct {
 		Revision string          `json:"revision,omitempty"`
-		Env      []*workflow.Env `json:"env,omitempty"`
+		Envs     []*workflow.Env `json:"envs,omitempty"`
 	}
 )

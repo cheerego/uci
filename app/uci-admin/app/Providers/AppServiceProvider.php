@@ -17,10 +17,11 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(UciMessaingRpcClient::class, function ($app) {
-            return new UciMessaingRpcClient(config("rpc.uci_messaging_server_http"));
+            return new UciMessaingRpcClient();
         });
-        //
-
+        $this->app->singleton(WorkflowService::class, function (\Illuminate\Contracts\Foundation\Application $app) {
+            return new WorkflowService();
+        });
     }
 
     /**
@@ -30,9 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton(WorkflowService::class, function (\Illuminate\Contracts\Foundation\Application $app) {
-            return new WorkflowService($app[UciMessaingRpcClient::class]);
-        });
 
     }
 }
