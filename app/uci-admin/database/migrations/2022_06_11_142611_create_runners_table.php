@@ -18,7 +18,8 @@ class CreateRunnersTable extends Migration
             $table->string("code")->default("");
             $table->string("salt")->default("");
             $table->string("status")->default();
-            $table->timestamp("status_changed_at")->nullable();
+            $table->timestamp("last_status_changed_at")->nullable();
+            $table->timestamp("last_dispatch_at")->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

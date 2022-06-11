@@ -21,6 +21,11 @@ class CreateWorkflowsTable extends Migration
 //            $table->text("trigger_method");
 //            $table->text("scheduler");
             $table->json("envs")->default("[]");
+
+            $table->integer("latest_pipeline_id")->default(0)->comment("最后一次流水线 ID");
+            $table->integer("latest_success_pipeline_id")->default(0)->comment("最后一次成功构建流水线 ID");
+            $table->integer("max_concurrent")->default(5);
+            $table->integer("build_timeout_second")->default(30 * 60)->comment("构建超时时间");
             $table->timestamps();
             $table->softDeletes();
         });

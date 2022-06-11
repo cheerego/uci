@@ -29,13 +29,21 @@ class CreatePipelinesTable extends Migration
 
 
             $table->text("raw_log")->default("");
+            $table->text("prepare_log")->default("");
 
             $table->integer("dispatch_times")->default(0);
             $table->timestamp("last_dispatch_at")->nullable();
+            $table->timestamp("last_use_at")->nullable();
 
             $table->timestamp("started_at")->nullable();
             $table->timestamp("closed_at")->nullable();
             $table->integer("duration")->default(0);
+
+            $table->integer("release_runner_at")->nullable();
+
+
+            $table->json("time_consuming")->nullable();
+
 
             $table->timestamps();
             $table->softDeletes();
