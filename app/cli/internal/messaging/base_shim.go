@@ -53,7 +53,7 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 				return errors.New("list watch consuming select chan return no ok")
 			}
 			log.L().Info("list watch consuming receive message from chan ", zap.String("dispatchMessage", dispatchMessage))
-			executor.E.Exec(dispatchMessage)
+			executor.E.Exec(ctx, dispatchMessage)
 		}
 	}
 }

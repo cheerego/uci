@@ -1,16 +1,17 @@
 package executor
 
 import (
-	"bytes"
+	"context"
 	"fmt"
+	"github.com/cheerego/uci/app/cli/internal/collector"
 	"github.com/cheerego/uci/app/cli/internal/config/dir"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
-	"io"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 )
 
 type HostExecutor struct {
@@ -61,37 +62,32 @@ func (h *HostExecutor) PrepareEnviron(payload *letter.StartPipelinePayload) []st
 	return pe
 }
 
-func (h *HostExecutor) Start(payload *letter.StartPipelinePayload) (string, error) {
+func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelinePayload) error {
 
 	err := h.PrepareWorkspace(payload)
 	if err != nil {
 		log.L().Error("prepare workspace err", zap.Error(err))
-		return "", err
+		return err
 	}
+	log.L().Info("pipeline dir", zap.String("dir", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt)))
 
 	workspaceDir := dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt)
-	cmd := exec.Command("sh", "-c", payload.Yaml)
+
+	cmd := exec.Command("sh", "-c", "-e", strings.Replace(payload.Yaml, "\r\n", "\n", -1))
 
 	cmd.Env = h.PrepareEnviron(payload)
 	cmd.Dir = workspaceDir
-	file, err := h.PrepareRawLog(payload)
+	stdPipe, err := cmd.StdoutPipe()
 	if err != nil {
-		return "", err
+		return err
 	}
-	defer file.Close()
-	bufferString := bytes.NewBufferString("")
-	cmd.Stdout = io.MultiWriter(file, bufferString)
-	cmd.Stderr = io.MultiWriter(file, bufferString)
-
-	log.L().Info("pipeline dir", zap.String("dir", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt)))
+	defer stdPipe.Close()
+	cmd.Stderr = cmd.Stdout
 	err = cmd.Start()
 	if err != nil {
 		log.S().Error("exec start err", zap.Error(err))
-		return "", err
+		return err
 	}
-	err = cmd.Wait()
-	if err != nil {
-		return "", err
-	}
-	return bufferString.String(), nil
+	collector.NewCollector().CollectorRawlog(ctx, payload.Uuid, stdPipe)
+	return cmd.Wait()
 }

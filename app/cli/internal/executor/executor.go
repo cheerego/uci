@@ -1,17 +1,17 @@
 package executor
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
-	"github.com/go-resty/resty/v2"
 	"go.uber.org/zap"
 )
 
 var E = NewExecutor()
 
 type IExecutor interface {
-	Start(payload *letter.StartPipelinePayload) (string, error)
+	Start(ctx context.Context, payload *letter.StartPipelinePayload) error
 	//PrepareWorkspace(payload *payload.StartPipelinePayload) error
 }
 
@@ -25,7 +25,7 @@ func NewExecutor() *Executor {
 	}
 }
 
-func (o *Executor) Exec(dispatchMessage string) {
+func (o *Executor) Exec(ctx context.Context, dispatchMessage string) {
 	var l letter.Letter
 	err := json.Unmarshal([]byte(dispatchMessage), &l)
 	if err != nil {
@@ -41,29 +41,10 @@ func (o *Executor) Exec(dispatchMessage string) {
 			return
 		}
 		go func() {
-			raw, err := o.HostExecutor.Start(p)
+			err := o.HostExecutor.Start(ctx, p)
 			if err != nil {
 				log.L().Error("after start", zap.Error(err))
 				return
-			}
-			log.L().Info("raw", zap.String("raw", raw))
-			client := resty.New()
-
-			var result = make(map[string]interface{})
-			resp, err := client.R().
-				SetHeader("Content-Type", "application/json").
-				SetBody(map[string]interface{}{
-					"uuid": p.Uuid,
-					"raw":  raw,
-				}).
-				SetResult(result).
-				Post("http://messaging.uci.127.0.0.1.nip.io/api/v1/pipeline/report/log/raw")
-			if err != nil {
-				log.L().Error("report raw log err", zap.Error(err))
-				return
-			}
-			if resp.StatusCode() != 200 {
-				log.L().Error("report log raw status code != 200", zap.Any("result", result))
 			}
 		}()
 
