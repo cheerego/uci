@@ -15,24 +15,28 @@ package pipeline
 type Status string
 
 const (
-	PreCheckFailed Status = "PreCheckFailed"
+	PreCheckFailed Status = "PRE_CHECK_FAILED"
 )
 
-const Queuing Status = "Queuing"
+const BuildQueuing Status = "BUILD_QUEUING"
+const BuildRunning Status = "BUILD_RUNNING"
+const BuildSucceed Status = "BUILD_SUCCEED"
+const BuildFailed Status = "BUILD_FAILED"
+const BuildTimeout Status = "BUILD_TIMEOUT"
+const BuildAbort Status = "BUILD_ABORT"
 
 const (
-	Dispatching Status = "Dispatching"
-
-	DispatchSuccess Status = "DispatchSuccess"
-	DispatchFailed  Status = "DispatchFailed"
-	DispatchTimeout Status = "DispatchTimeout"
+	Dispatching                      Status = "DISPATCHING"
+	DispatchSuccess                  Status = "DISPATCH_SUCCESS"
+	DispatchFailed                   Status = "DISPATCH_FAILED"
+	DispatchTimeout                  Status = "DISPATCH_TIMEOUT"
+	SelfHostRunnerDispatchTimeout    Status = "SELF_HOST_RUNNER_DISPATCH_TIMEOUT"
+	NoAvailableRunnerDispatchTimeout Status = "NO_AVAILABLE_RUNNER_DISPATCH_TIMEOUT"
 )
 
 const (
-	BuildSucceed Status = "BuildSucceed"
-
-	BuildFailed            Status = "BuildFailed"
-	CachePersistenceFailed Status = "CachePersistenceFailed"
-	LogPersistenceFailed   Status = "LogPersistenceFailed"
-	RunnerInnerError       Status = "RunnerInnerError"
+	CachePersistenceError Status = "CACHE_PERSISTENCE_ERROR"
+	LogPersistenceError   Status = "LOG_PERSISTENCE_ERROR"
+	RunnerInternalError   Status = "RUNNER_INTERNAL_ERROR"
+	RunnerPrepareError    Status = "RUNNER_PREPARE_ERROR"
 )

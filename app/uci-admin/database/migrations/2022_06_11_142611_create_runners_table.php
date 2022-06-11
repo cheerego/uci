@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWorkflowsTable extends Migration
+class CreateRunnersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateWorkflowsTable extends Migration
      */
     public function up()
     {
-        Schema::create('workflows', function (Blueprint $table) {
+        Schema::create('runners', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->text("yaml");
-            $table->integer("creator_id");
-//            $table->text("trigger_method");
-//            $table->text("scheduler");
-            $table->json("envs")->default("[]");
+            $table->string("code")->default("");
+            $table->string("salt")->default("");
+            $table->string("status")->default();
+            $table->timestamp("status_changed_at")->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -33,6 +31,6 @@ class CreateWorkflowsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('workflows');
+        Schema::dropIfExists('runners');
     }
 }

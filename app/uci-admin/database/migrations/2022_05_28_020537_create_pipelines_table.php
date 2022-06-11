@@ -16,15 +16,27 @@ class CreatePipelinesTable extends Migration
         Schema::create('pipelines', function (Blueprint $table) {
             $table->id();
             $table->integer("workflow_id");
+            $table->integer("number")->default(0);
             $table->text("yaml")->default("");
             $table->string("salt")->default("");
-            $table->timestamp("last_dispatch_time")->nullable();
-            $table->integer("dispatch_times")->default(0);
-            $table->string("status")->default("Queuing");
+
+            $table->integer("runner_id")->default(0);
+
+            $table->string("status")->default("BUILD_QUEUING");
             $table->string("status_message")->default("");
             $table->string("uuid")->default("");
+            $table->json("envs")->default("[]");
+
+
             $table->text("raw_log")->default("");
-            $table->json("envs");
+
+            $table->integer("dispatch_times")->default(0);
+            $table->timestamp("last_dispatch_at")->nullable();
+
+            $table->timestamp("started_at")->nullable();
+            $table->timestamp("closed_at")->nullable();
+            $table->integer("duration")->default(0);
+
             $table->timestamps();
             $table->softDeletes();
 
