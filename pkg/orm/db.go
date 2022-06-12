@@ -18,7 +18,7 @@ func New(dsn string, dbPoolConfig string) (*gorm.DB, error) {
 		SkipDefaultTransaction: true,
 		Logger: logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
 			SlowThreshold:             200 * time.Millisecond,
-			LogLevel:                  logger.Info,
+			LogLevel:                  logger.Error,
 			IgnoreRecordNotFoundError: true,
 			Colorful:                  true,
 		}),

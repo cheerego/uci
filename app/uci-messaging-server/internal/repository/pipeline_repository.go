@@ -23,8 +23,8 @@ func NewPipelineRepository(db *gorm.DB) *PipelineRepository {
 func (p *PipelineRepository) IncreaseDispatchTimes(ctx context.Context, id uint32) (int64, error) {
 	var m pipeline.Pipeline
 	tx := orm.FromContext(ctx, p.db).Model(&m).Where(id).Updates(map[string]interface{}{
-		"dispatch_times":     gorm.Expr("dispatch_times + ?", 1),
-		"last_dispatch_time": time.Now(),
+		"dispatch_times":   gorm.Expr("dispatch_times + ?", 1),
+		"last_dispatch_at": time.Now(),
 	})
 	return tx.RowsAffected, tx.Error
 
