@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
@@ -46,8 +48,6 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 	}
 	// 借机器
 
-	borrow, err := Services.RunnerService.Borrow(ctx)
-
 	// 下发指令 同步
 
 	//workflow, err := w.FindById(ctx, workerFlowId)
@@ -84,6 +84,22 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 	_, err = Services.PipelineService.UpdateStatus(ctx, p.ID, pipeline.DispatchSuccess)
 	return err
 }
-func (w *WorkflowService) BorrowRunner(ctx context.Context, p *pipeline.Pipeline) {
+
+// TryBorrowRunner
+// CCI 归还节点会归还失败，为什么，怎么避免归还节点失败的问题? 如果无法处理，哪改如何进行兜底设计
+
+func (w *WorkflowService) TryBorrowRunner(ctx context.Context, p *pipeline.Pipeline) error {
+	mutex := storage.Godisson().NewMutex(locks.GetPipelineLockKey(p.ID))
+	err := mutex.TryLock(-1, -1)
+	if err != nil {
+		return err
+	}
+	defer mutex.Unlock()
+	idles, err := Services.RunnerService.FindIdles(ctx)
+	if len(idles) == 0 {
+		return nil
+	}
+
+	return nil
 
 }

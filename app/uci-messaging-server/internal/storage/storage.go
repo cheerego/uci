@@ -31,6 +31,10 @@ func Redis() *redis.Client {
 	return Storages.redis
 }
 
+func Godisson() *godisson.Godisson {
+	return Storages.godisson
+}
+
 func Register() error {
 	log.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
 	g, err := orm.New(config.Configs.GormMasterDSN, config.Configs.GormMasterPoolConfig)
@@ -40,7 +44,7 @@ func Register() error {
 
 	// create redis client
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})

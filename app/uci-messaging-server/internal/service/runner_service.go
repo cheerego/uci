@@ -13,7 +13,7 @@ func NewRunnerService() *RunnerService {
 	return &RunnerService{}
 }
 
-func (r *RunnerService) Borrow(ctx context.Context) ([]*runner.Runner, error) {
+func (r *RunnerService) FindIdles(ctx context.Context) ([]*runner.Runner, error) {
 	defaultLimit := 10
 	return repository.Repositories.RunnerRepository.FindIdles(ctx, defaultLimit)
 }
