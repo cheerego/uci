@@ -73,8 +73,8 @@ class WorkflowController extends AdminController
         $show->field('name', __('Name'));
         $show->field('yaml', __('Yaml'));
         $show->field('creator_id', __('Creator id'));
-        $show->field("envs", __("Envs"));
-//        $show->field('param_envs', __('Param envs'));
+//        $show->field("envs", __("Envs"));
+        $show->field("envs", __("Envs"))->json();
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->field('deleted_at', __('Deleted at'));

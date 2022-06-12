@@ -25,11 +25,11 @@ func NewExecutor() *Executor {
 	}
 }
 
-func (o *Executor) Exec(ctx context.Context, dispatchMessage string) {
+func (o *Executor) Exec(ctx context.Context, letterString string) {
 	var l letter.Letter
-	err := json.Unmarshal([]byte(dispatchMessage), &l)
+	err := json.Unmarshal([]byte(letterString), &l)
 	if err != nil {
-		log.L().Error("json.Unmarshal dispatchMessage err", zap.Error(err), zap.String("dispatchMessage", dispatchMessage))
+		log.L().Error("json.Unmarshal letterString err", zap.Error(err), zap.String("letterString", letterString))
 		return
 	}
 
@@ -43,14 +43,14 @@ func (o *Executor) Exec(ctx context.Context, dispatchMessage string) {
 		go func() {
 			err := o.HostExecutor.Start(ctx, p)
 			if err != nil {
-				log.L().Error("after start", zap.Error(err))
+				log.L().Error("after start", zap.String("pipeline", p.LogName()), zap.Error(err))
 				return
 			}
 		}()
 
 	case letter.StopAction:
 	default:
-		log.L().Error("无效的 action 类型", zap.String("dispatchMessage", dispatchMessage), zap.String("action", string(l.Action)))
+		log.L().Error("无效的 action 类型", zap.String("letterString", letterString), zap.String("action", string(l.Action)))
 	}
 
 }

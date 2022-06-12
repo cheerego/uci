@@ -33,6 +33,7 @@ class CreatePipelinesTable extends Migration
 
             $table->integer("dispatch_times")->default(0);
             $table->timestamp("last_dispatch_at")->nullable();
+            $table->timestamp("dispatch_success_at")->nullable();
             $table->timestamp("last_use_at")->nullable();
 
             $table->timestamp("started_at")->nullable();

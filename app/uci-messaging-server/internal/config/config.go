@@ -17,10 +17,10 @@ type Config struct {
 	RabbitAddrUrl string `env:"RABBIT_ADDR_URL,required"`
 }
 
-func init() {
+func Register() error {
 	if err := env.Parse(&Configs); err != nil {
-		//log.Fatalf("parse config err: %v", err)
-		log.L().Fatal("parse config err", zap.Error(err))
+		return err
 	}
 	log.L().Info("config: ", zap.Any("Config", Configs))
+	return nil
 }

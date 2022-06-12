@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/pkg/orm"
 	uuid "github.com/satori/go.uuid"
@@ -28,7 +29,6 @@ func NewPipeline(workflow *workflow.Workflow) *Pipeline {
 	uid := uuid.NewV4().String()
 	salt := uid[0:8]
 	return &Pipeline{
-		Model:          orm.Model{},
 		WorkflowId:     workflow.ID,
 		Yaml:           workflow.Yaml,
 		Salt:           salt,
@@ -39,4 +39,7 @@ func NewPipeline(workflow *workflow.Workflow) *Pipeline {
 		DispatchTimes:  0,
 		Envs:           []*Env{},
 	}
+}
+func (p Pipeline) LogString() string {
+	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s", p.WorkflowId, p.Uuid, p.ID, p.Salt)
 }

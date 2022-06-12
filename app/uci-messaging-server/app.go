@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
@@ -33,6 +36,10 @@ func NewApplication() *Application {
 }
 
 func (a *Application) Start() error {
+	err := a.register()
+	if err != nil {
+		return err
+	}
 	g, _ := errgroup.WithContext(context.TODO())
 	g.Go(a.startHttp)
 	g.Go(a.startGrpc)
@@ -67,5 +74,24 @@ func (a *Application) startCron() error {
 	}
 	s := gocron.NewScheduler(location)
 	s.StartBlocking()
+	return nil
+}
+
+func (a *Application) register() error {
+	if err := config.Register(); err != nil {
+		return err
+	}
+
+	if err := storage.Register(); err != nil {
+		return err
+	}
+
+	if err := repository.Register(); err != nil {
+		return err
+	}
+	if err := service.Register(); err != nil {
+		return err
+	}
+
 	return nil
 }

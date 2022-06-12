@@ -5,8 +5,10 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
+	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"time"
 )
@@ -23,15 +25,17 @@ func (w *WorkflowService) FindById(ctx context.Context, workerflowId uint32) (*w
 }
 
 func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*workflow.Env) error {
+	// 初始化 RequestId
+	ctx = http.WithRequestId(ctx)
 	// 创建 Pipeline
-
 	p := pipeline.NewPipeline(workflow)
+
+	// TODO 事务处理
 	err := Services.PipelineService.Create(ctx, p)
-	log.L().Info("pipelineid", zap.Any("id", p.ID))
 	if err != nil {
 		return err
 	}
-
+	// 收集环境变量
 	systemEnv := Services.PipelineEnvService.CollectSystemEnvs(p)
 	mergeEnvs := Services.PipelineEnvService.MergeEnvs(systemEnv, workflow.Envs, customEnvs)
 	p.Envs = mergeEnvs
@@ -40,10 +44,11 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 	if err != nil {
 		return err
 	}
-	// 收集环境变量
-	// 写入数据
-	// 下发指令 同步
 	// 借机器
+
+	borrow, err := Services.RunnerService.Borrow(ctx)
+
+	// 下发指令 同步
 
 	//workflow, err := w.FindById(ctx, workerFlowId)
 	//if err != nil {
@@ -56,11 +61,10 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 	// 借到了机器就改为下发中
 	// 借不到机器就还是等待
 
-	Services.PipelineService.IncreaseDispatchTimes(ctx, p.ID)
-
 	l := &letter.Letter{
-		Action: letter.StartAction,
-		Payload: letter.StartPipelinePayload{
+		Action:    letter.StartAction,
+		RequestId: uuid.NewV4().String(),
+		Payload: &letter.StartPipelinePayload{
 			WorkflowId: workflow.ID,
 			PipelineId: p.ID,
 			Yaml:       p.Yaml,
@@ -71,11 +75,15 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 		Timestamp: time.Now(),
 	}
 
+	log.L().Info("publishing payload", zap.String("pipeline", p.LogString()), zap.Any("letter", l))
 	err = Services.MessagingService.Publish("1", l)
 	if err != nil {
-		log.L().Error("dispatch err", zap.Uint32("workflowId", workflow.ID), zap.Uint32("pipelineId", p.ID), zap.Error(err))
+		log.L().Info("dispatch err", zap.String("pipeline", p.LogString()), zap.Error(err))
 		return nil
 	}
 	_, err = Services.PipelineService.UpdateStatus(ctx, p.ID, pipeline.DispatchSuccess)
 	return err
+}
+func (w *WorkflowService) BorrowRunner(ctx context.Context, p *pipeline.Pipeline) {
+
 }
