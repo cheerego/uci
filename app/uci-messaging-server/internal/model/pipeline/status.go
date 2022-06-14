@@ -22,16 +22,16 @@ const BuildQueuing Status = "BUILD_QUEUING"
 const BuildRunning Status = "BUILD_RUNNING"
 const BuildSucceed Status = "BUILD_SUCCEED"
 const BuildFailed Status = "BUILD_FAILED"
-const BuildTimeout Status = "BUILD_TIMEOUT"
+const BuildTimeouted Status = "BUILD_TIMEOUTED"
 const BuildAbort Status = "BUILD_ABORT"
 
 const (
-	Dispatching                      Status = "DISPATCHING"
-	DispatchSuccess                  Status = "DISPATCH_SUCCESS"
-	DispatchFailed                   Status = "DISPATCH_FAILED"
-	DispatchTimeout                  Status = "DISPATCH_TIMEOUT"
-	SelfHostRunnerDispatchTimeout    Status = "SELF_HOST_RUNNER_DISPATCH_TIMEOUT"
-	NoAvailableRunnerDispatchTimeout Status = "NO_AVAILABLE_RUNNER_DISPATCH_TIMEOUT"
+	Dispatching                        Status = "DISPATCHING"
+	DispatchSucceed                    Status = "DISPATCH_SUCCEED"
+	DispatchFailed                     Status = "DISPATCH_FAILED"
+	DispatchTimeouted                  Status = "DISPATCH_TIMEOUTED"
+	SelfHostRunnerDispatchTimeouted    Status = "SELF_HOST_RUNNER_DISPATCH_TIMEOUTED"
+	NoAvailableRunnerDispatchTimeouted Status = "NO_AVAILABLE_RUNNER_DISPATCH_TIMEOUTED"
 )
 
 const (

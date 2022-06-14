@@ -120,6 +120,7 @@ class WorkflowController extends AdminController
         $form->action(route(admin_get_route("workflows.trigger.action"), [$workflow->id]));
 
         $form->id("id", "Id");
+        $form->textarea("yaml", __("Yaml"))->disable();
         $form->table('envs', __('Param envs'), function ($table) {
             $table->text('key');
             $table->text('value');
@@ -135,7 +136,7 @@ class WorkflowController extends AdminController
 
 
         $revision = $request->input("revision");
-        $param_envs = $request->input("envs");
+        $param_envs = $request->input("envs", []);
         $needle_param_envs = [];
         foreach ($param_envs as $key => $value) {
             $needle_param_envs[] = $value;

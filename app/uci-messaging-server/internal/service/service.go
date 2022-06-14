@@ -8,10 +8,11 @@ type Service struct {
 	PipelineService    *PipelineService
 	PipelineEnvService *PipelineEnvService
 	RunnerService      *RunnerService
+	DispatchService    *DispatchService
 }
 
-func NewService(workflowService *WorkflowService, messagingService *MessagingService, pipelineService *PipelineService, pipelineEnvService *PipelineEnvService, runnerService *RunnerService) *Service {
-	return &Service{WorkflowService: workflowService, MessagingService: messagingService, PipelineService: pipelineService, PipelineEnvService: pipelineEnvService, RunnerService: runnerService}
+func NewService(workflowService *WorkflowService, messagingService *MessagingService, pipelineService *PipelineService, pipelineEnvService *PipelineEnvService, runnerService *RunnerService, dispatchService *DispatchService) *Service {
+	return &Service{WorkflowService: workflowService, MessagingService: messagingService, PipelineService: pipelineService, PipelineEnvService: pipelineEnvService, RunnerService: runnerService, DispatchService: dispatchService}
 }
 
 func Register() error {
@@ -22,6 +23,7 @@ func Register() error {
 		NewPipelineService(),
 		NewPipelineEnvService(),
 		NewRunnerService(),
+		NewDispatchService(),
 	)
 	return nil
 }

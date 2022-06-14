@@ -42,3 +42,7 @@ func (p *PipelineService) UpdateRawlog(ctx context.Context, id uint32, raw strin
 	return repository.Repositories.PipelineRepository.UpdateRawlog(ctx, id, raw)
 
 }
+
+func (p *PipelineService) UpdateAfterBorrowedRunner(ctx context.Context, pl *pipeline.Pipeline) (int64, error) {
+	return repository.Repositories.PipelineRepository.UpdateAfterBorrowedRunner(ctx, pl)
+}

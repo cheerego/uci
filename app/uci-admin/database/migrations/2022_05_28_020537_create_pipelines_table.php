@@ -17,30 +17,33 @@ class CreatePipelinesTable extends Migration
             $table->id();
             $table->integer("workflow_id");
             $table->integer("number")->default(0);
-            $table->text("yaml")->default("");
+            $table->string("uuid")->default("");
             $table->string("salt")->default("");
-
-            $table->integer("runner_id")->default(0);
+            $table->text("yaml")->default("");
 
             $table->string("status")->default("BUILD_QUEUING");
             $table->string("status_message")->default("");
-            $table->string("uuid")->default("");
             $table->json("envs")->default("[]");
+
+            $table->integer("runner_id")->default(0);
+            $table->timestamp("borrow_runner_at")->nullable();
+            $table->timestamp("release_runner_at")->nullable();
+
 
 
             $table->text("raw_log")->default("");
             $table->text("prepare_log")->default("");
 
             $table->integer("dispatch_times")->default(0);
-            $table->timestamp("last_dispatch_at")->nullable();
-            $table->timestamp("dispatch_success_at")->nullable();
-            $table->timestamp("last_use_at")->nullable();
+            $table->timestamp("first_dispatched_at")->nullable();
+            $table->timestamp("last_dispatched_at")->nullable();
+            $table->timestamp("dispatch_succeed_at")->nullable();
 
             $table->timestamp("started_at")->nullable();
             $table->timestamp("closed_at")->nullable();
             $table->integer("duration")->default(0);
 
-            $table->integer("release_runner_at")->nullable();
+
 
 
             $table->json("time_consuming")->nullable();
