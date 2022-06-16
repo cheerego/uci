@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
@@ -23,32 +22,8 @@ func NewDispatchService() *DispatchService {
 	return &DispatchService{}
 }
 
-// tryBorrowRunner
-// CCI 归还节点会归还失败，为什么，怎么避免归还节点失败的问题? 如果无法处理，哪改如何进行兜底设计
-func (d *DispatchService) tryBorrowRunner(ctx context.Context) (*runner.Runner, error) {
-	idles, err := Services.RunnerService.FindIdles(ctx)
-	if len(idles) == 0 {
-		return nil, e.ErrBorrowRunnerNoIdle.WithStack()
-	}
-	firstRunner := idles[0]
-	mutex := storage.Godisson().NewMutex(locks.GetRunnerBorrowLockKey(firstRunner.ID))
-	err = mutex.TryLock(-1, -1)
-	if err != nil {
-		return nil, err
-	}
-	defer mutex.Unlock()
-	secondRunner, err := Services.RunnerService.FindById(ctx, firstRunner.ID)
-	if err != nil {
-		return nil, err
-	}
-	if secondRunner.Status != runner.Running {
-		return nil, e.ErrBorrowRunnerDoubleCheckStatus.WithStack()
-	}
-	return secondRunner, nil
-}
-
 func (d *DispatchService) TryQueuingBorrowRunner(ctx context.Context, p *pipeline.Pipeline) (*runner.Runner, error) {
-	mutex := storage.Godisson().NewMutex(locks.GetPipelineDispatchLockKey(p.ID))
+	mutex := storage.Godisson().NewMutex(locks.GetPipelineLifecycleLockKey(p.ID))
 	err := mutex.TryLock(-1, -1)
 	if err != nil {
 		return nil, err
@@ -79,7 +54,7 @@ func (d *DispatchService) TryQueuingBorrowRunner(ctx context.Context, p *pipelin
 	// runnerId，status，last_dispatched_at
 	p.RunnerId = borrowRunner.ID
 	p.BorrowRunnerAt = time.Now()
-	p.Status = pipeline.Dispatching
+	p.Status = pipeline.WaitingForDispatching
 
 	_, err = Services.PipelineService.UpdateAfterBorrowedRunner(ctx, p)
 	if err != nil {

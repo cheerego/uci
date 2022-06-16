@@ -14,25 +14,24 @@ package pipeline
 
 type Status string
 
-const (
-	PreCheckFailed Status = "PRE_CHECK_FAILED"
-)
+const PreCheckFailed Status = "PRE_CHECK_FAILED"
 
 const BuildQueuing Status = "BUILD_QUEUING"
-const BuildRunning Status = "BUILD_RUNNING"
+const WaitForBorrowing Status = "WAIT_FOR_BORROWING"
+const BorrowRunnerSucceed Status = "BORROW_RUNNER_SUCCEED"
+const BorrowRunnerTimeouted Status = "BORROW_RUNNER_TIMEOUTED"
+
+const WaitForDispatching Status = "WAIT_FOR_DISPATCHING"
+const DispatchSucceed Status = "DISPATCH_SUCCEED"
+const DispatchFailed Status = "DISPATCH_FAILED"
+const DispatchTimeouted Status = "DISPATCH_TIMEOUTED"
+const SelfHostRunnerDispatchTimeouted Status = "SELF_HOST_RUNNER_DISPATCH_TIMEOUTED"
+const NoAvailableRunnerDispatchTimeouted Status = "NO_AVAILABLE_RUNNER_DISPATCH_TIMEOUTED"
+
 const BuildSucceed Status = "BUILD_SUCCEED"
 const BuildFailed Status = "BUILD_FAILED"
 const BuildTimeouted Status = "BUILD_TIMEOUTED"
-const BuildAbort Status = "BUILD_ABORT"
-
-const (
-	Dispatching                        Status = "DISPATCHING"
-	DispatchSucceed                    Status = "DISPATCH_SUCCEED"
-	DispatchFailed                     Status = "DISPATCH_FAILED"
-	DispatchTimeouted                  Status = "DISPATCH_TIMEOUTED"
-	SelfHostRunnerDispatchTimeouted    Status = "SELF_HOST_RUNNER_DISPATCH_TIMEOUTED"
-	NoAvailableRunnerDispatchTimeouted Status = "NO_AVAILABLE_RUNNER_DISPATCH_TIMEOUTED"
-)
+const BuildAborted Status = "BUILD_ABORTED"
 
 const (
 	CachePersistenceError Status = "CACHE_PERSISTENCE_ERROR"
