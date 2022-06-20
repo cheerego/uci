@@ -18,7 +18,8 @@ const PreCheckFailed Status = "PRE_CHECK_FAILED"
 
 const BuildQueuing Status = "BUILD_QUEUING"
 const WaitForBorrowing Status = "WAIT_FOR_BORROWING"
-const BorrowRunnerSucceed Status = "BORROW_RUNNER_SUCCEED"
+
+//const BorrowRunnerSucceed Status = "BORROW_RUNNER_SUCCEED"
 const BorrowRunnerTimeouted Status = "BORROW_RUNNER_TIMEOUTED"
 
 const WaitForDispatching Status = "WAIT_FOR_DISPATCHING"

@@ -40,11 +40,11 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 		return err
 	}
 
-	runner, err := Services.DispatchService.TryQueuingBorrowRunner(ctx, p)
-	if err != nil {
-		return err
-	}
-	Services.DispatchService.TryDispatchStartPipelineLetter(ctx, p, runner)
+	//runner, err := Services.DispatchService.TryQueuingBorrowRunner(ctx, p)
+	//if err != nil {
+	//	return err
+	//}
+	//Services.DispatchService.TryDispatchStartPipelineLetter(ctx, p, runner)
 	return nil
 
 	// 下发指令 同步

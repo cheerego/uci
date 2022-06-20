@@ -13,21 +13,21 @@ import (
 	"time"
 )
 
-type BorrowPhase struct {
+type WaitForBorrowing struct {
 }
 
-func (b *BorrowPhase) Exec(ctx context.Context, id uint32) error {
-	mutex := storage.Godisson().NewMutex(locks.GetPipelineLifecycleLockKey(id))
+func (b *WaitForBorrowing) Exec(ctx context.Context, p *pipeline.Pipeline) error {
+	mutex := storage.Godisson().NewMutex(locks.GetPipelineLifecycleLockKey(p.ID))
 	err := mutex.TryLock(-1, -1)
 	if err != nil {
 		return err
 	}
 	defer func() {
 		_, err := mutex.Unlock()
-		log.L().Error("borrow phase unlock mutex err", zap.Uint32("pipeline", id), zap.Error(err))
+		log.L().Error("borrow phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
 	}()
 
-	p, err := service.Services.PipelineService.FindById(ctx, id)
+	p, err = service.Services.PipelineService.FindById(ctx, p.ID)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (b *BorrowPhase) Exec(ctx context.Context, id uint32) error {
 	// runnerId，status，last_dispatched_at
 	p.RunnerId = borrowRunner.ID
 	p.BorrowRunnerAt = time.Now()
-	p.Status = pipeline.BorrowRunnerSucceed
+	p.Status = pipeline.WaitForDispatching
 
 	_, err = service.Services.PipelineService.UpdateAfterBorrowedRunner(ctx, p)
 	if err != nil {
@@ -63,7 +63,7 @@ func (b *BorrowPhase) Exec(ctx context.Context, id uint32) error {
 
 // tryBorrowRunner
 // CCI 归还节点会归还失败，为什么，怎么避免归还节点失败的问题? 如果无法处理，哪改如何进行兜底设计
-func (b *BorrowPhase) tryBorrowRunner(ctx context.Context) (*runner.Runner, error) {
+func (b *WaitForBorrowing) tryBorrowRunner(ctx context.Context) (*runner.Runner, error) {
 	idles, err := service.Services.RunnerService.FindIdles(ctx)
 	if len(idles) == 0 {
 		return nil, e.ErrBorrowRunnerNoIdle.WithStack()

@@ -30,12 +30,8 @@ func (p *PipelineRepository) IncreaseDispatchTimes(ctx context.Context, id uint3
 
 }
 
-func (p *PipelineRepository) UpdateStatus(ctx context.Context, id uint32, status pipeline.Status) (int64, error) {
-	var m pipeline.Pipeline
-
-	tx := orm.FromContext(ctx, p.db).Model(&m).Where(id).Select("status").Updates(map[string]interface{}{
-		"status": status,
-	})
+func (p *PipelineRepository) UpdateStatus(ctx context.Context, m *pipeline.Pipeline) (int64, error) {
+	tx := orm.FromContext(ctx, p.db).Select("Status").Updates(m)
 	return tx.RowsAffected, tx.Error
 }
 
