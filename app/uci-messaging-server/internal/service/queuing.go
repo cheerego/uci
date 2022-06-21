@@ -1,10 +1,9 @@
-package phase
+package service
 
 import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
@@ -28,16 +27,18 @@ func (q *QueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	}
 	defer func() {
 		_, err := mutex.Unlock()
-		log.L().Error("queuing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
+		if err != nil {
+			log.L().Error("queuing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
+		}
 	}()
-	p, err = service.Services.PipelineService.FindById(context.TODO(), p.ID)
+	p, err = Services.PipelineService.FindById(context.TODO(), p.ID)
 	if err != nil {
 		return err
 	}
 	if p.Status != pipeline.BuildQueuing {
 		return nil
 	}
-	_, err = service.Services.PipelineService.UpdateStatus(context.TODO(), p, pipeline.WaitForBorrowing)
+	_, err = Services.PipelineService.UpdateStatus(context.TODO(), p, pipeline.WaitForBorrowing)
 	if err != nil {
 		return err
 	}

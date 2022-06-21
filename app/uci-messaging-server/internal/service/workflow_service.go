@@ -6,6 +6,8 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
 	"github.com/cheerego/uci/pkg/http"
+	"github.com/cheerego/uci/pkg/log"
+	"go.uber.org/zap"
 )
 
 type WorkflowService struct {
@@ -38,6 +40,16 @@ func (w *WorkflowService) Trigger(ctx context.Context, workflow *workflow.Workfl
 	_, err = Services.PipelineService.UpdateEnvs(ctx, p)
 	if err != nil {
 		return err
+	}
+
+	err = NewQueuingPhase().Exec(ctx, p)
+	if err != nil {
+		log.L().Info("queuing phase", zap.Error(err))
+	}
+
+	err = NewWaitForBorrowing().Exec(ctx, p)
+	if err != nil {
+		log.L().Info("waiting for borrowing phase", zap.Error(err))
 	}
 
 	//runner, err := Services.DispatchService.TryQueuingBorrowRunner(ctx, p)
