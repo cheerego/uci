@@ -21,7 +21,7 @@ func UciDir() string {
 }
 
 func UciPipelineDir(workflowId uint32, pipelineId uint32, salt string) string {
-	return path.Join(UciDir(), fmt.Sprintf("workflow-%d-pipeline-%d-%s", workflowId, pipelineId, salt))
+	return path.Join(UciDir(), fmt.Sprintf("workflower-%d-pipeliner-%d-%s", workflowId, pipelineId, salt))
 }
 
 func UciTaskWorkspaceDir(workflowId uint32, pipelineId uint32, salt string) string {

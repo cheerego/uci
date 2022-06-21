@@ -3,7 +3,7 @@ package locks
 import "fmt"
 
 func GetPipelineLifecycleLockKey(pipelineId uint32) string {
-	return fmt.Sprintf("uci-messaging-server:lock:lifecycle:pipeline-%d", pipelineId)
+	return fmt.Sprintf("uci-messaging-server:lock:lifecycle:pipeliner-%d", pipelineId)
 }
 
 func GetRunnerBorrowLockKey(runnerId uint32) string {

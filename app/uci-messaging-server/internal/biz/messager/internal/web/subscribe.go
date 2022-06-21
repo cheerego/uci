@@ -1,4 +1,4 @@
-package messging
+package web
 
 import (
 	"fmt"

@@ -1,15 +1,15 @@
 package report
 
 import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/pipeliner/internal/web"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/internal/controller/pipeline"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 func Raw(c echo.Context) error {
-	f := new(pipeline.ReportRawlogForm)
+	f := new(web.ReportRawlogForm)
 
 	if err := c.Bind(f); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())

@@ -46,5 +46,5 @@ func NewPipeline(workflow *workflow.Workflow) *Pipeline {
 	}
 }
 func (p Pipeline) LogString() string {
-	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s", p.WorkflowId, p.Uuid, p.ID, p.Salt)
+	return fmt.Sprintf("workflower-%d-uuid-%s-pipeliner-%d-%s", p.WorkflowId, p.Uuid, p.ID, p.Salt)
 }

@@ -1,6 +1,7 @@
-package workflow
+package web
 
 import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/workflower/internal/facade"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/labstack/echo/v4"
@@ -23,5 +24,5 @@ func Trigger(c echo.Context) error {
 		return err
 	}
 
-	return service.Services.WorkflowService.Trigger(cc.Request().Context(), workflow, f.Envs)
+	return facade.Trigger(cc.Request().Context(), workflow, f.Envs)
 }

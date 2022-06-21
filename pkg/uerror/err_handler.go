@@ -28,6 +28,9 @@ func JSONHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 				message = he.Error()
 			}
 			code = message
+			if httpCode == 404 {
+				message = "Route " + message
+			}
 		case *UError:
 
 			u := cause.(*UError)

@@ -4,19 +4,25 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/messager"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/pipeliner"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/workflower"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/web"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/cheerego/uci/pkg/log/backend"
 	"github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/go-co-op/gocron"
+	"github.com/go-playground/validator"
+	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
+	"gopkg.in/olahol/melody.v1"
+	http2 "net/http"
 	"time"
 )
 
@@ -56,11 +62,36 @@ func (a *Application) startHttp() error {
 	o := http.NewEcho()
 	o.Use(uctx.ContextMiddleware)
 	o.Debug = true
+	o.Validator = NewRequestValidator()
 
 	o.HTTPErrorHandler = uerror.JSONHttpErrorHandler(o)
-	web.Route(o)
-	web.WS(o)
+
+	o.GET("/", func(ctx echo.Context) error {
+		return ctx.String(200, "Hello World, UCI MESSAGING SERVER")
+	})
+
+	workflower.Route(o)
+	messager.Route(o)
+	pipeliner.Route(o)
+
+	WS(o)
 	return o.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
+}
+
+type RequestValidator struct {
+	validator *validator.Validate
+}
+
+func NewRequestValidator() *RequestValidator {
+	return &RequestValidator{validator: validator.New()}
+}
+
+func (cv *RequestValidator) Validate(i interface{}) error {
+	if err := cv.validator.Struct(i); err != nil {
+		// Optionally, you could return the error to give each route more control over the status code
+		return echo.NewHTTPError(http2.StatusBadRequest, err.Error())
+	}
+	return nil
 }
 
 func (a *Application) startGrpc() error {
@@ -94,4 +125,32 @@ func (a *Application) register() error {
 	}
 
 	return nil
+}
+
+func WS(r *echo.Echo) {
+	m := melody.New()
+
+	r.GET("/uci/ws", func(c echo.Context) error {
+		m.HandleRequest(c.Response().Writer, c.Request())
+		return nil
+	})
+
+	m.HandlePong(func(session *melody.Session) {
+
+	})
+	m.HandleConnect(func(session *melody.Session) {
+
+	})
+	m.HandleClose(func(session *melody.Session, i int, s string) error {
+		return nil
+	})
+	m.HandleDisconnect(func(session *melody.Session) {
+
+	})
+	m.HandleSentMessage(func(session *melody.Session, bytes []byte) {
+
+	})
+	m.HandleMessage(func(s *melody.Session, msg []byte) {
+		m.Broadcast(msg)
+	})
 }

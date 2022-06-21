@@ -1,10 +1,10 @@
-package messging
+package web
 
 //func Publish(c echo.Context) error {
 //	payload := c.QueryParam("payload")
 //	name := c.Param("name")
 //
-//	err := service.Services.MessagingService.Publish(name, payload)
+//	err := facade.Services.MessagingService.Publish(name, payload)
 //	if err != nil {
 //		return err
 //	}

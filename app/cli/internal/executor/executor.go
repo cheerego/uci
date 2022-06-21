@@ -37,13 +37,13 @@ func (o *Executor) Exec(ctx context.Context, letterString string) {
 	case letter.StartAction:
 		p, err := l.StartPipelinePayload()
 		if err != nil {
-			log.L().Error("parse start pipeline payload err", zap.Error(err))
+			log.L().Error("parse start pipeliner payload err", zap.Error(err))
 			return
 		}
 		go func() {
 			err := o.HostExecutor.Start(ctx, p)
 			if err != nil {
-				log.L().Error("after start", zap.String("pipeline", p.LogName()), zap.Error(err))
+				log.L().Error("after start", zap.String("pipeliner", p.LogName()), zap.Error(err))
 				return
 			}
 		}()

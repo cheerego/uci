@@ -41,7 +41,7 @@ func ReportRawlog(ctx context.Context, uuid string, append bool, raw string) err
 		SetQueryParams(map[string]string{
 			"append": strconv.FormatBool(append),
 		}).
-		Post(host.Host() + "/api/v1/pipeline/report/log/raw")
+		Post(host.Host() + "/api/v1/pipeliner/report/log/raw")
 
 	if err != nil {
 		err := errors.Wrapf(err, "url: %s, body: %v, queryParam: %v, result: %v", resp.Request.URL, resp.Request.Body, resp.Request.QueryParam, result)

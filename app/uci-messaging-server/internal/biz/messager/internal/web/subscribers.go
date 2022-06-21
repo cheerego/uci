@@ -1,4 +1,4 @@
-package messging
+package web
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
