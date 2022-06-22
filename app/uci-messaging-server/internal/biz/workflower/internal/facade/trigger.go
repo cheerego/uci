@@ -3,9 +3,11 @@ package facade
 import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/phaser"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
@@ -38,6 +40,18 @@ func Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*wor
 	//	return nil
 	//}
 	//defer rlock.Unlock()
+	key := locks.GetPipelineLifecycleLockKey(p.ID)
+	rlock := storage.Godisson().NewRLock(key)
+	err = rlock.TryLock(-1, -1)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_, err := rlock.Unlock()
+		if err != nil {
+			log.L().Error("queuing phaser unlock mutex err", zap.Uint32("pipeliner", p.ID), zap.Error(err))
+		}
+	}()
 
 	err = phaser.Phases[pipeline.BuildQueuing].Exec(ctx, p)
 	if err != nil {

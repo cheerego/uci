@@ -21,18 +21,18 @@ func NewWaitForBorrowingPhase() *WaitForBorrowingPhase {
 }
 
 func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
-	mutex := storage.Godisson().NewMutex(locks.GetPipelineLifecycleLockKey(p.ID))
-	err := mutex.TryLock(-1, -1)
+	key := locks.GetPipelineLifecycleLockKey(p.ID)
+	rlock := storage.Godisson().NewRLock(key)
+	err := rlock.TryLock(-1, -1)
 	if err != nil {
 		return err
 	}
 	defer func() {
-		_, err := mutex.Unlock()
+		_, err := rlock.Unlock()
 		if err != nil {
-			log.L().Error("borrow phaser unlock mutex err", zap.Uint32("pipeliner", p.ID), zap.Error(err))
+			log.L().Error("queuing phaser unlock mutex err", zap.Uint32("pipeliner", p.ID), zap.Error(err))
 		}
 	}()
-
 	p, err = service.Services.PipelineService.FindById(ctx, p.ID)
 	if err != nil {
 		return err
