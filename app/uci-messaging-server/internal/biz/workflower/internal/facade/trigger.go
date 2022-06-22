@@ -32,14 +32,28 @@ func Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*wor
 		return err
 	}
 
+	//rlock := storage.Godisson().NewRLock(locks.GetPipelineLifecycleLockKey(p.ID))
+	//err = rlock.TryLock(-1, -1)
+	//if err != nil {
+	//	return nil
+	//}
+	//defer rlock.Unlock()
+
 	err = phaser.Phases[pipeline.BuildQueuing].Exec(ctx, p)
 	if err != nil {
-		log.L().Info("queuing phaser", zap.Error(err))
+		log.L().Info("build queuing phase", zap.Error(err))
+		return nil
 	}
 
 	err = phaser.Phases[pipeline.WaitForBorrowing].Exec(ctx, p)
 	if err != nil {
-		log.L().Info("waiting for borrowing phaser", zap.Error(err))
+		log.L().Info("wait for borrowing phase", zap.Error(err))
+		return nil
+	}
+
+	err = phaser.Phases[pipeline.WaitForDispatching].Exec(ctx, p)
+	if err != nil {
+		log.L().Info("wait for dispatching phase", zap.Error(err))
 	}
 
 	//runner, err := Services.DispatchService.TryQueuingBorrowRunner(ctx, p)

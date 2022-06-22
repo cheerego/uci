@@ -13,14 +13,14 @@ import (
 	"time"
 )
 
-type WaitForBorrowing struct {
+type WaitForBorrowingPhase struct {
 }
 
-func NewWaitForBorrowing() *WaitForBorrowing {
-	return &WaitForBorrowing{}
+func NewWaitForBorrowingPhase() *WaitForBorrowingPhase {
+	return &WaitForBorrowingPhase{}
 }
 
-func (b *WaitForBorrowing) Exec(ctx context.Context, p *pipeline.Pipeline) error {
+func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	mutex := storage.Godisson().NewMutex(locks.GetPipelineLifecycleLockKey(p.ID))
 	err := mutex.TryLock(-1, -1)
 	if err != nil {
@@ -64,7 +64,7 @@ func (b *WaitForBorrowing) Exec(ctx context.Context, p *pipeline.Pipeline) error
 
 // tryBorrowRunner
 // CCI 归还节点会归还失败，为什么，怎么避免归还节点失败的问题? 如果无法处理，哪改如何进行兜底设计
-func (b *WaitForBorrowing) tryBorrowRunner(ctx context.Context) (*runner.Runner, error) {
+func (b *WaitForBorrowingPhase) tryBorrowRunner(ctx context.Context) (*runner.Runner, error) {
 	idles, err := service.Services.RunnerService.FindIdles(ctx)
 	if len(idles) == 0 {
 		return nil, e.ErrBorrowRunnerNoIdle.WithStack()

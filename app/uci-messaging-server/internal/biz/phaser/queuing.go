@@ -21,13 +21,13 @@ func NewQueuingPhase() *QueuingPhase {
 // 将任务状态由 BuildQueuing -> WaitForBorrowing
 func (q *QueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	key := locks.GetPipelineLifecycleLockKey(p.ID)
-	mutex := storage.Godisson().NewMutex(key)
-	err := mutex.TryLock(-1, -1)
+	rlock := storage.Godisson().NewRLock(key)
+	err := rlock.TryLock(-1, -1)
 	if err != nil {
 		return err
 	}
 	defer func() {
-		_, err := mutex.Unlock()
+		_, err := rlock.Unlock()
 		if err != nil {
 			log.L().Error("queuing phaser unlock mutex err", zap.Uint32("pipeliner", p.ID), zap.Error(err))
 		}
