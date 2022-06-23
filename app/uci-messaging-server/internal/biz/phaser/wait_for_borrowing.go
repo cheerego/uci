@@ -30,7 +30,7 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 	defer func() {
 		_, err := rlock.Unlock()
 		if err != nil {
-			log.L().Error("queuing phaser unlock mutex err", zap.Uint32("pipeliner", p.ID), zap.Error(err))
+			log.L().Error("wait for borrowing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
 		}
 	}()
 	p, err = service.Services.PipelineService.FindById(ctx, p.ID)
@@ -43,10 +43,10 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 
 	borrowRunner, err := b.tryBorrowRunner(ctx)
 	if err != nil {
-		log.L().Info("pipeliner borrow runner err", zap.String("pipeliner", p.LogString()), zap.Error(err))
+		log.L().Info("pipeline borrow runner err", zap.String("pipeline", p.LogString()), zap.Error(err))
 		return err
 	}
-	log.L().Info("pipeliner borrow runner success", zap.String("pipeliner", p.LogString()), zap.Uint32("runner_id", borrowRunner.ID))
+	log.L().Info("pipeline borrow runner success, WaitForBorrowing -> WaitForDispatching", zap.String("pipeline", p.LogString()), zap.Uint32("runner_id", borrowRunner.ID))
 	// 借到机器了
 	// 更新流水线相关数据
 	// runnerId，status，last_dispatched_at

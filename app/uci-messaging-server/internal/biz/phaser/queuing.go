@@ -43,6 +43,6 @@ func (q *QueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	if err != nil {
 		return err
 	}
-	log.L().Info("queuing phaser pipeliner status BuildQueuing -> WaitForBorrowing", zap.String("pipeliner", p.LogString()))
+	log.L().Info("queuing phase pipeline status BuildQueuing -> WaitForBorrowing", zap.String("pipeliner", p.LogString()))
 	return nil
 }

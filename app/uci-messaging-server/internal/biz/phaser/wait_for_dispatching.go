@@ -57,10 +57,10 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 		Timestamp: time.Now(),
 	}
 
-	log.L().Info("publishing start pipeliner letter", zap.String("pipeliner", p.LogString()), zap.Any("letter", l))
+	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.LogString()), zap.Any("letter", l))
 	err = facade.Publish(fmt.Sprintf("%d", p.RunnerId), l)
 	if err != nil {
-		log.L().Info("publishing start pipeliner letter err", zap.String("pipeliner", p.LogString()), zap.Error(err))
+		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.LogString()), zap.Error(err))
 		return nil
 	}
 

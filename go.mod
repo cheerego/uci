@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/TheZeroSlave/zapsentry v1.10.0
 	github.com/caarlos0/env/v6 v6.9.1
-	github.com/cheerego/go-redisson v0.0.5
+	github.com/cheerego/go-redisson v0.0.6
 	github.com/cockroachdb/errors v1.9.0
 	github.com/dimiro1/banner v1.1.0
 	github.com/getsentry/sentry-go v0.12.0
