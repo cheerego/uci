@@ -10,16 +10,16 @@ import (
 	"go.uber.org/zap"
 )
 
-type QueuingPhase struct {
+type BuildQueuingPhase struct {
 }
 
-func NewQueuingPhase() *QueuingPhase {
-	return &QueuingPhase{}
+func NewBuildQueuingPhase() *BuildQueuingPhase {
+	return &BuildQueuingPhase{}
 }
 
 // Exec BuildQueuing 状态的任务会被该方法执行
 // 将任务状态由 BuildQueuing -> WaitForBorrowing
-func (q *QueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
+func (q *BuildQueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	key := locks.GetPipelineLifecycleLockKey(p.ID)
 	rlock := storage.Godisson().NewRLock(key)
 	err := rlock.TryLock(-1, -1)

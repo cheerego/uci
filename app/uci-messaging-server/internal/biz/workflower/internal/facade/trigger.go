@@ -34,12 +34,6 @@ func Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*wor
 		return err
 	}
 
-	//rlock := storage.Godisson().NewRLock(locks.GetPipelineLifecycleLockKey(p.ID))
-	//err = rlock.TryLock(-1, -1)
-	//if err != nil {
-	//	return nil
-	//}
-	//defer rlock.Unlock()
 	key := locks.GetPipelineLifecycleLockKey(p.ID)
 	rlock := storage.Godisson().NewRLock(key)
 	err = rlock.TryLock(-1, -1)

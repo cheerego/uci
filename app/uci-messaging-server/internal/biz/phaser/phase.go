@@ -10,7 +10,7 @@ type Phaser interface {
 }
 
 var Phases = map[pipeline.Status]Phaser{
-	pipeline.BuildQueuing:       NewQueuingPhase(),
+	pipeline.BuildQueuing:       NewBuildQueuingPhase(),
 	pipeline.WaitForBorrowing:   NewWaitForBorrowingPhase(),
 	pipeline.WaitForDispatching: NewWaitForDispatchingPhase(),
 }
