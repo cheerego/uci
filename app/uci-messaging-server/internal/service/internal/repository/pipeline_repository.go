@@ -57,7 +57,7 @@ func (p *PipelineRepository) UpdateEnvs(ctx context.Context, pl *pipeline.Pipeli
 	return tx.RowsAffected, tx.Error
 }
 
-func (p *PipelineRepository) UpdateAfterBorrowedRunner(ctx context.Context, pl *pipeline.Pipeline) (int64, error) {
+func (p *PipelineRepository) Update(ctx context.Context, pl *pipeline.Pipeline) (int64, error) {
 	tx := orm.FromContext(ctx, p.db).Updates(pl)
 	return tx.RowsAffected, tx.Error
 }

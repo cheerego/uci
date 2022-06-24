@@ -10,6 +10,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/ptr"
 	"github.com/cheerego/uci/protocol/letter"
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
@@ -113,18 +114,19 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 		log.L().Info("pipeline borrow runner err", zap.String("pipeline", p.LogString()), zap.Error(err))
 		return err
 	}
-	log.L().Info("pipeline borrow runner success, WaitForBorrowing -> WaitForDispatching", zap.String("pipeline", p.LogString()), zap.Uint32("runner_id", borrowRunner.ID))
+
 	// 借到机器了
 	// 更新流水线相关数据
 	// runnerId，status，last_dispatched_at
 	p.RunnerId = borrowRunner.ID
-	p.BorrowRunnerAt = time.Now()
+	p.BorrowRunnerAt = ptr.Ptr(time.Now())
 	p.Status = pipeline.WaitForDispatching
 
-	_, err = service.Services.PipelineService.UpdateAfterBorrowedRunner(ctx, p)
+	_, err = service.Services.PipelineService.Update(ctx, p)
 	if err != nil {
 		return err
 	}
+	log.L().Info("pipeline borrow runner success, WaitForBorrowing -> WaitForDispatching", zap.String("pipeline", p.LogString()), zap.String("runner", borrowRunner.LogName()))
 
 	return nil
 }

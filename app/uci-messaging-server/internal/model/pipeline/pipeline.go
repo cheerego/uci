@@ -11,8 +11,10 @@ import (
 type Pipeline struct {
 	orm.Model
 	WorkflowId uint32
-	Yaml       string
+	Number     uint32
+	Uuid       string
 	Salt       string
+	Yaml       string
 
 	FirstDispatchedAt *time.Time
 	LastDispatchedAt  *time.Time
@@ -25,7 +27,7 @@ type Pipeline struct {
 
 	StartedAt *time.Time
 	ClosedAt  *time.Time
-	Duration  *time.Time
+	Duration  uint32
 
 	TriggeredCause string
 	FailedCause    string
@@ -34,7 +36,6 @@ type Pipeline struct {
 	Status        Status
 	StatusMessage string
 	RawLog        string
-	Uuid          string
 
 	//CurrentStep      string
 }
@@ -43,7 +44,6 @@ func NewPipeline(workflow *workflow.Workflow) *Pipeline {
 	uid := uuid.NewV4().String()
 	salt := uid[0:8]
 	return &Pipeline{
-		Model:         orm.Model{},
 		WorkflowId:    workflow.ID,
 		Yaml:          workflow.Yaml,
 		Salt:          salt,

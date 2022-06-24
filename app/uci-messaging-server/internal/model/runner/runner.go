@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"fmt"
 	"github.com/cheerego/uci/pkg/orm"
 	"time"
 )
@@ -17,6 +18,10 @@ type Runner struct {
 
 	LastStatusChangedAt time.Time
 	LastDispatchAt      time.Time
+}
+
+func (r *Runner) LogName() string {
+	return fmt.Sprintf("runner-%d-salt-%s-machine-%s", r.ID, r.Salt, r.MachineCode)
 }
 
 func (r Runner) TableName() string {
