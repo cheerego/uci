@@ -69,25 +69,5 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 	if err != nil {
 		log.L().Info("wait for dispatching phase", zap.Error(err))
 	}
-
-	//runner, err := Services.DispatchService.TryQueuingBorrowRunner(ctx, p)
-	//if err != nil {
-	//	return err
-	//}
-	//Services.DispatchService.TryDispatchStartPipelineLetter(ctx, p, runner)
 	return nil
-
-	// 下发指令 同步
-
-	//workflower, err := w.FindById(ctx, workerFlowId)
-	//if err != nil {
-	//	return err
-	//}
-	// 借在线机器机器
-	// 下发指令
-	// 第一次下发时间
-
-	// 借到了机器就改为下发中
-	// 借不到机器就还是等待
-
 }

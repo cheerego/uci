@@ -31,7 +31,7 @@ class PipelineController extends AdminController
         $grid->column('workflow_id', __('Workflow id'));
         $grid->column('yaml', __('Yaml'));
         $grid->column('salt', __('Salt'));
-        $grid->column('last_dispatch_time', __('Last dispatch time'));
+        $grid->column('last_dispatch_at', __('Last dispatch time'));
         $grid->column('dispatch_times', __('Dispatch times'));
         $grid->column('status', __('Status'));
         $grid->column('status_message', __('Status message'));

@@ -14,16 +14,27 @@ type Pipeline struct {
 	Yaml       string
 	Salt       string
 
-	LastDispatchedAt  time.Time
-	DispatchSucceedAt time.Time
-	BorrowRunnerAt    time.Time
-	Envs              Envs
-	Status            Status
-	StatusMessage     string
-	RawLog            string
-	Uuid              string
+	FirstDispatchedAt *time.Time
+	LastDispatchedAt  *time.Time
+	DispatchSucceedAt *time.Time
 	DispatchTimes     uint32
-	RunnerId          uint32
+
+	RunnerId        uint32
+	BorrowRunnerAt  *time.Time
+	ReleaseRunnerAt *time.Time
+
+	StartedAt *time.Time
+	ClosedAt  *time.Time
+	Duration  *time.Time
+
+	TriggeredCause string
+	FailedCause    string
+
+	Envs          Envs
+	Status        Status
+	StatusMessage string
+	RawLog        string
+	Uuid          string
 
 	//CurrentStep      string
 }
