@@ -27,15 +27,6 @@ func ContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func (c *Context) Success() error {
-	rid := c.Request().Header.Get(echo.HeaderXRequestID)
-	return c.JSON(200, NewResult("SUCCESS", "SUCCESS", nil, rid))
-}
-func (c *Context) ParamInt(name string) (int, error) {
-	param := c.Param(name)
-	return strconv.Atoi(param)
-}
-
 func (c *Context) ParamUint32(name string) (uint32, error) {
 	param := c.Param(name)
 	atoi, err := strconv.Atoi(param)
@@ -43,6 +34,14 @@ func (c *Context) ParamUint32(name string) (uint32, error) {
 		return 0, err
 	}
 	return uint32(atoi), nil
+}
+func (c *Context) Success() error {
+	rid := c.Request().Header.Get(echo.HeaderXRequestID)
+	return c.JSON(200, NewResult("SUCCESS", "SUCCESS", nil, rid))
+}
+func (c *Context) ParamInt(name string) (int, error) {
+	param := c.Param(name)
+	return strconv.Atoi(param)
 }
 
 func (c *Context) Data(data any) error {
