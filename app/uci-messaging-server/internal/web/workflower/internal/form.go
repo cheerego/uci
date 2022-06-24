@@ -1,4 +1,4 @@
-package web
+package internal
 
 import "github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 

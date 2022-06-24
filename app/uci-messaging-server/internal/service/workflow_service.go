@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/service/internal/repository"
 )
 
 type WorkflowService struct {

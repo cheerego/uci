@@ -1,5 +1,7 @@
 package service
 
+import "github.com/cheerego/uci/app/uci-messaging-server/internal/service/internal/repository"
+
 var Services *Service
 
 type Service struct {
@@ -14,6 +16,7 @@ func NewService(workflowService *WorkflowService, pipelineService *PipelineServi
 }
 
 func Register() error {
+	repository.Register()
 
 	Services = NewService(
 		NewWorkflowService(),

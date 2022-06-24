@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/messager"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/pipeliner"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/workflower"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/repository"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/facade"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/messager"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/pipeliner"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/workflower"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/cheerego/uci/pkg/log/backend"
@@ -117,10 +117,11 @@ func (a *Application) register() error {
 		return err
 	}
 
-	if err := repository.Register(); err != nil {
+	if err := service.Register(); err != nil {
 		return err
 	}
-	if err := service.Register(); err != nil {
+
+	if err := facade.Register(); err != nil {
 		return err
 	}
 
@@ -131,8 +132,7 @@ func WS(r *echo.Echo) {
 	m := melody.New()
 
 	r.GET("/uci/ws", func(c echo.Context) error {
-		m.HandleRequest(c.Response().Writer, c.Request())
-		return nil
+		return m.HandleRequest(c.Response().Writer, c.Request())
 	})
 
 	m.HandlePong(func(session *melody.Session) {

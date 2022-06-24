@@ -1,8 +1,8 @@
 package pipeliner
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/pipeliner/internal/web/pipeline"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/pipeliner/internal/web/report"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/pipeliner/internal/pipeline"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/pipeliner/internal/report"
 	"github.com/labstack/echo/v4"
 )
 

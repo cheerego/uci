@@ -1,4 +1,4 @@
-package web
+package internal
 
 //func Publish(c echo.Context) error {
 //	payload := c.QueryParam("payload")

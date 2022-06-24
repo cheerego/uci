@@ -1,7 +1,7 @@
-package web
+package internal
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/messager/internal/shim/watcher"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/labstack/echo/v4"
 )

@@ -1,8 +1,8 @@
-package web
+package internal
 
 import (
 	"fmt"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/messager/facade"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/facade"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/labstack/echo/v4"
 )
@@ -15,13 +15,13 @@ func Subscribe(c echo.Context) error {
 
 	if watch == "true" {
 
-		subscribe, err := facade.Subscribe(name)
+		subscribe, err := facade.Facades.MessagingFacade.Subscribe(name)
 		if err != nil {
 			return err
 		}
 		defer func() {
 			log.S().Infof("requestId %s client %s subscribe canceling", rid, name)
-			facade.Unsubscribe(name)
+			facade.Facades.MessagingFacade.Unsubscribe(name)
 			log.S().Infof("requestId %s client %s subscribe canceled", rid, name)
 		}()
 

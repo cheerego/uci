@@ -2,7 +2,6 @@ package facade
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/biz/phaser"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
@@ -13,7 +12,14 @@ import (
 	"go.uber.org/zap"
 )
 
-func Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*workflow.Env) error {
+type WorkflowFacade struct {
+}
+
+func NewWorkflowFacade() *WorkflowFacade {
+	return &WorkflowFacade{}
+}
+
+func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*workflow.Env) error {
 	// 初始化 RequestId
 	ctx = http.WithRequestId(ctx)
 	// 创建 Pipeline
@@ -47,19 +53,19 @@ func Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*wor
 		}
 	}()
 
-	err = phaser.Phases[pipeline.BuildQueuing].Exec(ctx, p)
+	err = Phases[pipeline.BuildQueuing].Exec(ctx, p)
 	if err != nil {
 		log.L().Info("build queuing phase", zap.Error(err))
 		return nil
 	}
 
-	err = phaser.Phases[pipeline.WaitForBorrowing].Exec(ctx, p)
+	err = Phases[pipeline.WaitForBorrowing].Exec(ctx, p)
 	if err != nil {
 		log.L().Info("wait for borrowing phase", zap.Error(err))
 		return nil
 	}
 
-	err = phaser.Phases[pipeline.WaitForDispatching].Exec(ctx, p)
+	err = Phases[pipeline.WaitForDispatching].Exec(ctx, p)
 	if err != nil {
 		log.L().Info("wait for dispatching phase", zap.Error(err))
 	}
