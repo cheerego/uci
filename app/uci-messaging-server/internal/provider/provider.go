@@ -1,4 +1,4 @@
-package storage
+package provider
 
 import (
 	"context"
@@ -36,24 +36,40 @@ func Godisson() *godisson.Godisson {
 }
 
 func Register() error {
-	log.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
-	g, err := orm.New(config.Configs.GormMasterDSN, config.Configs.GormMasterPoolConfig)
+	db, err := initDB()
 	if err != nil {
 		return err
 	}
 
+	rdb, g, err := initRedis()
+	if err != nil {
+		return err
+	}
+
+	Storages = NewStorage(db, rdb, g)
+	return nil
+}
+
+func initDB() (*gorm.DB, error) {
+	log.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
+	g, err := orm.New(config.Configs.GormMasterDSN, config.Configs.GormMasterPoolConfig)
+	if err != nil {
+		return nil, err
+	}
+	return g, nil
+}
+
+func initRedis() (*redis.Client, *godisson.Godisson, error) {
 	// create redis client
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	_, err = rdb.Ping(context.TODO()).Result()
+	_, err := rdb.Ping(context.TODO()).Result()
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
-
 	newGodisson := godisson.NewGodisson(rdb)
-	Storages = NewStorage(g, rdb, newGodisson)
-	return nil
+	return rdb, newGodisson, nil
 }
