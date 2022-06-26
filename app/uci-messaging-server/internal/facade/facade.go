@@ -3,14 +3,15 @@ package facade
 var Facades *Facade
 
 type Facade struct {
-	MessagingFacade *MessagingFacade
-	WorkflowFacade  *WorkflowFacade
-	AmqpFacade      *AmqpFacade
-	QueueFacade     *QueueFacade
+	MessagingFacade  *MessagingFacade
+	WorkflowFacade   *WorkflowFacade
+	AmqpFacade       *AmqpFacade
+	RedisQueueFacade *RedisQueueFacade
+	LockKeyFacade    *LockKeyFacade
 }
 
-func NewFacade(messagingFacade *MessagingFacade, workflowFacade *WorkflowFacade, amqpFacade *AmqpFacade, queueFacade *QueueFacade) *Facade {
-	return &Facade{MessagingFacade: messagingFacade, WorkflowFacade: workflowFacade, AmqpFacade: amqpFacade, QueueFacade: queueFacade}
+func NewFacade(messagingFacade *MessagingFacade, workflowFacade *WorkflowFacade, amqpFacade *AmqpFacade, queueFacade *RedisQueueFacade, lockKeyFacade *LockKeyFacade) *Facade {
+	return &Facade{MessagingFacade: messagingFacade, WorkflowFacade: workflowFacade, AmqpFacade: amqpFacade, RedisQueueFacade: queueFacade, LockKeyFacade: lockKeyFacade}
 }
 
 func Register() error {
@@ -18,7 +19,8 @@ func Register() error {
 		NewMessagingFacade(),
 		NewWorkflowFacade(),
 		NewAmqpFacade(),
-		NewQueueFacade(),
+		NewRedisQueueFacade(),
+		NewLockKeyFacade(),
 	)
 	return nil
 }

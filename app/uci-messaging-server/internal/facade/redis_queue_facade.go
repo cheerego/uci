@@ -7,14 +7,14 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 )
 
-type QueueFacade struct {
+type RedisQueueFacade struct {
 }
 
-func NewQueueFacade() *QueueFacade {
-	return &QueueFacade{}
+func NewRedisQueueFacade() *RedisQueueFacade {
+	return &RedisQueueFacade{}
 }
 
-func (q *QueueFacade) PublishBuildQueuingSet(ctx context.Context, p ...*pipeline.Pipeline) (int64, error) {
+func (q *RedisQueueFacade) PublishBuildQueuingSet(ctx context.Context, p ...*pipeline.Pipeline) (int64, error) {
 	ids := make([]interface{}, len(p))
 	for _, item := range p {
 		ids = append(ids, item.ID)
@@ -22,7 +22,7 @@ func (q *QueueFacade) PublishBuildQueuingSet(ctx context.Context, p ...*pipeline
 	return provider.Redis().SAdd(ctx, q.buildQueuingKey(), ids).Result()
 }
 
-func (q *QueueFacade) PublishWaitForBorrowingSet(ctx context.Context, p ...*pipeline.Pipeline) (int64, error) {
+func (q *RedisQueueFacade) PublishWaitForBorrowingSet(ctx context.Context, p ...*pipeline.Pipeline) (int64, error) {
 	ids := make([]interface{}, len(p))
 	for _, item := range p {
 		ids = append(ids, item.ID)
@@ -30,7 +30,7 @@ func (q *QueueFacade) PublishWaitForBorrowingSet(ctx context.Context, p ...*pipe
 	return provider.Redis().SAdd(ctx, q.waitForBorrowingKey(), ids).Result()
 }
 
-func (q *QueueFacade) PublishWaitForDispatchingSet(ctx context.Context, p ...*pipeline.Pipeline) (int64, error) {
+func (q *RedisQueueFacade) PublishWaitForDispatchingSet(ctx context.Context, p ...*pipeline.Pipeline) (int64, error) {
 	ids := make([]interface{}, len(p))
 	for _, item := range p {
 		ids = append(ids, item.ID)
@@ -38,18 +38,18 @@ func (q *QueueFacade) PublishWaitForDispatchingSet(ctx context.Context, p ...*pi
 	return provider.Redis().SAdd(ctx, q.waitForDispatchingKey(), ids).Result()
 }
 
-func (q *QueueFacade) buildQueuingKey() string {
+func (q *RedisQueueFacade) buildQueuingKey() string {
 	return q.key(pipeline.BuildQueuing)
 }
 
-func (q *QueueFacade) waitForBorrowingKey() string {
+func (q *RedisQueueFacade) waitForBorrowingKey() string {
 	return q.key(pipeline.WaitForBorrowing)
 }
 
-func (q *QueueFacade) waitForDispatchingKey() string {
+func (q *RedisQueueFacade) waitForDispatchingKey() string {
 	return q.key(pipeline.WaitForDispatching)
 }
 
-func (q *QueueFacade) key(s pipeline.Status) string {
+func (q *RedisQueueFacade) key(s pipeline.Status) string {
 	return fmt.Sprintf("UCI_PIPELINE_%s_SET", string(s))
 }

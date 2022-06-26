@@ -1,6 +1,8 @@
 package service
 
-import "github.com/cheerego/uci/app/uci-messaging-server/internal/service/internal/repository"
+import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/service/internal/repository"
+)
 
 var Services *Service
 

@@ -47,3 +47,8 @@ func (p *PipelineService) UpdateRawlog(ctx context.Context, id uint32, raw strin
 func (p *PipelineService) Update(ctx context.Context, pl *pipeline.Pipeline) (int64, error) {
 	return repository.Repositories.PipelineRepository.Update(ctx, pl)
 }
+
+func (p *PipelineService) FindByStatus(ctx context.Context, s pipeline.Status) ([]*pipeline.Pipeline, error) {
+	return repository.Repositories.PipelineRepository.FindByStatus(ctx, s)
+
+}

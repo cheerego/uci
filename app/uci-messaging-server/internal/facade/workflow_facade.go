@@ -2,7 +2,6 @@ package facade
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
@@ -40,7 +39,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 		return err
 	}
 
-	key := locks.GetPipelineLifecycleLockKey(p.ID)
+	key := Facades.LockKeyFacade.GetPipelineLifecycleLockKey(p.ID)
 	rlock := provider.Godisson().NewRLock(key)
 	err = rlock.TryLock(-1, -1)
 	if err != nil {

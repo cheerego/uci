@@ -61,3 +61,12 @@ func (p *PipelineRepository) Update(ctx context.Context, pl *pipeline.Pipeline) 
 	tx := orm.FromContext(ctx, p.db).Updates(pl)
 	return tx.RowsAffected, tx.Error
 }
+
+func (p *PipelineRepository) FindByStatus(ctx context.Context, s pipeline.Status) ([]*pipeline.Pipeline, error) {
+	m := make([]*pipeline.Pipeline, 0)
+	err := orm.FromContext(ctx, p.db).Where("status = ?", s).Find(&m).Error
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
