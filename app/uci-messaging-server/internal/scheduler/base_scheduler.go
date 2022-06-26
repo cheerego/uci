@@ -52,7 +52,8 @@ func NewScheduler() (*Scheduler, error) {
 }
 
 func (s *Scheduler) Start() {
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealCheckBuildQueuingScheduler()).Do)
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealBuildQueuingScheduler()).Do)
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealWaitForBorrowing()).Do)
 	s.Scheduler.StartBlocking()
 }
 

@@ -9,18 +9,18 @@ import (
 	"go.uber.org/zap"
 )
 
-type RevealCheckBuildQueuingScheduler struct {
+type RevealBuildQueuingScheduler struct {
 }
 
-func NewRevealCheckBuildQueuingScheduler() *RevealCheckBuildQueuingScheduler {
-	return &RevealCheckBuildQueuingScheduler{}
+func NewRevealBuildQueuingScheduler() *RevealBuildQueuingScheduler {
+	return &RevealBuildQueuingScheduler{}
 }
 
-func (r *RevealCheckBuildQueuingScheduler) Enable() (bool, string) {
-	return true, facade.Facades.LockKeyFacade.GetCheckBuildQueuingSchedulerLockKey()
+func (r *RevealBuildQueuingScheduler) Enable() (bool, string) {
+	return true, facade.Facades.LockKeyFacade.GetRevealBuildQueuingSchedulerLockKey()
 }
 
-func (r *RevealCheckBuildQueuingScheduler) Exec() {
+func (r *RevealBuildQueuingScheduler) Exec() {
 	ctx := context.TODO()
 	pipelines, err := service.Services.PipelineService.FindByStatus(ctx, pipeline.BuildQueuing)
 	if err != nil {
