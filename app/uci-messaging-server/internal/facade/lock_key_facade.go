@@ -1,6 +1,9 @@
 package facade
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
+)
 
 type LockKeyFacade struct {
 }
@@ -16,10 +19,12 @@ func (l *LockKeyFacade) GetPipelineLifecycleLockKey(pipelineId uint32) string {
 func (l *LockKeyFacade) GetRunnerBorrowLockKey(runnerId uint32) string {
 	return fmt.Sprintf("uci-messaging-server:lock:borrow:runner-%d", runnerId)
 }
-func (l *LockKeyFacade) GetRevealBuildQueuingSchedulerLockKey() string {
-	return fmt.Sprintf("uci-messaging-server:lock:cron:reveal-build-queuing")
+
+// 定时任务
+func (l *LockKeyFacade) GetRevealPipelineStatusSchedulerLockKey(status pipeline.Status) string {
+	return fmt.Sprintf("uci-messaging-server:lock:cron:reveal-%s", string(status))
 }
 
-func (l *LockKeyFacade) GetRevealWaitForBorrowingLockKey() string {
-	return fmt.Sprintf("uci-messaging-server:lock:cron:reveal-wait-for-borrowing")
+func (l *LockKeyFacade) GetSmembersWaitForBuildQueuingLockKey(status pipeline.Status) string {
+	return fmt.Sprintf("uci-messaging-server:lock:cron:smembers-%s", string(status))
 }

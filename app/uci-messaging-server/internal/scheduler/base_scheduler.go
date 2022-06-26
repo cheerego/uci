@@ -1,6 +1,7 @@
 package scheduler
 
 import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/go-co-op/gocron"
@@ -10,8 +11,8 @@ import (
 )
 
 type IScheduler interface {
-	Enable() (bool, string)
-	Exec()
+	Enable(params ...interface{}) (bool, string)
+	Exec(params ...interface{})
 }
 
 type BaseScheduler struct {
@@ -22,8 +23,8 @@ func NewBaseScheduler(IScheduler IScheduler) *BaseScheduler {
 	return &BaseScheduler{IScheduler: IScheduler}
 }
 
-func (b *BaseScheduler) Do() {
-	enable, lockKey := b.IScheduler.Enable()
+func (b *BaseScheduler) Do(params ...interface{}) {
+	enable, lockKey := b.IScheduler.Enable(params)
 	if enable {
 		mutex := provider.Godisson().NewMutex(lockKey)
 		err := mutex.TryLock(-1, -1)
@@ -32,7 +33,7 @@ func (b *BaseScheduler) Do() {
 		}
 		defer mutex.Unlock()
 	}
-	b.IScheduler.Exec()
+	b.IScheduler.Exec(params...)
 }
 
 type Scheduler struct {
@@ -52,8 +53,15 @@ func NewScheduler() (*Scheduler, error) {
 }
 
 func (s *Scheduler) Start() {
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealBuildQueuingScheduler()).Do)
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealWaitForBorrowing()).Do)
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.BuildQueuing)
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.BuildQueuing)
+
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.WaitForBorrowing)
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.WaitForBorrowing)
+
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.WaitForDispatching)
+	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.WaitForDispatching)
+
 	s.Scheduler.StartBlocking()
 }
 
