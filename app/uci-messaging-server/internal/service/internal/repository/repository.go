@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 )
 
 var Repositories *Repository
@@ -18,9 +18,9 @@ func NewRepository(workflowRepository *WorkflowRepository, pipelineRepository *P
 
 func Register() error {
 	Repositories = NewRepository(
-		NewWorkflowRepository(storage.MasterDB()),
-		NewPipelineRepository(storage.MasterDB()),
-		NewRunnerRepository(storage.MasterDB()),
+		NewWorkflowRepository(provider.MasterDB()),
+		NewPipelineRepository(provider.MasterDB()),
+		NewRunnerRepository(provider.MasterDB()),
 	)
 	return nil
 }

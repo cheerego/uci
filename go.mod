@@ -4,12 +4,13 @@ go 1.18
 
 require (
 	github.com/TheZeroSlave/zapsentry v1.10.0
+	github.com/assembla/cony v0.3.2
 	github.com/caarlos0/env/v6 v6.9.1
 	github.com/cheerego/go-redisson v0.0.6
 	github.com/cockroachdb/errors v1.9.0
 	github.com/dimiro1/banner v1.1.0
 	github.com/getsentry/sentry-go v0.12.0
-	github.com/go-co-op/gocron v1.13.0
+	github.com/go-co-op/gocron v1.14.0
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
@@ -62,7 +63,8 @@ require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/testify v1.7.1 // indirect
+	github.com/streadway/amqp v1.0.0 // indirect
+	github.com/stretchr/testify v1.7.2 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/tklauser/numcpus v0.4.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

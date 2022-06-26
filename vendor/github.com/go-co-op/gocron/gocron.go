@@ -12,8 +12,29 @@ import (
 	"reflect"
 	"regexp"
 	"runtime"
+	"sync"
 	"time"
 )
+
+// PanicHandlerFunc represents a type that can be set to handle panics occurring
+// during job execution.
+type PanicHandlerFunc func(jobName string, recoverData interface{})
+
+// The global panic handler
+var (
+	panicHandler      PanicHandlerFunc
+	panicHandlerMutex = sync.RWMutex{}
+)
+
+// SetPanicHandler sets the global panicHandler to the given function.
+// Leaving it nil or setting it to nil disables automatic panic handling.
+// If the panicHandler is not nil, any panic that occurs during executing a job will be recovered
+// and the panicHandlerFunc will be called with the job's name and the recover data.
+func SetPanicHandler(handler PanicHandlerFunc) {
+	panicHandlerMutex.Lock()
+	defer panicHandlerMutex.Unlock()
+	panicHandler = handler
+}
 
 // Error declarations for gocron related errors
 var (
@@ -30,6 +51,7 @@ var (
 	ErrInvalidDayOfMonthEntry           = errors.New("only days 1 through 28 are allowed for monthly schedules")
 	ErrTagsUnique                       = func(tag string) error { return fmt.Errorf("a non-unique tag was set on the job: %s", tag) }
 	ErrWrongParams                      = errors.New("wrong list of params")
+	ErrDoWithJobDetails                 = errors.New("DoWithJobDetails expects a function whose last parameter is a gocron.Job")
 	ErrUpdateCalledWithoutJob           = errors.New("a call to Scheduler.Update() requires a call to Scheduler.Job() first")
 	ErrCronParseFailure                 = errors.New("cron expression failed to be parsed")
 	ErrInvalidDaysOfMonthDuplicateValue = errors.New("duplicate days of month is not allowed in Month() and Months() methods")
@@ -65,6 +87,12 @@ const (
 	duration
 	crontab
 )
+
+func callJobFunc(jobFunc interface{}) {
+	if jobFunc != nil {
+		reflect.ValueOf(jobFunc).Call([]reflect.Value{})
+	}
+}
 
 func callJobFuncWithParams(jobFunc interface{}, params []interface{}) {
 	f := reflect.ValueOf(jobFunc)

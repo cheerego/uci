@@ -11,28 +11,28 @@ import (
 	"gorm.io/gorm"
 )
 
-var Storages *Storage
+var Providers *Provider
 
-type Storage struct {
+type Provider struct {
 	masterDB *gorm.DB
 	redis    *redis.Client
 	godisson *godisson.Godisson
 }
 
-func NewStorage(masterDB *gorm.DB, redis *redis.Client, godisson *godisson.Godisson) *Storage {
-	return &Storage{masterDB: masterDB, redis: redis, godisson: godisson}
+func NewStorage(masterDB *gorm.DB, redis *redis.Client, godisson *godisson.Godisson) *Provider {
+	return &Provider{masterDB: masterDB, redis: redis, godisson: godisson}
 }
 
 func MasterDB() *gorm.DB {
-	return Storages.masterDB
+	return Providers.masterDB
 }
 
 func Redis() *redis.Client {
-	return Storages.redis
+	return Providers.redis
 }
 
 func Godisson() *godisson.Godisson {
-	return Storages.godisson
+	return Providers.godisson
 }
 
 func Register() error {
@@ -46,7 +46,7 @@ func Register() error {
 		return err
 	}
 
-	Storages = NewStorage(db, rdb, g)
+	Providers = NewStorage(db, rdb, g)
 	return nil
 }
 

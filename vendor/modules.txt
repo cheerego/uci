@@ -1,6 +1,9 @@
 # github.com/TheZeroSlave/zapsentry v1.10.0
 ## explicit; go 1.17
 github.com/TheZeroSlave/zapsentry
+# github.com/assembla/cony v0.3.2
+## explicit
+github.com/assembla/cony
 # github.com/caarlos0/env/v6 v6.9.1
 ## explicit; go 1.17
 github.com/caarlos0/env/v6
@@ -59,7 +62,7 @@ github.com/getsentry/sentry-go
 github.com/getsentry/sentry-go/internal/crypto/randutil
 github.com/getsentry/sentry-go/internal/debug
 github.com/getsentry/sentry-go/internal/ratelimit
-# github.com/go-co-op/gocron v1.13.0
+# github.com/go-co-op/gocron v1.14.0
 ## explicit; go 1.17
 github.com/go-co-op/gocron
 # github.com/go-ole/go-ole v1.2.6
@@ -197,7 +200,10 @@ github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/stretchr/testify v1.7.1
+# github.com/streadway/amqp v1.0.0
+## explicit; go 1.10
+github.com/streadway/amqp
+# github.com/stretchr/testify v1.7.2
 ## explicit; go 1.13
 # github.com/tklauser/go-sysconf v0.3.10
 ## explicit; go 1.13

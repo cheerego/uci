@@ -5,8 +5,8 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
@@ -41,7 +41,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 	}
 
 	key := locks.GetPipelineLifecycleLockKey(p.ID)
-	rlock := storage.Godisson().NewRLock(key)
+	rlock := provider.Godisson().NewRLock(key)
 	err = rlock.TryLock(-1, -1)
 	if err != nil {
 		return err

@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/facade"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/scheduler"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/messager"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/pipeliner"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/workflower"
@@ -16,14 +17,12 @@ import (
 	"github.com/cheerego/uci/pkg/log/backend"
 	"github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
-	"github.com/go-co-op/gocron"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/olahol/melody.v1"
 	http2 "net/http"
-	"time"
 )
 
 func init() {
@@ -99,12 +98,16 @@ func (a *Application) startGrpc() error {
 }
 
 func (a *Application) startCron() error {
-	location, err := time.LoadLocation("Asia/Shanghai")
+	s, err := scheduler.NewScheduler()
 	if err != nil {
 		return err
 	}
-	s := gocron.NewScheduler(location)
-	s.StartBlocking()
+	go func() {
+		killSignal := signal.KillSignal()
+		<-killSignal
+		s.Scheduler.Stop()
+	}()
+	s.Start()
 	return nil
 }
 
@@ -113,7 +116,7 @@ func (a *Application) register() error {
 		return err
 	}
 
-	if err := storage.Register(); err != nil {
+	if err := provider.Register(); err != nil {
 		return err
 	}
 

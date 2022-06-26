@@ -7,8 +7,8 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/locks"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/storage"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/ptr"
 	"github.com/cheerego/uci/protocol/letter"
@@ -36,7 +36,7 @@ func NewWaitForDispatchingPhase() *WaitForDispatchingPhase {
 
 func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	key := locks.GetPipelineLifecycleLockKey(p.ID)
-	rlock := storage.Godisson().NewRLock(key)
+	rlock := provider.Godisson().NewRLock(key)
 	err := rlock.TryLock(-1, -1)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func NewWaitForBorrowingPhase() *WaitForBorrowingPhase {
 
 func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	key := locks.GetPipelineLifecycleLockKey(p.ID)
-	rlock := storage.Godisson().NewRLock(key)
+	rlock := provider.Godisson().NewRLock(key)
 	err := rlock.TryLock(-1, -1)
 	if err != nil {
 		return err
@@ -111,7 +111,7 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 
 	borrowRunner, err := b.tryBorrowRunner(ctx)
 	if err != nil {
-		log.L().Info("pipeline borrow runner err", zap.String("pipeline", p.LogString()), zap.Error(err))
+		log.L().Error("pipeline borrow runner err", zap.String("pipeline", p.LogString()), zap.Error(err))
 		return err
 	}
 
@@ -139,7 +139,7 @@ func (b *WaitForBorrowingPhase) tryBorrowRunner(ctx context.Context) (*runner.Ru
 		return nil, e.ErrBorrowRunnerNoIdle.WithStack()
 	}
 	firstRunner := idles[0]
-	mutex := storage.Godisson().NewMutex(locks.GetRunnerBorrowLockKey(firstRunner.ID))
+	mutex := provider.Godisson().NewMutex(locks.GetRunnerBorrowLockKey(firstRunner.ID))
 	err = mutex.TryLock(-1, -1)
 	if err != nil {
 		return nil, err
@@ -166,7 +166,7 @@ func NewBuildQueuingPhase() *BuildQueuingPhase {
 // 将任务状态由 BuildQueuing -> WaitForBorrowing
 func (q *BuildQueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) error {
 	key := locks.GetPipelineLifecycleLockKey(p.ID)
-	rlock := storage.Godisson().NewRLock(key)
+	rlock := provider.Godisson().NewRLock(key)
 	err := rlock.TryLock(-1, -1)
 	if err != nil {
 		return err
