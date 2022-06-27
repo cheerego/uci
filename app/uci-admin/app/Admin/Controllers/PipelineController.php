@@ -37,15 +37,36 @@ class PipelineController extends AdminController
 //        $grid->column('first_dispatched_at', __('First dispatched At'));
 //        $grid->column('last_dispatched_at', __('Last dispatched At'));
         $grid->column('dispatch_times', __('Dispatch times'));
-        $grid->column('status', __('Status'));
+        $grid->column('status', __('Status'))->display(function ($status) {
+            $cause = "warning";
+
+            switch ($status) {
+                case "BUILD_QUEUING":
+                    $cause = "warning";
+                    break;
+                case "BUILD_RUNNING":
+                    $cause = "primary";
+                    break;
+                case "BUILD_SUCCEED":
+                    $cause = "success";
+                    break;
+                case "DISPATCH_TIMEOUTED":
+                case "BORROW_TIMEOUTED":
+                case "BUILD_FAILED":
+                    $cause = "danger";
+                    break;
+            }
+
+
+            return "<p class='label label-$cause' >$status</p>";
+        });
 
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
         $grid->column('deleted_at', __('Deleted at'));
 
 
-
-        $grid->filter(function (Grid\Filter $filter){
+        $grid->filter(function (Grid\Filter $filter) {
             $filter->equal('workflow_id', 'workflow_id');
         });
 
