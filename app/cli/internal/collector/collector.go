@@ -3,13 +3,12 @@ package collector
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
-	"golang.org/x/sync/errgroup"
 	"io"
-	"strings"
 	"sync"
 	"time"
 )
@@ -23,64 +22,46 @@ func NewCollector() *Collector {
 
 func (c *Collector) CollectorRawlog(ctx context.Context, payload *letter.StartPipelinePayload, reader io.Reader) error {
 	r := bufio.NewReader(reader)
-	var rwlock = sync.RWMutex{}
-	strs := make([]string, 1000, 1500)
 
-	g, gctx := errgroup.WithContext(ctx)
+	mutex := sync.Mutex{}
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
 
-	contentLen := 0
-	g.Go(func() error {
-		for {
-			str, err := r.ReadString('\n')
-			if len(str) > 0 {
-				log.L().Info("1", zap.String("pipeline", payload.LogName()), zap.String("str", str))
-				func() {
-					rwlock.Lock()
-					defer rwlock.Unlock()
-					strs = append(strs, str)
-					contentLen++
-				}()
-
-			}
-			if err == io.EOF {
-				log.L().Info("eof", zap.String("pipeline", payload.LogName()), zap.String("str", str))
-				return err
-			}
-			if err != nil {
-				return err
-			}
-		}
-	})
-
-	g.Go(func() error {
-		ticker := time.NewTicker(5 * time.Second)
-		defer ticker.Stop()
-
-		var read = func() {
-			var raw string
-			func() {
-				rwlock.Lock()
-				defer rwlock.Unlock()
-				raw = strings.Join(strs[:contentLen], "")
-				strs = strs[contentLen+1:]
-				contentLen = 0
-			}()
-			log.L().Info("raw", zap.String("pipeline", payload.LogName()), zap.String("raw", raw))
-			requests.ReportRawlog(ctx, payload.Uuid, true, raw)
-		}
-
+	var report bool = false
+	go func() {
 		for {
 			select {
-			case <-gctx.Done():
-				log.L().Info("done", zap.String("pipeline", payload.LogName()))
-				read()
-				return nil
 			case <-ticker.C:
-				log.L().Info("ticker", zap.String("pipeline", payload.LogName()))
-				read()
+				mutex.Lock()
+				report = true
+				mutex.Unlock()
 			}
 		}
+	}()
+	strs := ""
 
-	})
-	return g.Wait()
+	for {
+		if len(strs) > 0 && report {
+			err := requests.ReportRawlog(context.TODO(), payload.Uuid, true, strs)
+			log.L().Error("1", zap.Error(err))
+			strs = ""
+			mutex.Lock()
+			report = false
+			mutex.Unlock()
+		}
+
+		str, err := r.ReadString('\n')
+		if len(str) > 0 {
+			log.L().Info("read", zap.String("str", str))
+			strs = fmt.Sprintf("%s%s", strs, str)
+		}
+		if err == io.EOF {
+			err := requests.ReportRawlog(context.TODO(), payload.Uuid, true, strs)
+			return err
+		}
+		if err != nil {
+			err := requests.ReportRawlog(context.TODO(), payload.Uuid, true, strs)
+			return err
+		}
+	}
 }
