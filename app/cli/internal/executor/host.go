@@ -66,10 +66,10 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 
 	err := h.PrepareWorkspace(payload)
 	if err != nil {
-		log.L().Error("prepare workspace err", zap.String("pipeliner", payload.LogName()), zap.Error(err))
+		log.L().Error("prepare workspace err", zap.String("pipeline", payload.LogName()), zap.Error(err))
 		return err
 	}
-	log.L().Info("pipeliner dir", zap.String("pipeliner", payload.LogName()), zap.String("dir", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt)))
+	log.L().Info("pipeline dir", zap.String("pipeline", payload.LogName()), zap.String("dir", dir.UciPipelineDir(payload.WorkflowId, payload.PipelineId, payload.Salt)))
 
 	workspaceDir := dir.UciTaskWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt)
 
@@ -85,7 +85,7 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 	cmd.Stderr = cmd.Stdout
 	err = cmd.Start()
 	if err != nil {
-		log.S().Error("exec start err", zap.String("pipeliner", payload.LogName()), zap.Error(err))
+		log.S().Error("exec start err", zap.String("pipeline", payload.LogName()), zap.Error(err))
 		return err
 	}
 	collector.NewCollector().CollectorRawlog(ctx, payload, stdPipe)

@@ -3,9 +3,11 @@ package executor
 import (
 	"context"
 	"encoding/json"
+	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
+	"time"
 )
 
 var E = NewExecutor()
@@ -37,13 +39,19 @@ func (o *Executor) Exec(ctx context.Context, letterString string) {
 	case letter.StartAction:
 		p, err := l.StartPipelinePayload()
 		if err != nil {
-			log.L().Error("parse start pipeliner payload err", zap.Error(err))
+			log.L().Error("parse start pipeline payload err", zap.Error(err))
 			return
 		}
 		go func() {
-			err := o.HostExecutor.Start(ctx, p)
+			time.Sleep(2 * time.Second)
+			err := requests.ReportPipelineStatusRunning(ctx, p.Uuid)
 			if err != nil {
-				log.L().Error("after start", zap.String("pipeliner", p.LogName()), zap.Error(err))
+				log.L().Error("report pipeline status RUNNING", zap.String("pipeline", p.LogName()))
+				return
+			}
+			err = o.HostExecutor.Start(ctx, p)
+			if err != nil {
+				log.L().Error("after start", zap.String("pipeline", p.LogName()), zap.Error(err))
 				return
 			}
 		}()
