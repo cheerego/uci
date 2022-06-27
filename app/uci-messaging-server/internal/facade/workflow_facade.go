@@ -54,21 +54,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 		}
 	}()
 
-	err = phase.Phases()[pipeline.BuildQueuing].Exec(ctx, p.ID)
-	if err != nil {
-		log.L().Info("build queuing phase", zap.Error(err))
-		return nil
-	}
+	phase.ListExec(ctx, pipeline.BuildQueuing, p.ID)
 
-	err = phase.Phases()[pipeline.WaitForBorrowing].Exec(ctx, p.ID)
-	if err != nil {
-		log.L().Info("wait for borrowing phase", zap.Error(err))
-		return nil
-	}
-
-	err = phase.Phases()[pipeline.WaitForDispatching].Exec(ctx, p.ID)
-	if err != nil {
-		log.L().Info("wait for dispatching phase", zap.Error(err))
-	}
 	return nil
 }

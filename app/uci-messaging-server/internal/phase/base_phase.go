@@ -60,6 +60,9 @@ func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 	}
 
 	_, err = snapshot.SRem(ctx, b.IPhaser.Status(), p.ID)
+
+	RemainsExec(ctx, b.IPhaser.Status(), p.ID)
+
 	return err
 }
 
@@ -71,9 +74,45 @@ func Phases() map[pipeline.Status]*BasePhase {
 	}
 }
 
-func Phase(status pipeline.Status) (*BasePhase, error) {
-	if phase, ok := Phases()[status]; ok {
-		return phase, nil
+func PhaseList() []*BasePhase {
+	return []*BasePhase{
+		NewBasePhase(NewBuildQueuingPhase()),
+		NewBasePhase(NewWaitForBorrowingPhase()),
+		NewBasePhase(NewWaitForDispatchingPhase()),
 	}
-	return nil, errors.Newf("phase not found, status %v", status)
+}
+
+func Remains(status pipeline.Status) []*BasePhase {
+
+	remain := make([]*BasePhase, 0)
+	var add bool = false
+	for _, phase := range PhaseList() {
+		if add {
+			remain = append(remain, phase)
+			continue
+		}
+		if phase.IPhaser.Status() == status {
+			add = true
+			continue
+		}
+	}
+	return remain
+}
+
+func ListExec(ctx context.Context, status pipeline.Status, id uint32) {
+	for _, phase := range PhaseList() {
+		err := phase.Exec(ctx, id)
+		if err != nil {
+			return
+		}
+	}
+}
+
+func RemainsExec(ctx context.Context, status pipeline.Status, id uint32) {
+	for _, phase := range Remains(status) {
+		err := phase.Exec(ctx, id)
+		if err != nil {
+			return
+		}
+	}
 }

@@ -36,7 +36,6 @@ func (s *SmembersPipelineStatusScheduler) Exec(params ...interface{}) {
 		return
 	}
 
-	log.L().Info("scheduler", zap.String("status", string(status)), zap.Any("Ids", ids))
 	publisher := s.SwitchPublisher(status)
 	for _, id := range ids {
 		err := publisher.Publish(amqp.Publishing{
