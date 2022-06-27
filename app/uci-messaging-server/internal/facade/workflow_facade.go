@@ -2,8 +2,10 @@ package facade
 
 import (
 	"context"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/phase"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/pkg/http"
@@ -39,7 +41,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 		return err
 	}
 
-	key := Facades.LockKeyFacade.GetPipelineLifecycleLockKey(p.ID)
+	key := lock.GetPipelineLifecycleLockKey(p.ID)
 	rlock := provider.Godisson().NewRLock(key)
 	err = rlock.TryLock(-1, -1)
 	if err != nil {
@@ -48,23 +50,23 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 	defer func() {
 		_, err := rlock.Unlock()
 		if err != nil {
-			log.L().Error("queuing phaser unlock mutex err", zap.Uint32("pipeliner", p.ID), zap.Error(err))
+			log.L().Error("queuing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
 		}
 	}()
 
-	err = Phases[pipeline.BuildQueuing].Exec(ctx, p)
+	err = phase.Phases()[pipeline.BuildQueuing].Exec(ctx, p.ID)
 	if err != nil {
 		log.L().Info("build queuing phase", zap.Error(err))
 		return nil
 	}
 
-	err = Phases[pipeline.WaitForBorrowing].Exec(ctx, p)
+	err = phase.Phases()[pipeline.WaitForBorrowing].Exec(ctx, p.ID)
 	if err != nil {
 		log.L().Info("wait for borrowing phase", zap.Error(err))
 		return nil
 	}
 
-	err = Phases[pipeline.WaitForDispatching].Exec(ctx, p)
+	err = phase.Phases()[pipeline.WaitForDispatching].Exec(ctx, p.ID)
 	if err != nil {
 		log.L().Info("wait for dispatching phase", zap.Error(err))
 	}

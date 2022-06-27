@@ -14,3 +14,7 @@ func FromContext(ctx context.Context, defaultDB *gorm.DB) *gorm.DB {
 	}
 	return defaultDB
 }
+
+func WithValue(ctx context.Context, defaultDB *gorm.DB) context.Context {
+	return context.WithValue(ctx, key, defaultDB)
+}

@@ -73,7 +73,3 @@ func initRedis() (*redis.Client, *godisson.Godisson, error) {
 	newGodisson := godisson.NewGodisson(rdb)
 	return rdb, newGodisson, nil
 }
-
-//func initCony() error {
-//	client := cony.NewClient(cony.URL())
-//}

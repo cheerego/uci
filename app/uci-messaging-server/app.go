@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/assembla/cony"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/conyer"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/facade"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/scheduler"
@@ -14,6 +16,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/workflower"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/log/backend"
 	"github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
@@ -49,6 +52,7 @@ func (a *Application) Start() error {
 	g.Go(a.startHttp)
 	g.Go(a.startGrpc)
 	g.Go(a.startCron)
+	g.Go(a.startCony)
 	g.Go(func() error {
 		killSignal := signal.KillSignal()
 		<-killSignal
@@ -108,6 +112,16 @@ func (a *Application) startCron() error {
 		s.Scheduler.Stop()
 	}()
 	s.Start()
+	return nil
+}
+func (a *Application) startCony() error {
+	cli := conyer.New(cony.URL(config.Configs.RabbitAddrUrl))
+	for cli.Loop() {
+		select {
+		case err := <-cli.Errors():
+			log.L().Error("cony client err", zap.Error(err))
+		}
+	}
 	return nil
 }
 

@@ -1,27 +1,23 @@
 package messaging
 
-//var Messagings *Messaging
-//
-//type Messaging struct {
-//	Publisher *rabbitmq.Publisher
-//}
-//
-//func (m *Messaging) NewConsumer() (rabbitmq.Consumer, error) {
-//	return rabbitmq.NewConsumer(
-//		config.Configs.RabbitAddrUrl, rabbitmq.Config{},
-//		rabbitmq.WithConsumerOptionsLogging,
-//	)
-//}
-//
-//func NewMessaging(publisher *rabbitmq.Publisher) *Messaging {
-//	return &Messaging{Publisher: publisher}
-//}
-//
-//func init() {
-//	publisher, err := rabbitmq.NewPublisher(
-//		config.Configs.RabbitAddrUrl, rabbitmq.Config{},
-//	)
-//	if err != nil {
-//	}
-//	Messagings = NewMessaging(publisher)
-//}
+import (
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
+	"github.com/cheerego/uci/protocol/letter"
+)
+
+func Publish(clientId string, l *letter.Letter) error {
+	return watcher.Publish(clientId, l)
+
+}
+
+func Subscribe(clientId string) (chan string, error) {
+	return watcher.Subscribe(clientId)
+}
+
+func Load(name string) (any, bool) {
+	return watcher.Load(name)
+}
+
+func Unsubscribe(name string) {
+	watcher.Unsubscribe(name)
+}

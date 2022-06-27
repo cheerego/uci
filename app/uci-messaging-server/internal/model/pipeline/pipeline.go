@@ -21,9 +21,10 @@ type Pipeline struct {
 	DispatchSucceedAt *time.Time
 	DispatchTimes     uint32
 
-	RunnerId        uint32
-	BorrowRunnerAt  *time.Time
-	ReleaseRunnerAt *time.Time
+	RunnerId              uint32
+	FirstBorrowRunnerAt   *time.Time
+	BorrowRunnerSucceedAt *time.Time
+	ReleaseRunnerAt       *time.Time
 
 	StartedAt *time.Time
 	ClosedAt  *time.Time

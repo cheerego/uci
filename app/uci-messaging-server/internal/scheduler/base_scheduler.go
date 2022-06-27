@@ -24,7 +24,7 @@ func NewBaseScheduler(IScheduler IScheduler) *BaseScheduler {
 }
 
 func (b *BaseScheduler) Do(params ...interface{}) {
-	enable, lockKey := b.IScheduler.Enable(params)
+	enable, lockKey := b.IScheduler.Enable(params...)
 	if enable {
 		mutex := provider.Godisson().NewMutex(lockKey)
 		err := mutex.TryLock(-1, -1)

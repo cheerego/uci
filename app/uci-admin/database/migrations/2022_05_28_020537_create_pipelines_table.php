@@ -29,7 +29,8 @@ class CreatePipelinesTable extends Migration
             $table->json("envs")->default("[]");
 
             $table->integer("runner_id")->default(0);
-            $table->timestamp("borrow_runner_at")->nullable();
+            $table->timestamp("first_borrow_runner_at")->nullable();
+            $table->timestamp("borrow_runner_succeed_at")->nullable();
             $table->timestamp("release_runner_at")->nullable();
 
 
@@ -45,8 +46,6 @@ class CreatePipelinesTable extends Migration
             $table->timestamp("first_dispatched_at")->nullable();
             $table->timestamp("last_dispatched_at")->nullable();
             $table->timestamp("dispatch_succeed_at")->nullable();
-
-
 
 
             $table->json("time_consuming")->nullable();
