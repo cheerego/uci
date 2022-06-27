@@ -28,15 +28,17 @@ class PipelineController extends AdminController
         $grid->model()->orderByDesc("id");
 
         $grid->column('id', __('Id'));
+        $grid->column('uuid', __('Uuid'));
         $grid->column('workflow_id', __('Workflow id'));
         $grid->column('yaml', __('Yaml'));
         $grid->column('salt', __('Salt'));
-        $grid->column('last_dispatch_at', __('Last dispatch time'));
+        $grid->column("runner_id", __("Runner Id"));
+        $grid->column("borrow_runner_succeed_at", __("Borrow Runner Succeed At"));
+//        $grid->column('first_dispatched_at', __('First dispatched At'));
+//        $grid->column('last_dispatched_at', __('Last dispatched At'));
         $grid->column('dispatch_times', __('Dispatch times'));
         $grid->column('status', __('Status'));
-        $grid->column('status_message', __('Status message'));
-        $grid->column('uuid', __('Uuid'));
-        $grid->column('raw_log', __('Raw log'));
+
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
         $grid->column('deleted_at', __('Deleted at'));
