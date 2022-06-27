@@ -65,18 +65,18 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	}
 
 	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.LogString()), zap.Any("letter", l))
-	err := messaging.Publish(fmt.Sprintf("%d", p.RunnerId), l)
-	if err != nil {
-		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.LogString()), zap.Error(err))
+	dispatchErr := messaging.Publish(fmt.Sprintf("%d", p.RunnerId), l)
+	if dispatchErr != nil {
+		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.LogString()), zap.String("error", dispatchErr.Error()))
 	} else {
 		p.DispatchSucceedAt = ptr.Ptr(time.Now())
 		p.Status = pipeline.DispatchSucceed
+		log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.LogString()))
 	}
-	_, err = service.Services.PipelineService.Update(ctx, p)
+	_, err := service.Services.PipelineService.Update(ctx, p)
 	if err != nil {
 		return err
 	}
-	log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.LogString()))
-	return nil
+	return dispatchErr
 
 }

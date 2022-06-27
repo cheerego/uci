@@ -27,7 +27,6 @@ func (w *WaitForDispatchingListener) Concurrent() int {
 }
 
 func (w *WaitForDispatchingListener) Handle(msg amqp.Delivery) {
-	log.L().Info("123123", zap.String("body", string(msg.Body)))
 	atoi, err := strconv.Atoi(string(msg.Body))
 	if err != nil {
 		log.L().Error("wait for dispatching consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))

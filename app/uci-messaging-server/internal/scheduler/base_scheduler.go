@@ -53,14 +53,14 @@ func NewScheduler() (*Scheduler, error) {
 }
 
 func (s *Scheduler) Start() {
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.BuildQueuing)
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.BuildQueuing)
+	s.Scheduler.Every(5).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.BuildQueuing)
+	s.Scheduler.Every(5).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.BuildQueuing)
 
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.WaitForBorrowing)
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.WaitForBorrowing)
+	s.Scheduler.Every(5).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.WaitForBorrowing)
+	s.Scheduler.Every(5).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.WaitForBorrowing)
 
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.WaitForDispatching)
-	s.Scheduler.Every(10).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.WaitForDispatching)
+	s.Scheduler.Every(5).Second().Do(NewBaseScheduler(NewRevealPipelineStatusScheduler()).Do, pipeline.WaitForDispatching)
+	s.Scheduler.Every(5).Second().Do(NewBaseScheduler(NewSmembersPipelineStatusScheduler()).Do, pipeline.WaitForDispatching)
 
 	s.Scheduler.StartBlocking()
 }
