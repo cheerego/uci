@@ -1,8 +1,10 @@
 package executor
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/cheerego/uci/app/cli/internal/collector"
 	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
@@ -13,7 +15,7 @@ import (
 var E = NewExecutor()
 
 type IExecutor interface {
-	Start(ctx context.Context, payload *letter.StartPipelinePayload) error
+	Start(ctx context.Context, payload *letter.StartPipelinePayload, pipe *bytes.Buffer) error
 	//PrepareWorkspace(payload *payload.StartPipelinePayload) error
 }
 
@@ -44,16 +46,23 @@ func (o *Executor) Exec(ctx context.Context, letterString string) {
 		}
 		go func() {
 			time.Sleep(2 * time.Second)
-			err := requests.ReportPipelineStatusRunning(ctx, p.Uuid)
+			err := requests.ReportPipelineStatus(ctx, p.Uuid, "BUILD_RUNNING", "")
 			if err != nil {
-				log.L().Error("report pipeline status RUNNING", zap.String("pipeline", p.LogName()))
+				log.L().Error("report pipeline status BUILD_RUNNING", zap.String("pipeline", p.LogName()))
 				return
 			}
-			err = o.HostExecutor.Start(ctx, p)
+			pipe := bytes.NewBufferString("")
+			collector.NewCollector().CollectorRawlog(ctx, p, pipe)
+			err = o.HostExecutor.Start(ctx, p, pipe)
 			if err != nil {
 				log.L().Error("after start", zap.String("pipeline", p.LogName()), zap.Error(err))
+				requests.ReportPipelineStatus(ctx, p.Uuid, "BUILD_FAILED", err.Error())
+				return
+			} else {
+				requests.ReportPipelineStatus(ctx, p.Uuid, "BUILD_SUCCEED", "")
 				return
 			}
+
 		}()
 
 	case letter.StopAction:

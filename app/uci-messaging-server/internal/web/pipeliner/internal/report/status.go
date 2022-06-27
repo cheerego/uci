@@ -23,7 +23,9 @@ func Status(c echo.Context) error {
 		return err
 	}
 	defer mutex.Unlock()
-	_, err = service.Services.PipelineService.UpdateStatus(c.Request().Context(), p, f.Status)
+	p.Status = f.Status
+	p.StatusMessage = f.FailedCause
+	_, err = service.Services.PipelineService.Update(c.Request().Context(), p)
 	if err != nil {
 		return err
 	}

@@ -15,6 +15,7 @@ type (
 		Uuid   string          `json:"uuid"`
 		Status pipeline.Status `json:"status"`
 		//Timestamp time.Time       `json:"timestamp"`
+		FailedCause string `json:"failedCause"`
 	}
 )
 

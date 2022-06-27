@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func ReportPipelineStatusRunning(ctx context.Context, uuid string) error {
+func ReportPipelineStatus(ctx context.Context, uuid string, status string, failedCause string) error {
 	timeout, cancelFunc := context.WithTimeout(ctx, 30*time.Second)
 	defer cancelFunc()
 
@@ -18,9 +18,10 @@ func ReportPipelineStatusRunning(ctx context.Context, uuid string) error {
 	resp, err := client.R().
 		SetContext(timeout).
 		SetBody(map[string]interface{}{
-			"uuid":      uuid,
-			"status":    "RUNNING",
-			"timestamp": time.Now(),
+			"uuid":        uuid,
+			"status":      status,
+			"timestamp":   time.Now(),
+			"failedCause": failedCause,
 		}).
 		SetResult(result).
 		Post(host.Host() + "/api/v1/pipeline/report/status")

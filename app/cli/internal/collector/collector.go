@@ -3,6 +3,7 @@ package collector
 import (
 	"bufio"
 	"context"
+	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
@@ -32,7 +33,7 @@ func (c *Collector) CollectorRawlog(ctx context.Context, payload *letter.StartPi
 		for {
 			str, err := r.ReadString('\n')
 			if len(str) > 0 {
-				log.L().Info("1", zap.String("pipeliner", payload.LogName()), zap.String("str", str))
+				log.L().Info("1", zap.String("pipeline", payload.LogName()), zap.String("str", str))
 				func() {
 					rwlock.Lock()
 					defer rwlock.Unlock()
@@ -42,7 +43,7 @@ func (c *Collector) CollectorRawlog(ctx context.Context, payload *letter.StartPi
 
 			}
 			if err == io.EOF {
-				log.L().Info("eof", zap.String("pipeliner", payload.LogName()), zap.String("str", str))
+				log.L().Info("eof", zap.String("pipeline", payload.LogName()), zap.String("str", str))
 				return err
 			}
 			if err != nil {
@@ -64,17 +65,18 @@ func (c *Collector) CollectorRawlog(ctx context.Context, payload *letter.StartPi
 				strs = strs[contentLen+1:]
 				contentLen = 0
 			}()
-			log.L().Info("raw", zap.String("pipeliner", payload.LogName()), zap.String("raw", raw))
+			log.L().Info("raw", zap.String("pipeline", payload.LogName()), zap.String("raw", raw))
+			requests.ReportRawlog(ctx, payload.Uuid, true, raw)
 		}
 
 		for {
 			select {
 			case <-gctx.Done():
-				log.L().Info("done", zap.String("pipeliner", payload.LogName()))
+				log.L().Info("done", zap.String("pipeline", payload.LogName()))
 				read()
 				return nil
 			case <-ticker.C:
-				log.L().Info("ticker", zap.String("pipeliner", payload.LogName()))
+				log.L().Info("ticker", zap.String("pipeline", payload.LogName()))
 				read()
 			}
 		}

@@ -28,6 +28,7 @@ const DispatchTimeouted Status = "DISPATCH_TIMEOUTED"
 const SelfHostRunnerDispatchTimeouted Status = "SELF_HOST_RUNNER_DISPATCH_TIMEOUTED"
 const NoAvailableRunnerDispatchTimeouted Status = "NO_AVAILABLE_RUNNER_DISPATCH_TIMEOUTED"
 
+const BuildRunning = "BUILD_RUNNING"
 const BuildSucceed Status = "BUILD_SUCCEED"
 const BuildFailed Status = "BUILD_FAILED"
 const BuildTimeouted Status = "BUILD_TIMEOUTED"

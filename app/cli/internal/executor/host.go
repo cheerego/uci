@@ -1,9 +1,9 @@
 package executor
 
 import (
+	"bytes"
 	"context"
 	"fmt"
-	"github.com/cheerego/uci/app/cli/internal/collector"
 	"github.com/cheerego/uci/app/cli/internal/config/dir"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
@@ -62,7 +62,7 @@ func (h *HostExecutor) PrepareEnviron(payload *letter.StartPipelinePayload) []st
 	return pe
 }
 
-func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelinePayload) error {
+func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelinePayload, pipe *bytes.Buffer) error {
 
 	err := h.PrepareWorkspace(payload)
 	if err != nil {
@@ -77,17 +77,18 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 
 	cmd.Env = h.PrepareEnviron(payload)
 	cmd.Dir = workspaceDir
-	stdPipe, err := cmd.StdoutPipe()
-	if err != nil {
-		return err
-	}
-	defer stdPipe.Close()
-	cmd.Stderr = cmd.Stdout
+	//stdPipe, err := cmd.StdoutPipe()
+	//if err != nil {
+	//	return err
+	//}
+	//defer stdPipe.Close()
+
+	cmd.Stdout = pipe
+	cmd.Stderr = pipe
 	err = cmd.Start()
 	if err != nil {
 		log.S().Error("exec start err", zap.String("pipeline", payload.LogName()), zap.Error(err))
 		return err
 	}
-	collector.NewCollector().CollectorRawlog(ctx, payload, stdPipe)
 	return cmd.Wait()
 }

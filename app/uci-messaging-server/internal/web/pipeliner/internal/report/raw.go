@@ -1,6 +1,7 @@
 package report
 
 import (
+	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
 	"github.com/labstack/echo/v4"
@@ -18,7 +19,8 @@ func Raw(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	_, err = service.Services.PipelineService.UpdateRawlog(c.Request().Context(), p.ID, f.Raw)
+	p.RawLog = fmt.Sprintf("%s%s", p.RawLog, f.Raw)
+	_, err = service.Services.PipelineService.Update(c.Request().Context(), p)
 	if err != nil {
 		return err
 	}
