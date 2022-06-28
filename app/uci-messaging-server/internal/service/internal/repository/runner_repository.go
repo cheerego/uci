@@ -26,3 +26,17 @@ func (r *RunnerRepository) FindIdles(ctx context.Context, limit int) ([]*runner.
 	return m, tx.Error
 
 }
+
+func (r *RunnerRepository) UpdateStatus(ctx context.Context, runner *runner.Runner) (int64, error) {
+	tx := orm.FromContext(ctx, r.db).Select("Status").Updates(runner)
+	return tx.RowsAffected, tx.Error
+}
+
+func (r *RunnerRepository) FindByUuid(ctx context.Context, uuid string) (*runner.Runner, error) {
+	var m runner.Runner
+	err := orm.FromContext(ctx, r.db).Where("code = ?", uuid).First(&m, 1).Error
+	if err != nil {
+		return nil, err
+	}
+	return &m, nil
+}

@@ -18,5 +18,6 @@ Route::group([
     $router->post("workflows/{workflow_id}/trigger", "WorkflowController@triggerAction")->name("workflows.trigger.action");
     $router->resource("workflows", WorkflowController::class);
     $router->resource('pipelines', PipelineController::class);
+    $router->resource('runners', RunnerController::class);
 
 });

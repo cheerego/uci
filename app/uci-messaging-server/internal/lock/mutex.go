@@ -13,6 +13,10 @@ func GetRunnerBorrowLockKey(runnerId uint32) string {
 	return fmt.Sprintf("uci-messaging-server:lock:borrow:runner-%d", runnerId)
 }
 
+func GetRunnerDiscoveryKey(runnerId uint32) string {
+	return fmt.Sprintf("uci-messaging-server:discovery:runner:%d", runnerId)
+}
+
 // 定时任务
 func GetRevealPipelineStatusSchedulerLockKey(status pipeline.Status) string {
 	return fmt.Sprintf("uci-messaging-server:lock:cron:reveal-%s", string(status))
