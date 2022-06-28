@@ -12,7 +12,6 @@ import (
 	"golang.org/x/sync/errgroup"
 	"io"
 	"os"
-	"sync"
 	"time"
 )
 
@@ -108,52 +107,50 @@ func (o *Executor) reportPipelineFinished(p *letter.StartPipelinePayload, err er
 
 func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 	r := bufio.NewReader(reader)
-	mutex := sync.Mutex{}
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
 
-	var report bool = false
-	go func() {
+	var rawCh = make(chan string, 100)
+	g, _ := errgroup.WithContext(context.TODO())
+	g.Go(func() error {
+		raws := ""
 		for {
 			select {
-			case <-ticker.C:
-				mutex.Lock()
-				report = true
-				mutex.Unlock()
+			case <-time.After(5 * time.Second):
+				err := requests.ReportRawlog(p.Uuid, true, raws)
+				if err != nil {
+					log.L().Error("1", zap.Error(err))
+				}
+				raws = ""
+			case raw, ok := <-rawCh:
+				if ok {
+					raws = fmt.Sprintf("%s%s", raws, raw)
+				} else {
+					err := requests.ReportRawlog(p.Uuid, true, raws)
+					if err != nil {
+						log.L().Error("1", zap.Error(err))
+					} else {
+						log.L().Info("read raw end")
+					}
+					return nil
+				}
 			}
 		}
-	}()
-	strs := ""
+	})
 
-	for {
-		if len(strs) > 0 && report {
-			err := requests.ReportRawlog(p.Uuid, true, strs)
+	g.Go(func() error {
+		defer close(rawCh)
+		for {
+			str, err := r.ReadString('\n')
+			if len(str) > 0 {
+				rawCh <- str
+			}
+			if err == io.EOF {
+				return nil
+			}
 			if err != nil {
-				log.L().Error("1", zap.Error(err))
+				rawCh <- str
+				return err
 			}
-
-			strs = ""
-			mutex.Lock()
-			report = false
-			mutex.Unlock()
 		}
-
-		str, err := r.ReadString('\n')
-		if len(str) > 0 {
-			log.L().Info("readstring", zap.String("str", str), zap.String("strs", strs))
-			strs = fmt.Sprintf("%s%s", strs, str)
-		}
-		if err == io.EOF {
-			log.L().Info("eof", zap.String("str", str), zap.String("strs", strs))
-			requests.ReportRawlog(p.Uuid, true, strs)
-			return nil
-		}
-		if err != nil {
-			log.L().Info("err", zap.String("str", str), zap.String("strs", strs))
-			requests.ReportRawlog(p.Uuid, true, strs)
-			return err
-		}
-		log.L().Info("3")
-	}
-
+	})
+	return g.Wait()
 }
