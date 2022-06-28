@@ -140,18 +140,16 @@ func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader
 
 		str, err := r.ReadString('\n')
 		if len(str) > 0 {
-			log.L().Info("readstring", zap.String("str", str))
+			log.L().Info("readstring", zap.String("str", str), zap.String("strs", strs))
 			strs = fmt.Sprintf("%s%s", strs, str)
-		} else {
-			log.L().Info("4")
 		}
 		if err == io.EOF {
-			log.L().Info("eof", zap.String("str", str))
+			log.L().Info("eof", zap.String("str", str), zap.String("strs", strs))
 			requests.ReportRawlog(p.Uuid, true, strs)
 			return nil
 		}
 		if err != nil {
-			log.L().Info("err", zap.String("str", str))
+			log.L().Info("err", zap.String("str", str), zap.String("strs", strs))
 			requests.ReportRawlog(p.Uuid, true, strs)
 			return err
 		}
