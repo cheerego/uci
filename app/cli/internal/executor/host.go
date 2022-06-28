@@ -3,11 +3,11 @@ package executor
 import (
 	"context"
 	"fmt"
-	"github.com/cheerego/uci/app/cli/internal/collector"
 	"github.com/cheerego/uci/app/cli/internal/config/dir"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
+	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -62,7 +62,7 @@ func (h *HostExecutor) PrepareEnviron(payload *letter.StartPipelinePayload) []st
 	return pe
 }
 
-func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelinePayload) error {
+func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelinePayload, w io.Writer) error {
 
 	err := h.PrepareWorkspace(payload)
 	if err != nil {
@@ -78,18 +78,17 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 	cmd.Env = h.PrepareEnviron(payload)
 	cmd.Dir = workspaceDir
 
-	r, w, err := os.Pipe()
-	if err != nil {
-		log.L().Error("new pipe err", zap.Error(err))
-		return err
-	}
-	defer r.Close()
-	defer w.Close()
+	//r, w, err := os.Pipe()
+	//if err != nil {
+	//	log.L().Error("new pipe err", zap.Error(err))
+	//	return err
+	//}
+	//defer r.Close()
+	//defer w.Close()
 
 	cmd.Stdout = w
 	cmd.Stderr = w
 	err = cmd.Start()
-	go collector.NewCollector().CollectorRawlog(ctx, payload, r)
 	if err != nil {
 		log.S().Error("exec start err", zap.String("pipeline", payload.LogName()), zap.Error(err))
 		return err
