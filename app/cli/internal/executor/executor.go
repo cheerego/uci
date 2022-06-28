@@ -32,7 +32,7 @@ func NewExecutor() *Executor {
 	}
 }
 
-func (o *Executor) Exec(ctx context.Context, letterString string) {
+func (o *Executor) Exec(letterString string) {
 	var l letter.Letter
 	err := json.Unmarshal([]byte(letterString), &l)
 	if err != nil {
@@ -40,6 +40,7 @@ func (o *Executor) Exec(ctx context.Context, letterString string) {
 		return
 	}
 
+	ctx := context.Background()
 	switch l.Action {
 	case letter.StartAction:
 		p, err := l.StartPipelinePayload()

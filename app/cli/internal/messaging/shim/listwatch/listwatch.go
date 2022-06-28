@@ -21,7 +21,7 @@ type ListWatch struct {
 	client      *http.Client
 }
 
-func (l *ListWatch) MessageChan(ctx context.Context) <-chan string {
+func (l *ListWatch) MessageChan() <-chan string {
 	return l.messagingCh
 }
 

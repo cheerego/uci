@@ -9,6 +9,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Grid\Displayers\Actions;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Encore\Admin\Widgets\Box;
@@ -54,8 +55,6 @@ class WorkflowController extends AdminController
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->add(new TriggerWorkflowPage());
         });
-
-
         return $grid;
     }
 

@@ -13,7 +13,7 @@ import (
 
 type Shimer interface {
 	Listening(ctx context.Context) error
-	MessageChan(ctx context.Context) <-chan string
+	MessageChan() <-chan string
 }
 
 type BaseShimer struct {
@@ -48,12 +48,12 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 		case <-ctx.Done():
 			log.L().Info("base shimer consuming canceled")
 			return uerror.ErrContextCanceledOrTimeout.WithStack()
-		case msg, ok := <-b.Shimer.MessageChan(ctx):
+		case msg, ok := <-b.Shimer.MessageChan():
 			if !ok {
 				return errors.New("list watch consuming select chan return no ok")
 			}
 			log.L().Info("list watch consuming receive message from chan ", zap.String("msg", msg))
-			go executor.E.Exec(ctx, msg)
+			go executor.E.Exec(msg)
 		}
 	}
 }

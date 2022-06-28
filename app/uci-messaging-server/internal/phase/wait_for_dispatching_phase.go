@@ -37,8 +37,7 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 		}
 	}
 
-	log.L().Info("123123", zap.Duration("duration", time.Now().Sub(*p.FirstDispatchedAt)))
-	if -time.Now().Sub(*p.FirstDispatchedAt).Minutes() >= 5 {
+	if time.Now().Unix()-p.FirstDispatchedAt.Unix() >= 5*60 {
 		p.Status = pipeline.DispatchTimeouted
 		_, err := service.Services.PipelineService.Update(ctx, p)
 		if err != nil {

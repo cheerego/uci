@@ -13,5 +13,9 @@ class TriggerWorkflowPage extends RowAction
     {
         return $this->response()->redirect(route(admin_get_route("workflows.trigger.page"),[$model->id]));
     }
+    public function form()
+    {
+        $this->text('file', '请选择文件');
+    }
 
 }
