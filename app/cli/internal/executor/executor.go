@@ -59,10 +59,10 @@ func (o *Executor) Exec(ctx context.Context, letterString string) {
 func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePayload) {
 	var err error
 	defer func() {
-		o.reportPipelineFinished(ctx, p, err)
+		o.reportPipelineFinished(p, err)
 	}()
 	time.Sleep(2 * time.Second)
-	err = o.reportPipelineRunning(ctx, p)
+	err = o.reportPipelineRunning(p)
 	if err != nil {
 		log.L().Error("report pipeline status BUILD_RUNNING", zap.String("pipeline", p.LogName()))
 		return
@@ -73,43 +73,40 @@ func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePaylo
 		return
 	}
 	defer r.Close()
-	defer w.Close()
 
-	g, ctx := errgroup.WithContext(ctx)
+	g, _ := errgroup.WithContext(ctx)
 	g.Go(func() error {
-		return o.reportRawlog(ctx, p, r)
+		return o.reportRawlog(p, r)
 	})
 
 	g.Go(func() error {
-		err = o.HostExecutor.Start(ctx, p, w)
-		if err != nil {
-			log.L().Error("report pipeline finish err", zap.Error(err))
-		}
-		return err
+		defer w.Close()
+		return o.HostExecutor.Start(ctx, p, w)
 	})
 
 	err = g.Wait()
 	if err != nil {
 		log.L().Error("wait group err", zap.Error(err))
 	}
+	log.L().Info("wait group end")
 
 }
 
-func (o *Executor) reportPipelineRunning(ctx context.Context, p *letter.StartPipelinePayload) error {
-	err := requests.ReportPipelineStatus(ctx, p.Uuid, "BUILD_RUNNING", "")
+func (o *Executor) reportPipelineRunning(p *letter.StartPipelinePayload) error {
+	err := requests.ReportPipelineStatus(p.Uuid, "BUILD_RUNNING", "")
 	return err
 }
 
-func (o *Executor) reportPipelineFinished(ctx context.Context, p *letter.StartPipelinePayload, err error) error {
+func (o *Executor) reportPipelineFinished(p *letter.StartPipelinePayload, err error) error {
 	if err != nil {
-		err = requests.ReportPipelineStatus(ctx, p.Uuid, "BUILD_FAILED", err.Error())
+		err = requests.ReportPipelineStatus(p.Uuid, "BUILD_FAILED", err.Error())
 	} else {
-		err = requests.ReportPipelineStatus(ctx, p.Uuid, "BUILD_SUCCEED", "")
+		err = requests.ReportPipelineStatus(p.Uuid, "BUILD_SUCCEED", "")
 	}
 	return err
 }
 
-func (o *Executor) reportRawlog(ctx context.Context, p *letter.StartPipelinePayload, reader io.Reader) error {
+func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 	r := bufio.NewReader(reader)
 	mutex := sync.Mutex{}
 	ticker := time.NewTicker(5 * time.Second)
@@ -130,8 +127,11 @@ func (o *Executor) reportRawlog(ctx context.Context, p *letter.StartPipelinePayl
 
 	for {
 		if len(strs) > 0 && report {
-			err := requests.ReportRawlog(context.TODO(), p.Uuid, true, strs)
-			log.L().Error("1", zap.Error(err))
+			err := requests.ReportRawlog(p.Uuid, true, strs)
+			if err != nil {
+				log.L().Error("1", zap.Error(err))
+			}
+
 			strs = ""
 			mutex.Lock()
 			report = false
@@ -140,16 +140,22 @@ func (o *Executor) reportRawlog(ctx context.Context, p *letter.StartPipelinePayl
 
 		str, err := r.ReadString('\n')
 		if len(str) > 0 {
-			strs = fmt.Sprintf("%s\n%s", strs, str)
+			log.L().Info("readstring", zap.String("str", str))
+			strs = fmt.Sprintf("%s%s", strs, str)
+		} else {
+			log.L().Info("4")
 		}
 		if err == io.EOF {
-			requests.ReportRawlog(context.TODO(), p.Uuid, true, strs)
+			log.L().Info("eof", zap.String("str", str))
+			requests.ReportRawlog(p.Uuid, true, strs)
 			return nil
 		}
 		if err != nil {
-			requests.ReportRawlog(context.TODO(), p.Uuid, true, strs)
+			log.L().Info("err", zap.String("str", str))
+			requests.ReportRawlog(p.Uuid, true, strs)
 			return err
 		}
+		log.L().Info("3")
 	}
 
 }

@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-func ReportPipelineStatus(ctx context.Context, uuid string, status string, failedCause string) error {
-	timeout, cancelFunc := context.WithTimeout(ctx, 30*time.Second)
+func ReportPipelineStatus(uuid string, status string, failedCause string) error {
+	timeout, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelFunc()
 
 	var result = make(map[string]interface{})

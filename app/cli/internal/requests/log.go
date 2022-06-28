@@ -11,8 +11,8 @@ import (
 	"time"
 )
 
-func ReportRawlog(ctx context.Context, uuid string, append bool, raw string) error {
-	timeout, cancelFunc := context.WithTimeout(ctx, 30*time.Second)
+func ReportRawlog(uuid string, append bool, raw string) error {
+	timeout, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelFunc()
 
 	var result = make(map[string]interface{})
