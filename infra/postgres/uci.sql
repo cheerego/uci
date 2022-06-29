@@ -4,7 +4,7 @@
 -- https://tableplus.com/
 --
 -- Database: uci
--- Generation Time: 2022-06-25 17:49:43.6500
+-- Generation Time: 2022-06-29 13:53:51.1110
 -- -------------------------------------------------------------
 
 
@@ -226,7 +226,8 @@ CREATE TABLE "public"."pipelines" (
     "status_message" varchar(255) NOT NULL DEFAULT ''::character varying,
     "envs" json NOT NULL DEFAULT '[]'::json,
     "runner_id" int4 NOT NULL DEFAULT 0,
-    "borrow_runner_at" timestamp(0),
+    "first_borrow_runner_at" timestamp(0),
+    "borrow_runner_succeed_at" timestamp(0),
     "release_runner_at" timestamp(0),
     "started_at" timestamp(0),
     "closed_at" timestamp(0),
@@ -312,15 +313,16 @@ COMMENT ON COLUMN "public"."workflows"."latest_success_pipeline_id" IS '最后�
 COMMENT ON COLUMN "public"."workflows"."build_timeout_second" IS '构建超时时间';
 
 INSERT INTO "public"."admin_menu" ("id", "parent_id", "order", "title", "icon", "uri", "permission", "created_at", "updated_at") VALUES
-('1', '0', '1', 'Dashboard', 'fa-bar-chart', '/', NULL, NULL, NULL),
-('2', '0', '2', 'Admin', 'fa-tasks', '', NULL, NULL, NULL),
-('3', '2', '3', 'Users', 'fa-users', 'auth/users', NULL, NULL, NULL),
-('4', '2', '4', 'Roles', 'fa-user', 'auth/roles', NULL, NULL, NULL),
-('5', '2', '5', 'Permission', 'fa-ban', 'auth/permissions', NULL, NULL, NULL),
-('6', '2', '6', 'Menu', 'fa-bars', 'auth/menu', NULL, NULL, NULL),
-('7', '2', '7', 'Operation log', 'fa-history', 'auth/logs', NULL, NULL, NULL),
-('8', '0', '0', 'Workflow', 'fa-bars', '/workflows', NULL, '2022-05-28 15:13:31', '2022-05-28 15:13:31'),
-('9', '0', '0', 'Pipeline', 'fa-bars', '/pipelines', NULL, '2022-05-28 15:13:45', '2022-05-28 15:13:45');
+('1', '0', '4', 'Dashboard', 'fa-bar-chart', '/', NULL, NULL, '2022-06-28 19:10:42'),
+('2', '0', '5', 'Admin', 'fa-tasks', '', NULL, NULL, '2022-06-28 19:10:42'),
+('3', '2', '6', 'Users', 'fa-users', 'auth/users', NULL, NULL, '2022-06-28 19:10:42'),
+('4', '2', '7', 'Roles', 'fa-user', 'auth/roles', NULL, NULL, '2022-06-28 19:10:42'),
+('5', '2', '8', 'Permission', 'fa-ban', 'auth/permissions', NULL, NULL, '2022-06-28 19:10:42'),
+('6', '2', '9', 'Menu', 'fa-bars', 'auth/menu', NULL, NULL, '2022-06-28 19:10:42'),
+('7', '2', '10', 'Operation log', 'fa-history', 'auth/logs', NULL, NULL, '2022-06-28 19:10:42'),
+('8', '0', '1', 'Workflow', 'fa-bars', '/workflows', NULL, '2022-05-28 15:13:31', '2022-06-28 19:10:42'),
+('9', '0', '2', 'Pipeline', 'fa-bars', '/pipelines', NULL, '2022-05-28 15:13:45', '2022-06-28 19:10:42'),
+('10', '0', '3', 'Runner', 'fa-bars', '/runners', NULL, '2022-06-28 14:39:00', '2022-06-28 19:10:42');
 
 INSERT INTO "public"."admin_operation_log" ("id", "user_id", "path", "method", "ip", "input", "created_at", "updated_at") VALUES
 ('60', '1', 'admin/workflows/2/trigger', 'GET', '172.21.0.8', '[]', '2022-06-10 16:24:59', '2022-06-10 16:24:59'),
@@ -928,7 +930,463 @@ INSERT INTO "public"."admin_operation_log" ("id", "user_id", "path", "method", "
 ('660', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","envs":[{"key":"hkn","value":"hekangning","_remove_":"0"}],"_token":"U7xERo3fM5lz4soyfDulOqQLJcb3kzSnWT5C6sb1"}', '2022-06-24 16:39:15', '2022-06-24 16:39:15'),
 ('661', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-24 16:39:17', '2022-06-24 16:39:17'),
 ('662', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","envs":[{"key":"hkn","value":"hekangning","_remove_":"0"}],"_token":"U7xERo3fM5lz4soyfDulOqQLJcb3kzSnWT5C6sb1"}', '2022-06-24 16:41:12', '2022-06-24 16:41:12'),
-('663', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-24 16:41:15', '2022-06-24 16:41:15');
+('663', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-24 16:41:15', '2022-06-24 16:41:15'),
+('664', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-27 13:59:55', '2022-06-27 13:59:55'),
+('665', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-27 13:59:55', '2022-06-27 13:59:55'),
+('666', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-27 15:36:14', '2022-06-27 15:36:14'),
+('667', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-27 16:30:30', '2022-06-27 16:30:30'),
+('668', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-27 16:30:30', '2022-06-27 16:30:30'),
+('669', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 16:30:34', '2022-06-27 16:30:34'),
+('670', '1', 'admin/workflows/create', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 16:30:36', '2022-06-27 16:30:36'),
+('671', '1', 'admin/workflows', 'POST', '172.21.0.8', '{"name":"test-12313","yaml":"echo 12323","creator_id":null,"_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-27 16:30:44', '2022-06-27 16:30:44'),
+('672', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-27 16:30:45', '2022-06-27 16:30:45'),
+('673', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 16:30:48', '2022-06-27 16:30:48'),
+('674', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 16:30:49', '2022-06-27 16:30:49'),
+('675', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 16:31:01', '2022-06-27 16:31:01'),
+('676', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 16:31:01', '2022-06-27 16:31:01'),
+('677', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-27 17:47:05', '2022-06-27 17:47:05'),
+('678', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 17:47:12', '2022-06-27 17:47:12'),
+('679', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 17:47:15', '2022-06-27 17:47:15'),
+('680', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 17:47:20', '2022-06-27 17:47:20'),
+('681', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 17:47:21', '2022-06-27 17:47:21'),
+('682', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 17:47:23', '2022-06-27 17:47:23'),
+('683', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 17:47:24', '2022-06-27 17:47:24'),
+('684', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 18:50:20', '2022-06-27 18:50:20'),
+('685', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 18:50:22', '2022-06-27 18:50:22'),
+('686', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 18:59:16', '2022-06-27 18:59:16'),
+('687', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 18:59:17', '2022-06-27 18:59:17'),
+('688', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 19:00:22', '2022-06-27 19:00:22'),
+('689', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 19:00:23', '2022-06-27 19:00:23'),
+('690', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 19:00:32', '2022-06-27 19:00:32'),
+('691', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-27 20:24:42', '2022-06-27 20:24:42'),
+('692', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-27 20:24:42', '2022-06-27 20:24:42'),
+('693', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-27 20:24:46', '2022-06-27 20:24:46'),
+('694', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:25:06', '2022-06-27 20:25:06'),
+('695', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:25:08', '2022-06-27 20:25:08'),
+('696', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:25:35', '2022-06-27 20:25:35'),
+('697', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:25:37', '2022-06-27 20:25:37'),
+('698', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:25:38', '2022-06-27 20:25:38'),
+('699', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:25:39', '2022-06-27 20:25:39'),
+('700', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:25:39', '2022-06-27 20:25:39'),
+('701', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:28:50', '2022-06-27 20:28:50'),
+('702', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:28:51', '2022-06-27 20:28:51'),
+('703', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:42:42', '2022-06-27 20:42:42'),
+('704', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 20:43:13', '2022-06-27 20:43:13'),
+('705', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 20:43:15', '2022-06-27 20:43:15'),
+('706', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 20:43:17', '2022-06-27 20:43:17'),
+('707', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 20:43:18', '2022-06-27 20:43:18'),
+('708', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 21:05:23', '2022-06-27 21:05:23'),
+('709', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 21:05:25', '2022-06-27 21:05:25'),
+('710', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 21:06:27', '2022-06-27 21:06:27'),
+('711', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 21:06:29', '2022-06-27 21:06:29'),
+('712', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:06:40', '2022-06-27 21:06:40'),
+('713', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:18:08', '2022-06-27 21:18:08'),
+('714', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 21:18:11', '2022-06-27 21:18:11'),
+('715', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:18:12', '2022-06-27 21:18:12'),
+('716', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 21:18:15', '2022-06-27 21:18:15'),
+('717', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 21:18:16', '2022-06-27 21:18:16'),
+('718', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 21:18:25', '2022-06-27 21:18:25'),
+('719', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 21:18:26', '2022-06-27 21:18:26'),
+('720', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 21:20:39', '2022-06-27 21:20:39'),
+('721', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 21:20:40', '2022-06-27 21:20:40'),
+('722', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 21:21:49', '2022-06-27 21:21:49'),
+('723', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 21:21:50', '2022-06-27 21:21:50'),
+('724', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:21:53', '2022-06-27 21:21:53'),
+('725', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:21:55', '2022-06-27 21:21:55'),
+('726', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:23:59', '2022-06-27 21:23:59'),
+('727', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 21:24:02', '2022-06-27 21:24:02'),
+('728', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:24:03', '2022-06-27 21:24:03'),
+('729', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 21:24:15', '2022-06-27 21:24:15'),
+('730', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 21:24:16', '2022-06-27 21:24:16'),
+('731', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:43:32', '2022-06-27 21:43:32'),
+('732', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 21:56:37', '2022-06-27 21:56:37'),
+('733', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:00:31', '2022-06-27 22:00:31'),
+('734', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:00:35', '2022-06-27 22:00:35'),
+('735', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:01:46', '2022-06-27 22:01:46'),
+('736', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 22:01:48', '2022-06-27 22:01:48'),
+('737', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:01:49', '2022-06-27 22:01:49'),
+('738', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:01:51', '2022-06-27 22:01:51'),
+('739', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:01:52', '2022-06-27 22:01:52'),
+('740', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:01:59', '2022-06-27 22:01:59'),
+('741', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:02:07', '2022-06-27 22:02:07'),
+('742', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1","_pjax":"#pjax-container"}', '2022-06-27 22:05:42', '2022-06-27 22:05:42'),
+('743', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:05:48', '2022-06-27 22:05:48'),
+('744', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:05:50', '2022-06-27 22:05:50'),
+('745', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1","_pjax":"#pjax-container"}', '2022-06-27 22:05:53', '2022-06-27 22:05:53'),
+('746', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1"}', '2022-06-27 22:06:44', '2022-06-27 22:06:44'),
+('747', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1"}', '2022-06-27 22:07:05', '2022-06-27 22:07:05'),
+('748', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1"}', '2022-06-27 22:07:39', '2022-06-27 22:07:39'),
+('749', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1"}', '2022-06-27 22:08:36', '2022-06-27 22:08:36'),
+('750', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1"}', '2022-06-27 22:10:02', '2022-06-27 22:10:02'),
+('751', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1"}', '2022-06-27 22:13:14', '2022-06-27 22:13:14'),
+('752', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:28:26', '2022-06-27 22:28:26'),
+('753', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 22:28:30', '2022-06-27 22:28:30'),
+('754', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:28:31', '2022-06-27 22:28:31'),
+('755', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:28:33', '2022-06-27 22:28:33'),
+('756', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:28:34', '2022-06-27 22:28:34'),
+('757', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:32:05', '2022-06-27 22:32:05'),
+('758', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:32:06', '2022-06-27 22:32:06'),
+('759', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:33:42', '2022-06-27 22:33:42'),
+('760', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:33:43', '2022-06-27 22:33:43'),
+('761', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:34:27', '2022-06-27 22:34:27'),
+('762', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:34:28', '2022-06-27 22:34:28'),
+('763', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:35:36', '2022-06-27 22:35:36'),
+('764', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:35:37', '2022-06-27 22:35:37'),
+('765', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:36:03', '2022-06-27 22:36:03'),
+('766', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:36:04', '2022-06-27 22:36:04'),
+('767', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:36:30', '2022-06-27 22:36:30'),
+('768', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:36:31', '2022-06-27 22:36:31'),
+('769', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:40:00', '2022-06-27 22:40:00'),
+('770', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:40:02', '2022-06-27 22:40:02'),
+('771', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:42:26', '2022-06-27 22:42:26'),
+('772', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:42:27', '2022-06-27 22:42:27'),
+('773', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:42:40', '2022-06-27 22:42:40'),
+('774', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1","_pjax":"#pjax-container"}', '2022-06-27 22:42:46', '2022-06-27 22:42:46'),
+('775', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:59:08', '2022-06-27 22:59:08'),
+('776', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:59:09', '2022-06-27 22:59:09'),
+('777', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 22:59:12', '2022-06-27 22:59:12'),
+('778', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 22:59:12', '2022-06-27 22:59:12'),
+('779', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 22:59:15', '2022-06-27 22:59:15'),
+('780', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 22:59:15', '2022-06-27 22:59:15'),
+('781', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 23:32:14', '2022-06-27 23:32:14'),
+('782', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 23:32:15', '2022-06-27 23:32:15'),
+('783', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:32:28', '2022-06-27 23:32:28'),
+('784', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:37:51', '2022-06-27 23:37:51'),
+('785', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 23:37:55', '2022-06-27 23:37:55'),
+('786', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:37:56', '2022-06-27 23:37:56'),
+('787', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 23:37:59', '2022-06-27 23:37:59'),
+('788', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 23:38:00', '2022-06-27 23:38:00'),
+('789', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-27 23:38:21', '2022-06-27 23:38:21'),
+('790', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:38:29', '2022-06-27 23:38:29'),
+('791', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:38:32', '2022-06-27 23:38:32'),
+('792', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"echo 12323\r\n123123","creator_id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-27 23:38:35', '2022-06-27 23:38:35'),
+('793', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-27 23:38:35', '2022-06-27 23:38:35'),
+('794', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 23:38:39', '2022-06-27 23:38:39'),
+('795', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:38:40', '2022-06-27 23:38:40'),
+('796', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 23:38:42', '2022-06-27 23:38:42'),
+('797', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 23:38:43', '2022-06-27 23:38:43'),
+('798', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 23:39:19', '2022-06-27 23:39:19'),
+('799', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 23:39:20', '2022-06-27 23:39:20'),
+('800', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:39:24', '2022-06-27 23:39:24'),
+('801', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:47:22', '2022-06-27 23:47:22'),
+('802', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 23:47:26', '2022-06-27 23:47:26'),
+('803', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:47:27', '2022-06-27 23:47:27'),
+('804', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 23:47:29', '2022-06-27 23:47:29'),
+('805', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 23:47:31', '2022-06-27 23:47:31'),
+('806', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:47:35', '2022-06-27 23:47:35'),
+('807', '1', 'admin/pipelines/29', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:47:41', '2022-06-27 23:47:41'),
+('808', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:48:03', '2022-06-27 23:48:03'),
+('809', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:48:06', '2022-06-27 23:48:06'),
+('810', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"echo 12323","creator_id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-27 23:48:10', '2022-06-27 23:48:10'),
+('811', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-27 23:48:11', '2022-06-27 23:48:11'),
+('812', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-27 23:48:15', '2022-06-27 23:48:15'),
+('813', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-27 23:48:15', '2022-06-27 23:48:15'),
+('814', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 23:48:17', '2022-06-27 23:48:17'),
+('815', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 23:48:18', '2022-06-27 23:48:18'),
+('816', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-27 23:57:33', '2022-06-27 23:57:33'),
+('817', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-27 23:57:34', '2022-06-27 23:57:34'),
+('818', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-28 00:00:38', '2022-06-28 00:00:38'),
+('819', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:00:39', '2022-06-28 00:00:39'),
+('820', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-28 00:00:56', '2022-06-28 00:00:56'),
+('821', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:00:57', '2022-06-28 00:00:57'),
+('822', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-28 00:02:55', '2022-06-28 00:02:55'),
+('823', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:02:57', '2022-06-28 00:02:57'),
+('824', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:20:46', '2022-06-28 00:20:46'),
+('825', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:20:47', '2022-06-28 00:20:47'),
+('826', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-28 00:20:51', '2022-06-28 00:20:51'),
+('827', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:20:51', '2022-06-28 00:20:51'),
+('828', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-28 00:23:40', '2022-06-28 00:23:40'),
+('829', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:23:41', '2022-06-28 00:23:41'),
+('830', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-28 00:31:31', '2022-06-28 00:31:31'),
+('831', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:31:32', '2022-06-28 00:31:32'),
+('832', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 00:31:51', '2022-06-28 00:31:51'),
+('833', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"QGHY7HSAWamb1mGArziSsT6KY46SYHFzLADML2ct"}', '2022-06-28 00:35:10', '2022-06-28 00:35:10'),
+('834', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 00:35:10', '2022-06-28 00:35:10'),
+('835', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 00:36:44', '2022-06-28 00:36:44'),
+('836', '1', 'admin/pipelines/38', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 00:36:49', '2022-06-28 00:36:49'),
+('837', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 00:39:12', '2022-06-28 00:39:12'),
+('838', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 00:40:17', '2022-06-28 00:40:17'),
+('839', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:42:24', '2022-06-28 00:42:24'),
+('840', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:42:46', '2022-06-28 00:42:46'),
+('841', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:43:42', '2022-06-28 00:43:42'),
+('842', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:46:44', '2022-06-28 00:46:44'),
+('843', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:47:20', '2022-06-28 00:47:20'),
+('844', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:47:38', '2022-06-28 00:47:38'),
+('845', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:47:57', '2022-06-28 00:47:57'),
+('846', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 00:48:26', '2022-06-28 00:48:26'),
+('847', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-28 13:18:16', '2022-06-28 13:18:16'),
+('848', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-28 13:18:17', '2022-06-28 13:18:17'),
+('849', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:18:22', '2022-06-28 13:18:22'),
+('850', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 13:18:25', '2022-06-28 13:18:25'),
+('851', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:18:26', '2022-06-28 13:18:26'),
+('852', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:18:28', '2022-06-28 13:18:28'),
+('853', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:18:29', '2022-06-28 13:18:29'),
+('854', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:20:27', '2022-06-28 13:20:27'),
+('855', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:20:28', '2022-06-28 13:20:28'),
+('856', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:21:04', '2022-06-28 13:21:04'),
+('857', '1', 'admin/pipelines/40', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:21:09', '2022-06-28 13:21:09'),
+('858', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:26:15', '2022-06-28 13:26:15'),
+('859', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 13:26:17', '2022-06-28 13:26:17'),
+('860', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:26:18', '2022-06-28 13:26:18'),
+('861', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:26:20', '2022-06-28 13:26:20'),
+('862', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:26:21', '2022-06-28 13:26:21'),
+('863', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:28:52', '2022-06-28 13:28:52'),
+('864', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:28:53', '2022-06-28 13:28:53'),
+('865', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:31:43', '2022-06-28 13:31:43'),
+('866', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:31:45', '2022-06-28 13:31:45'),
+('867', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:31:56', '2022-06-28 13:31:56'),
+('868', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:31:57', '2022-06-28 13:31:57'),
+('869', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:32:32', '2022-06-28 13:32:32'),
+('870', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:32:35', '2022-06-28 13:32:35'),
+('871', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"echo 1\r\nsleep 7\r\necho 2","creator_id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-28 13:32:49', '2022-06-28 13:32:49'),
+('872', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 13:32:50', '2022-06-28 13:32:50'),
+('873', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 13:32:53', '2022-06-28 13:32:53'),
+('874', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:32:54', '2022-06-28 13:32:54'),
+('875', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:32:56', '2022-06-28 13:32:56'),
+('876', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:32:57', '2022-06-28 13:32:57'),
+('877', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:34:56', '2022-06-28 13:34:56'),
+('878', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:34:56', '2022-06-28 13:34:56'),
+('879', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:35:43', '2022-06-28 13:35:43'),
+('880', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:35:44', '2022-06-28 13:35:44'),
+('881', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:37:06', '2022-06-28 13:37:06'),
+('882', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:37:07', '2022-06-28 13:37:07'),
+('883', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:38:40', '2022-06-28 13:38:40'),
+('884', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:38:41', '2022-06-28 13:38:41'),
+('885', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:39:49', '2022-06-28 13:39:49'),
+('886', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:39:50', '2022-06-28 13:39:50'),
+('887', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:41:54', '2022-06-28 13:41:54'),
+('888', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:41:55', '2022-06-28 13:41:55'),
+('889', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:43:23', '2022-06-28 13:43:23'),
+('890', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:43:24', '2022-06-28 13:43:24'),
+('891', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:46:34', '2022-06-28 13:46:34'),
+('892', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:46:34', '2022-06-28 13:46:34'),
+('893', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:50:42', '2022-06-28 13:50:42'),
+('894', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:50:46', '2022-06-28 13:50:46'),
+('895', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1","_pjax":"#pjax-container"}', '2022-06-28 13:51:00', '2022-06-28 13:51:00'),
+('896', '1', 'admin/pipelines/53', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:51:04', '2022-06-28 13:51:04'),
+('897', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:51:18', '2022-06-28 13:51:18'),
+('898', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:51:22', '2022-06-28 13:51:22'),
+('899', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"docker rmi nginx || true\r\ndocker pull nginx\r\n\r\necho 1\r\nsleep 7\r\necho 2","creator_id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-28 13:51:36', '2022-06-28 13:51:36'),
+('900', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 13:51:38', '2022-06-28 13:51:38'),
+('901', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1","_pjax":"#pjax-container"}', '2022-06-28 13:51:51', '2022-06-28 13:51:51'),
+('902', '1', 'admin/pipelines/53', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:51:57', '2022-06-28 13:51:57'),
+('903', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:52:15', '2022-06-28 13:52:15'),
+('904', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 13:52:19', '2022-06-28 13:52:19'),
+('905', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 13:52:21', '2022-06-28 13:52:21'),
+('906', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:52:24', '2022-06-28 13:52:24'),
+('907', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:52:26', '2022-06-28 13:52:26'),
+('908', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:53:59', '2022-06-28 13:53:59'),
+('909', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:54:02', '2022-06-28 13:54:02'),
+('910', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 13:55:01', '2022-06-28 13:55:01'),
+('911', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 13:55:05', '2022-06-28 13:55:05'),
+('912', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:08:56', '2022-06-28 14:08:56'),
+('913', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 14:08:57', '2022-06-28 14:08:57'),
+('914', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:09:17', '2022-06-28 14:09:17'),
+('915', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 14:09:19', '2022-06-28 14:09:19'),
+('916', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:10:29', '2022-06-28 14:10:29'),
+('917', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 14:10:31', '2022-06-28 14:10:31'),
+('918', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:12:45', '2022-06-28 14:12:45'),
+('919', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 14:12:47', '2022-06-28 14:12:47'),
+('920', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:17:45', '2022-06-28 14:17:45'),
+('921', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 14:17:48', '2022-06-28 14:17:48'),
+('922', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:19:50', '2022-06-28 14:19:50'),
+('923', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 14:19:51', '2022-06-28 14:19:51'),
+('924', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 14:21:44', '2022-06-28 14:21:44'),
+('925', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 14:21:50', '2022-06-28 14:21:50'),
+('926', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:25:13', '2022-06-28 14:25:13'),
+('927', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:26:21', '2022-06-28 14:26:21'),
+('928', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:27:22', '2022-06-28 14:27:22'),
+('929', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:28:23', '2022-06-28 14:28:23'),
+('930', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:28:41', '2022-06-28 14:28:41'),
+('931', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:29:08', '2022-06-28 14:29:08'),
+('932', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:29:23', '2022-06-28 14:29:23'),
+('933', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:29:48', '2022-06-28 14:29:48'),
+('934', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:31:15', '2022-06-28 14:31:15'),
+('935', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:31:46', '2022-06-28 14:31:46'),
+('936', '1', 'admin/pipelines/62', 'GET', '172.21.0.8', '[]', '2022-06-28 14:32:19', '2022-06-28 14:32:19'),
+('937', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 14:38:18', '2022-06-28 14:38:18'),
+('938', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:31', '2022-06-28 14:38:31'),
+('939', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:32', '2022-06-28 14:38:32'),
+('940', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:38', '2022-06-28 14:38:38'),
+('941', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:39', '2022-06-28 14:38:39'),
+('942', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:41', '2022-06-28 14:38:41'),
+('943', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:42', '2022-06-28 14:38:42'),
+('944', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:43', '2022-06-28 14:38:43'),
+('945', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:44', '2022-06-28 14:38:44'),
+('946', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:46', '2022-06-28 14:38:46'),
+('947', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:47', '2022-06-28 14:38:47'),
+('948', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:48', '2022-06-28 14:38:48'),
+('949', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:49', '2022-06-28 14:38:49'),
+('950', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:51', '2022-06-28 14:38:51'),
+('951', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:52', '2022-06-28 14:38:52'),
+('952', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:54', '2022-06-28 14:38:54'),
+('953', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:55', '2022-06-28 14:38:55'),
+('954', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:38:57', '2022-06-28 14:38:57'),
+('955', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:38:58', '2022-06-28 14:38:58'),
+('956', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"parent_id":"0","title":"Runner","icon":"fa-bars","uri":"\/runners","roles":[null],"permission":null,"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 14:39:00', '2022-06-28 14:39:00'),
+('957', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:39:01', '2022-06-28 14:39:01'),
+('958', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '[]', '2022-06-28 14:42:11', '2022-06-28 14:42:11'),
+('959', '1', 'admin/runners', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 14:42:15', '2022-06-28 14:42:15'),
+('960', '1', 'admin/runners', 'GET', '172.21.0.8', '[]', '2022-06-28 15:39:33', '2022-06-28 15:39:33'),
+('961', '1', 'admin/runners', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 15:45:53', '2022-06-28 15:45:53'),
+('962', '1', 'admin/runners', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 15:46:14', '2022-06-28 15:46:14'),
+('963', '1', 'admin/runners', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 15:46:30', '2022-06-28 15:46:30'),
+('964', '1', 'admin/runners', 'GET', '172.21.0.8', '[]', '2022-06-28 17:16:29', '2022-06-28 17:16:29'),
+('965', '1', 'admin/runners', 'GET', '172.21.0.8', '[]', '2022-06-28 17:16:29', '2022-06-28 17:16:29'),
+('966', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 17:16:38', '2022-06-28 17:16:38'),
+('967', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 17:16:43', '2022-06-28 17:16:43'),
+('968', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"docker rmi nginx || true\r\ndocker pull nginx\r\n\r\ncd \/ && ls -l","creator_id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-28 17:17:21', '2022-06-28 17:17:21'),
+('969', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 17:17:23', '2022-06-28 17:17:23'),
+('970', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 17:17:28', '2022-06-28 17:17:28'),
+('971', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 17:17:30', '2022-06-28 17:17:30'),
+('972', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 17:17:34', '2022-06-28 17:17:34'),
+('973', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 17:17:38', '2022-06-28 17:17:38'),
+('974', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 17:18:00', '2022-06-28 17:18:00'),
+('975', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 17:19:00', '2022-06-28 17:19:00'),
+('976', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 17:19:04', '2022-06-28 17:19:04'),
+('977', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 17:25:15', '2022-06-28 17:25:15'),
+('978', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 17:25:16', '2022-06-28 17:25:16'),
+('979', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 17:25:19', '2022-06-28 17:25:19'),
+('980', '1', 'admin/runners', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 17:27:54', '2022-06-28 17:27:54'),
+('981', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 17:28:01', '2022-06-28 17:28:01'),
+('982', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 17:28:07', '2022-06-28 17:28:07'),
+('983', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 17:28:10', '2022-06-28 17:28:10'),
+('984', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 17:28:33', '2022-06-28 17:28:33'),
+('985', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 17:28:36', '2022-06-28 17:28:36'),
+('986', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 19:10:15', '2022-06-28 19:10:15'),
+('987', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:10:31', '2022-06-28 19:10:31'),
+('988', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:10:35', '2022-06-28 19:10:35'),
+('989', '1', 'admin/auth/menu', 'POST', '172.21.0.8', '{"_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_order":"[{\"id\":8},{\"id\":9},{\"id\":10},{\"id\":1},{\"id\":2,\"children\":[{\"id\":3},{\"id\":4},{\"id\":5},{\"id\":6},{\"id\":7}]}]"}', '2022-06-28 19:10:42', '2022-06-28 19:10:42'),
+('990', '1', 'admin/auth/menu', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:10:42', '2022-06-28 19:10:42'),
+('991', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-28 19:22:41', '2022-06-28 19:22:41'),
+('992', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:22:46', '2022-06-28 19:22:46'),
+('993', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 19:57:58', '2022-06-28 19:57:58'),
+('994', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 19:57:58', '2022-06-28 19:57:58'),
+('995', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"page":"2","_pjax":"#pjax-container"}', '2022-06-28 19:58:25', '2022-06-28 19:58:25'),
+('996', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:58:30', '2022-06-28 19:58:30'),
+('997', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 19:58:39', '2022-06-28 19:58:39'),
+('998', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:58:39', '2022-06-28 19:58:39'),
+('999', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 19:58:46', '2022-06-28 19:58:46'),
+('1000', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 19:58:47', '2022-06-28 19:58:47'),
+('1001', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 19:58:49', '2022-06-28 19:58:49'),
+('1002', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 19:58:50', '2022-06-28 19:58:50'),
+('1003', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:58:52', '2022-06-28 19:58:52'),
+('1004', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:59:02', '2022-06-28 19:59:02'),
+('1005', '1', 'admin/pipelines/49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68', 'DELETE', '172.21.0.8', '{"_method":"delete","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 19:59:24', '2022-06-28 19:59:24'),
+('1006', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:59:25', '2022-06-28 19:59:25'),
+('1007', '1', 'admin/pipelines/29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48', 'DELETE', '172.21.0.8', '{"_method":"delete","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 19:59:46', '2022-06-28 19:59:46'),
+('1008', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:59:46', '2022-06-28 19:59:46'),
+('1009', '1', 'admin/pipelines/9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28', 'DELETE', '172.21.0.8', '{"_method":"delete","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 19:59:53', '2022-06-28 19:59:53'),
+('1010', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 19:59:54', '2022-06-28 19:59:54'),
+('1011', '1', 'admin/pipelines/1,2,3,4,5,6,7,8', 'DELETE', '172.21.0.8', '{"_method":"delete","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 19:59:59', '2022-06-28 19:59:59'),
+('1012', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 20:00:00', '2022-06-28 20:00:00'),
+('1013', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 20:00:02', '2022-06-28 20:00:02'),
+('1014', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 20:00:06', '2022-06-28 20:00:06'),
+('1015', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 20:00:07', '2022-06-28 20:00:07'),
+('1016', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 20:00:09', '2022-06-28 20:00:09'),
+('1017', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 20:00:10', '2022-06-28 20:00:10'),
+('1018', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 20:00:11', '2022-06-28 20:00:11'),
+('1019', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 20:00:12', '2022-06-28 20:00:12'),
+('1020', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 20:00:13', '2022-06-28 20:00:13'),
+('1021', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 20:00:14', '2022-06-28 20:00:14'),
+('1022', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 20:00:17', '2022-06-28 20:00:17'),
+('1023', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 20:00:17', '2022-06-28 20:00:17'),
+('1024', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 20:00:19', '2022-06-28 20:00:19'),
+('1025', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 20:00:20', '2022-06-28 20:00:20'),
+('1026', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 20:00:22', '2022-06-28 20:00:22'),
+('1027', '1', 'admin/pipelines/73', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 20:00:29', '2022-06-28 20:00:29'),
+('1028', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 20:00:37', '2022-06-28 20:00:37'),
+('1029', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 20:14:31', '2022-06-28 20:14:31'),
+('1030', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-28 21:01:46', '2022-06-28 21:01:46'),
+('1031', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:01:50', '2022-06-28 21:01:50'),
+('1032', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:01:55', '2022-06-28 21:01:55'),
+('1033', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"docker rmi nginx || true\r\ndocker pull nginx\r\n\r\ncd \/ && ls -l","creator_id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-28 21:02:04', '2022-06-28 21:02:04'),
+('1034', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 21:02:04', '2022-06-28 21:02:04'),
+('1035', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 21:02:07', '2022-06-28 21:02:07'),
+('1036', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:02:08', '2022-06-28 21:02:08'),
+('1037', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 21:02:10', '2022-06-28 21:02:10'),
+('1038', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 21:02:10', '2022-06-28 21:02:10'),
+('1039', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:02:13', '2022-06-28 21:02:13'),
+('1040', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:02:21', '2022-06-28 21:02:21'),
+('1041', '1', 'admin/pipelines/74', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:02:27', '2022-06-28 21:02:27'),
+('1042', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:08:42', '2022-06-28 21:08:42'),
+('1043', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"workflow_id":"1","_pjax":"#pjax-container"}', '2022-06-28 21:10:47', '2022-06-28 21:10:47'),
+('1044', '1', 'admin/pipelines/74', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:11:23', '2022-06-28 21:11:23'),
+('1045', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:11:30', '2022-06-28 21:11:30'),
+('1046', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:11:31', '2022-06-28 21:11:31'),
+('1047', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:11:34', '2022-06-28 21:11:34'),
+('1048', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:24', '2022-06-28 21:14:24'),
+('1049', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 21:14:30', '2022-06-28 21:14:30'),
+('1050', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:30', '2022-06-28 21:14:30'),
+('1051', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 21:14:32', '2022-06-28 21:14:32'),
+('1052', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 21:14:33', '2022-06-28 21:14:33'),
+('1053', '1', 'admin/pipelines', 'GET', '172.21.0.8', '[]', '2022-06-28 21:14:38', '2022-06-28 21:14:38'),
+('1054', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:42', '2022-06-28 21:14:42'),
+('1055', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:44', '2022-06-28 21:14:44'),
+('1056', '1', 'admin/pipelines/75', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:46', '2022-06-28 21:14:46'),
+('1057', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:52', '2022-06-28 21:14:52'),
+('1058', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:54', '2022-06-28 21:14:54'),
+('1059', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:14:57', '2022-06-28 21:14:57');
+
+INSERT INTO "public"."admin_operation_log" ("id", "user_id", "path", "method", "ip", "input", "created_at", "updated_at") VALUES
+('1060', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"docker pull nginx\r\n\r\ncd \/ && ls -l","creator_id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-28 21:15:03', '2022-06-28 21:15:03'),
+('1061', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 21:15:04', '2022-06-28 21:15:04'),
+('1062', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 21:15:07', '2022-06-28 21:15:07'),
+('1063', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 21:15:08', '2022-06-28 21:15:08'),
+('1064', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 21:15:10', '2022-06-28 21:15:10'),
+('1065', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 21:15:11', '2022-06-28 21:15:11'),
+('1066', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:15:13', '2022-06-28 21:15:13'),
+('1067', '1', 'admin/workflows/1/edit', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:23:24', '2022-06-28 21:23:24'),
+('1068', '1', 'admin/workflows/1', 'PUT', '172.21.0.8', '{"name":"test-12313","yaml":"docker pull nginx\r\n\r\ncd \/ && ls -l","creator_id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_method":"PUT","_previous_":"http:\/\/admin.uci.127.0.0.1.nip.io\/admin\/workflows"}', '2022-06-28 21:23:44', '2022-06-28 21:23:44'),
+('1069', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 21:23:44', '2022-06-28 21:23:44'),
+('1070', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 21:23:48', '2022-06-28 21:23:48'),
+('1071', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:23:49', '2022-06-28 21:23:49'),
+('1072', '1', 'admin/workflows/1/trigger', 'POST', '172.21.0.8', '{"id":"1","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr"}', '2022-06-28 21:23:52', '2022-06-28 21:23:52'),
+('1073', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 21:23:53', '2022-06-28 21:23:53'),
+('1074', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:23:56', '2022-06-28 21:23:56'),
+('1075', '1', 'admin/pipelines', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:24:01', '2022-06-28 21:24:01'),
+('1076', '1', 'admin/pipelines/78', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 21:24:04', '2022-06-28 21:24:04'),
+('1077', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 22:18:56', '2022-06-28 22:18:56'),
+('1078', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 22:18:56', '2022-06-28 22:18:56'),
+('1079', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 22:19:14', '2022-06-28 22:19:14'),
+('1080', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 22:19:30', '2022-06-28 22:19:30'),
+('1081', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-28 22:28:55', '2022-06-28 22:28:55'),
+('1082', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:35:44', '2022-06-28 22:35:44'),
+('1083', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:36:04', '2022-06-28 22:36:04'),
+('1084', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:36:24', '2022-06-28 22:36:24'),
+('1085', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:36:44', '2022-06-28 22:36:44'),
+('1086', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:36:59', '2022-06-28 22:36:59'),
+('1087', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:38:34', '2022-06-28 22:38:34'),
+('1088', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:38:45', '2022-06-28 22:38:45'),
+('1089', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:39:25', '2022-06-28 22:39:25'),
+('1090', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:40:56', '2022-06-28 22:40:56'),
+('1091', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:41:04', '2022-06-28 22:41:04'),
+('1092', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:42:23', '2022-06-28 22:42:23'),
+('1093', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:43:48', '2022-06-28 22:43:48'),
+('1094', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:44:01', '2022-06-28 22:44:01'),
+('1095', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:44:52', '2022-06-28 22:44:52'),
+('1096', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:44:59', '2022-06-28 22:44:59'),
+('1097', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:45:03', '2022-06-28 22:45:03'),
+('1098', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 22:45:04', '2022-06-28 22:45:04'),
+('1099', '1', 'admin/workflows/1/trigger', 'GET', '172.21.0.8', '[]', '2022-06-28 22:46:27', '2022-06-28 22:46:27'),
+('1100', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 22:46:29', '2022-06-28 22:46:29'),
+('1101', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:46:33', '2022-06-28 22:46:33'),
+('1102', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:46:41', '2022-06-28 22:46:41'),
+('1103', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:47:44', '2022-06-28 22:47:44'),
+('1104', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:47:46', '2022-06-28 22:47:46'),
+('1105', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:47:55', '2022-06-28 22:47:55'),
+('1106', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:48:34', '2022-06-28 22:48:34'),
+('1107', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:48:37', '2022-06-28 22:48:37'),
+('1108', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:48:57', '2022-06-28 22:48:57'),
+('1109', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:49:29', '2022-06-28 22:49:29'),
+('1110', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:49:34', '2022-06-28 22:49:34'),
+('1111', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"yaml":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:49:44', '2022-06-28 22:49:44'),
+('1112', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 22:49:45', '2022-06-28 22:49:45'),
+('1113', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 22:50:18', '2022-06-28 22:50:18'),
+('1114', '1', 'admin/_handle_action_', 'POST', '172.21.0.8', '{"revision":null,"_key":"1","_model":"App_Models_Workflow","_token":"rGA1irlhKSc4zRPGDVSZP9PMEB0POytOM3qL0iRr","_action":"App_Admin_Actions_Pipeline_TriggerWorkflowPage"}', '2022-06-28 22:50:23', '2022-06-28 22:50:23'),
+('1115', '1', 'admin/workflows', 'GET', '172.21.0.8', '{"_pjax":"#pjax-container"}', '2022-06-28 22:50:24', '2022-06-28 22:50:24'),
+('1116', '1', 'admin', 'GET', '172.21.0.8', '[]', '2022-06-28 22:54:12', '2022-06-28 22:54:12'),
+('1117', '1', 'admin/workflows', 'GET', '172.21.0.8', '[]', '2022-06-28 23:58:34', '2022-06-28 23:58:34');
 
 INSERT INTO "public"."admin_permissions" ("id", "name", "slug", "http_method", "http_path", "created_at", "updated_at") VALUES
 ('1', 'All permission', '*', '', '*', NULL, NULL),
@@ -962,15 +1420,414 @@ INSERT INTO "public"."migrations" ("id", "migration", "batch") VALUES
 ('3', '2016_01_04_173148_create_admin_tables', '1'),
 ('4', '2019_08_19_000000_create_failed_jobs_table', '1'),
 ('5', '2019_12_14_000001_create_personal_access_tokens_table', '1'),
-('41', '2022_04_29_075932_create_workflows_table', '2'),
-('42', '2022_05_28_020537_create_pipelines_table', '2'),
-('43', '2022_06_11_142611_create_runners_table', '2');
+('44', '2022_04_29_075932_create_workflows_table', '2'),
+('45', '2022_05_28_020537_create_pipelines_table', '2'),
+('46', '2022_06_11_142611_create_runners_table', '2');
 
-INSERT INTO "public"."pipelines" ("id", "workflow_id", "number", "uuid", "salt", "yaml", "triggered_cause", "failed_cause", "status", "status_message", "envs", "runner_id", "borrow_runner_at", "release_runner_at", "started_at", "closed_at", "duration", "raw_log", "prepare_log", "dispatch_times", "first_dispatched_at", "last_dispatched_at", "dispatch_succeed_at", "time_consuming", "created_at", "updated_at", "deleted_at") VALUES
-('2', '1', '0', 'ae01cc7e-2453-4999-a8a7-6448ec62e0df', 'ae01cc7e', 'echo 123
-echo $hkn', '', '', 'WAIT_FOR_BORROWING', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"2"},{"key":"WORKFLOW_ID","value":"1"},{"key":"hkn","value":"hekangning"},{"key":"hkn","value":"hekangning"}]', '0', NULL, NULL, NULL, NULL, '0', '', '', '0', NULL, NULL, NULL, NULL, '2022-06-24 16:41:13', '2022-06-24 16:41:13', NULL);
+INSERT INTO "public"."pipelines" ("id", "workflow_id", "number", "uuid", "salt", "yaml", "triggered_cause", "failed_cause", "status", "status_message", "envs", "runner_id", "first_borrow_runner_at", "borrow_runner_succeed_at", "release_runner_at", "started_at", "closed_at", "duration", "raw_log", "prepare_log", "dispatch_times", "first_dispatched_at", "last_dispatched_at", "dispatch_succeed_at", "time_consuming", "created_at", "updated_at", "deleted_at") VALUES
+('69', '1', '0', '09064f00-8c62-4a70-b03f-ce385220f5db', '09064f00', 'docker rmi nginx || true
+docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"69"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 20:00:10', '2022-06-28 20:00:10', NULL, NULL, NULL, '0', 'Error response from daemon: conflict: unable to remove repository reference "nginx" (must force) - container d3988da799a0 is using its referenced image 55f4b40fe486
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 20:00:10', '2022-06-28 20:00:10', '2022-06-28 20:00:10', NULL, '2022-06-28 20:00:10', '2022-06-28 20:00:16', NULL),
+('70', '1', '0', '1849a836-cfa4-4553-ada2-8b48ac81f7ec', '1849a836', 'docker rmi nginx || true
+docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"70"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 20:00:12', '2022-06-28 20:00:12', NULL, NULL, NULL, '0', 'Error response from daemon: conflict: unable to remove repository reference "nginx" (must force) - container d3988da799a0 is using its referenced image 55f4b40fe486
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 20:00:12', '2022-06-28 20:00:12', '2022-06-28 20:00:12', NULL, '2022-06-28 20:00:12', '2022-06-28 20:00:18', NULL),
+('71', '1', '0', '21323a94-be2c-4f41-bc60-8c9dae29beb8', '21323a94', 'docker rmi nginx || true
+docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"71"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 20:00:14', '2022-06-28 20:00:14', NULL, NULL, NULL, '0', 'Error response from daemon: conflict: unable to remove repository reference "nginx" (must force) - container d3988da799a0 is using its referenced image 55f4b40fe486
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 20:00:14', '2022-06-28 20:00:14', '2022-06-28 20:00:14', NULL, '2022-06-28 20:00:14', '2022-06-28 20:00:20', NULL),
+('72', '1', '0', 'e571ab70-1f46-4eaf-a63f-33d134de6205', 'e571ab70', 'docker rmi nginx || true
+docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"72"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 20:00:17', '2022-06-28 20:00:17', NULL, NULL, NULL, '0', 'Error response from daemon: conflict: unable to remove repository reference "nginx" (must force) - container d3988da799a0 is using its referenced image 55f4b40fe486
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 20:00:17', '2022-06-28 20:00:17', '2022-06-28 20:00:17', NULL, '2022-06-28 20:00:17', '2022-06-28 20:00:23', NULL),
+('73', '1', '0', '5fd7e934-f6b1-4240-8b61-6031aa92251d', '5fd7e934', 'docker rmi nginx || true
+docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"73"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 20:00:20', '2022-06-28 20:00:20', NULL, NULL, NULL, '0', 'Error response from daemon: conflict: unable to remove repository reference "nginx" (must force) - container d3988da799a0 is using its referenced image 55f4b40fe486
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 20:00:20', '2022-06-28 20:00:20', '2022-06-28 20:00:20', NULL, '2022-06-28 20:00:20', '2022-06-28 20:00:26', NULL),
+('74', '1', '0', '2123db18-0554-4218-93c6-551c9197c41e', '2123db18', 'docker rmi nginx || true
+docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"74"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 21:02:10', '2022-06-28 21:02:10', NULL, NULL, NULL, '0', 'Error response from daemon: conflict: unable to remove repository reference "nginx" (must force) - container d3988da799a0 is using its referenced image 55f4b40fe486
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 21:02:10', '2022-06-28 21:02:10', '2022-06-28 21:02:10', NULL, '2022-06-28 21:02:10', '2022-06-28 21:02:16', NULL),
+('75', '1', '0', 'ad5905e9-e9ad-4e60-90bd-c7007f53583b', 'ad5905e9', 'docker rmi nginx || true
+docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"75"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 21:14:33', '2022-06-28 21:14:33', NULL, NULL, NULL, '0', 'Error response from daemon: conflict: unable to remove repository reference "nginx" (must force) - container d3988da799a0 is using its referenced image 55f4b40fe486
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 21:14:33', '2022-06-28 21:14:33', '2022-06-28 21:14:33', NULL, '2022-06-28 21:14:33', '2022-06-28 21:14:39', NULL),
+('76', '1', '0', 'aa2cfb00-7384-4da8-b0e6-49acd3be81a2', 'aa2cfb00', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BORROW_RUNNER_TIMEOUTED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"76"},{"key":"WORKFLOW_ID","value":"1"}]', '0', '2022-06-28 21:15:08', NULL, NULL, NULL, NULL, '0', '', '', '0', NULL, NULL, NULL, NULL, '2022-06-28 21:15:08', '2022-06-28 21:15:08', NULL),
+('77', '1', '0', 'cbf212a0-5580-4cc8-9b99-1812b1a2a3a4', 'cbf212a0', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"77"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 21:15:11', '2022-06-28 21:15:11', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 21:15:11', '2022-06-28 21:15:11', '2022-06-28 21:15:11', NULL, '2022-06-28 21:15:11', '2022-06-28 21:15:17', NULL),
+('78', '1', '0', '9d7d0ae0-6ec0-4812-b0ee-b74fdb1740d7', '9d7d0ae0', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"78"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 21:23:53', '2022-06-28 21:23:53', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 21:23:53', '2022-06-28 21:23:53', '2022-06-28 21:23:53', NULL, '2022-06-28 21:23:53', '2022-06-28 21:23:59', NULL),
+('79', '1', '0', '2c9d40ea-d1b4-4cf0-a172-ad5e2778323f', '2c9d40ea', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"79"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 22:46:33', '2022-06-28 22:46:33', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 22:46:33', '2022-06-28 22:46:33', '2022-06-28 22:46:33', NULL, '2022-06-28 22:46:33', '2022-06-28 22:46:40', NULL),
+('80', '1', '0', '6fb2f27c-518a-4be2-bf96-222f6d04fbb7', '6fb2f27c', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"80"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 22:46:42', '2022-06-28 22:46:42', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 22:46:42', '2022-06-28 22:46:42', '2022-06-28 22:46:42', NULL, '2022-06-28 22:46:42', '2022-06-28 22:46:48', NULL),
+('81', '1', '0', '5c194527-c4a1-45cf-bf67-4f3040077e72', '5c194527', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_FAILED', 'exit status 1', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"81"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 22:47:44', '2022-06-28 22:47:44', NULL, NULL, NULL, '0', 'Using default tag: latest
+Error response from daemon: Head "https://registry-1.docker.io/v2/library/nginx/manifests/latest": EOF
+', '', '1', '2022-06-28 22:47:44', '2022-06-28 22:47:44', '2022-06-28 22:47:44', NULL, '2022-06-28 22:47:44', '2022-06-28 22:47:56', NULL),
+('82', '1', '0', 'b9c0f476-d4e7-4c20-8d46-ed1dc284f87f', 'b9c0f476', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"82"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 22:47:56', '2022-06-28 22:47:56', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 22:47:56', '2022-06-28 22:47:56', '2022-06-28 22:47:56', NULL, '2022-06-28 22:47:56', '2022-06-28 22:48:01', NULL),
+('83', '1', '0', 'fdae4f8e-3848-4f59-a8c9-8c0459a88fd7', 'fdae4f8e', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"83"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 22:48:38', '2022-06-28 22:48:38', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 22:48:38', '2022-06-28 22:48:38', '2022-06-28 22:48:38', NULL, '2022-06-28 22:48:38', '2022-06-28 22:48:45', NULL),
+('84', '1', '0', '02cef47d-4dfc-41aa-a01d-7dae17883652', '02cef47d', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"84"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 22:49:45', '2022-06-28 22:49:45', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 22:49:45', '2022-06-28 22:49:45', '2022-06-28 22:49:45', NULL, '2022-06-28 22:49:45', '2022-06-28 22:49:51', NULL),
+('85', '1', '0', '758b95c4-bbcf-43f3-9518-7f212238f13d', '758b95c4', 'docker pull nginx
+
+cd / && ls -l', '', '', 'BUILD_SUCCEED', '', '[{"key":"CI","value":"true"},{"key":"PIPELINE_ID","value":"85"},{"key":"WORKFLOW_ID","value":"1"}]', '1', '2022-06-28 22:50:24', '2022-06-28 22:50:24', NULL, NULL, NULL, '0', 'Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Image is up to date for nginx:latest
+docker.io/library/nginx:latest
+total 10
+drwxrwxr-x  44 root  admin  1408 Jun 24 17:01 Applications
+drwxr-xr-x  68 root  wheel  2176 May 17 19:53 Library
+drwxr-xr-x@  9 root  wheel   288 Mar 26 15:21 System
+drwxr-xr-x   6 root  admin   192 May 12 17:54 Users
+drwxr-xr-x   4 root  wheel   128 Jun 21 11:18 Volumes
+drwxr-xr-x@ 38 root  wheel  1216 Mar 26 15:21 bin
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 cores
+dr-xr-xr-x   3 root  wheel  4624 Jun 20 10:21 dev
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 etc -> private/etc
+lrwxr-xr-x   1 root  wheel    25 Jun 20 10:21 home -> /System/Volumes/Data/home
+drwxr-xr-x   2 root  wheel    64 Mar 26 15:21 opt
+drwxr-xr-x   6 root  wheel   192 Jun 20 10:21 private
+drwxr-xr-x@ 65 root  wheel  2080 Mar 26 15:21 sbin
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 tmp -> private/tmp
+drwxr-xr-x@ 11 root  wheel   352 Mar 26 15:21 usr
+lrwxr-xr-x@  1 root  wheel    11 Mar 26 15:21 var -> private/var
+', '', '1', '2022-06-28 22:50:24', '2022-06-28 22:50:24', '2022-06-28 22:50:24', NULL, '2022-06-28 22:50:24', '2022-06-28 22:50:32', NULL);
+
+INSERT INTO "public"."runners" ("id", "code", "salt", "status", "last_status_changed_at", "last_dispatched_at", "created_at", "updated_at", "deleted_at") VALUES
+('1', '1', '1', 'FAKE_RUNNING', NULL, NULL, NULL, '2022-06-29 00:19:25', NULL);
 
 INSERT INTO "public"."workflows" ("id", "name", "yaml", "creator_id", "envs", "latest_pipeline_id", "latest_success_pipeline_id", "max_concurrent", "build_timeout_second", "created_at", "updated_at", "deleted_at") VALUES
-('1', 'test-1', 'echo 123
-echo $hkn', '1', '[{"key":"hkn","value":"hekangning"}]', '0', '0', '5', '1800', '2022-06-24 16:38:47', '2022-06-24 16:38:47', NULL);
+('1', 'test-12313', 'docker pull nginx
+
+cd / && ls -l', '1', '[]', '0', '0', '5', '1800', '2022-06-27 16:30:44', '2022-06-28 21:15:03', NULL);
 

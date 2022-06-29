@@ -48,7 +48,8 @@ func (o *Executor) Exec(letterString string) {
 			log.L().Error("parse start pipeline payload err", zap.Error(err))
 			return
 		}
-		o.startAction(ctx, p)
+		err = o.startAction(ctx, p)
+		o.reportPipelineFinished(p, err)
 
 	case letter.StopAction:
 	default:
@@ -56,21 +57,17 @@ func (o *Executor) Exec(letterString string) {
 	}
 
 }
-func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePayload) {
-	var err error
-	defer func() {
-		o.reportPipelineFinished(p, err)
-	}()
+func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePayload) error {
+
 	time.Sleep(2 * time.Second)
-	err = o.reportPipelineRunning(p)
+	err := o.reportPipelineRunning(p)
 	if err != nil {
-		log.L().Error("report pipeline status BUILD_RUNNING", zap.String("pipeline", p.LogName()))
-		return
+		return err
 	}
 
 	r, w, err := os.Pipe()
 	if err != nil {
-		return
+		return err
 	}
 	defer r.Close()
 
@@ -84,12 +81,7 @@ func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePaylo
 		return o.HostExecutor.Start(ctx, p, w)
 	})
 
-	err = g.Wait()
-	if err != nil {
-		log.L().Error("wait group err", zap.Error(err))
-	}
-	log.L().Info("wait group end")
-
+	return g.Wait()
 }
 
 func (o *Executor) reportPipelineRunning(p *letter.StartPipelinePayload) error {
