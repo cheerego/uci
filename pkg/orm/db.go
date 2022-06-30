@@ -43,5 +43,6 @@ func setDBPool(db *sql.DB, dbPoolConfig string) error {
 	db.SetMaxIdleConns(GetOrDefault(values, "MaxIdleConns", 50))
 	db.SetConnMaxIdleTime(time.Duration(GetOrDefault(values, "ConnMaxIdleTime", 1200)) * time.Second)
 	db.SetConnMaxLifetime(time.Duration(GetOrDefault(values, "ConnMaxLifetime", 1800)) * time.Second)
+
 	return nil
 }

@@ -4,10 +4,8 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/messaging"
 	"github.com/cheerego/uci/app/cli/internal/precheck"
-	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 type Uci struct {
@@ -42,105 +40,6 @@ func (u *Uci) Root() *cobra.Command {
 	config.AddCommand(u.ConfigDelete())
 	root.AddCommand(config)
 	return root
-}
-
-func (u *Uci) Up() *cobra.Command {
-	return &cobra.Command{
-		Use:   "up",
-		Short: "start a shim for messaging",
-		Long:  "start a shim for messaging",
-		PreRun: func(cmd *cobra.Command, args []string) {
-			err := u.Check()
-			if err != nil {
-				log.S().Fatalf("PreRun Check err %s", err.Error())
-			}
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := u.BaseShimer.Run(u.Context); err != nil {
-				log.L().Error("runner shimer run err", zap.Error(err))
-			}
-		},
-	}
-}
-
-func (u *Uci) Stop() *cobra.Command {
-	return &cobra.Command{
-		Use:   "stop",
-		Short: "Stop UCI runner",
-		Long:  "Stop UCI runner",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			log.L().Info("stop uci runner")
-			return nil
-		},
-	}
-}
-
-func (u *Uci) Config() *cobra.Command {
-	return &cobra.Command{
-		Use:  "config",
-		Long: "Manage the npm configuration files",
-		Example: `
-uci config set <key>=<value> [<key>=<value> ...]
-uci config get [<key> [<key> ...]]
-uci config delete <key> [<key> ...]
-uci config list [--json]
-`,
-		Args: func(cmd *cobra.Command, args []string) error {
-			return nil
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			log.L().Info("stop uci runner", zap.Any("args", args))
-		},
-	}
-}
-
-func (u *Uci) ConfigSet() *cobra.Command {
-	return &cobra.Command{
-		Use:   "set",
-		Short: "set uci config item",
-		Args:  cobra.MinimumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			log.L().Info("stop uci runner", zap.Any("args", args))
-			return nil
-		},
-	}
-}
-
-func (u *Uci) ConfigGet() *cobra.Command {
-	return &cobra.Command{
-		Use:   "get [<key> [<key> ...]]",
-		Short: "get uci config item",
-		Args:  cobra.MinimumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return nil
-		},
-	}
-}
-
-func (u *Uci) ConfigList() *cobra.Command {
-	return &cobra.Command{
-		Use:   "list",
-		Short: "list uci config items",
-		Args: func(cmd *cobra.Command, args []string) error {
-			return nil
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			log.L().Info("stop uci runner", zap.Any("args", args))
-		},
-	}
-}
-
-func (u *Uci) ConfigDelete() *cobra.Command {
-	return &cobra.Command{
-		Use:   "delete",
-		Short: "delete uci config item",
-		Args: func(cmd *cobra.Command, args []string) error {
-			return nil
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			log.L().Info("stop uci runner", zap.Any("args", args))
-		},
-	}
 }
 
 // Check 检查 go 程序收存在
