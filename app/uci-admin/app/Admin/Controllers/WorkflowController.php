@@ -2,14 +2,13 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Actions\Pipeline\TriggerWorkflowPage;
+use App\Admin\Actions\TriggerWorkflowAction;
 use App\Models\Workflow;
 use App\Services\WorkflowService;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Grid\Displayers\Actions;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Encore\Admin\Widgets\Box;
@@ -53,7 +52,7 @@ class WorkflowController extends AdminController
         $grid->column('updated_at', __('Updated at'));
         $grid->column('deleted_at', __('Deleted at'));
         $grid->actions(function (Grid\Displayers\Actions $actions) {
-            $actions->add(new TriggerWorkflowPage());
+            $actions->add(new TriggerWorkflowAction());
         });
         return $grid;
     }

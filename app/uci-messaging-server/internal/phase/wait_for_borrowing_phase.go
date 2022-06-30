@@ -32,7 +32,8 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 	}
 
 	// 如果借机器超过了 5 分钟，则将任务状态置为借机器超时，且清理 redis 中的该流水线
-	if time.Now().Unix()-p.FirstBorrowRunnerAt.Unix() > 5*60 {
+
+	if time.Now().Sub(p.FirstBorrowRunnerAt.In(time.Local)).Minutes() > 5 {
 		p.Status = pipeline.BorrowRunnerTimeouted
 		_, err := service.Services.PipelineService.Update(ctx, p)
 		if err != nil {

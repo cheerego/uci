@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Admin\Actions\Pipeline;
+namespace App\Admin\Actions;
 
 use App\Models\Workflow;
 use App\Services\WorkflowService;
 use Encore\Admin\Actions\RowAction;
 
-class TriggerWorkflowPage extends RowAction
+class TriggerWorkflowAction extends RowAction
 {
     public $name = '触发构建1';
 
@@ -34,11 +34,7 @@ class TriggerWorkflowPage extends RowAction
     public function form()
     {
         $this->text("revision", __("Revision"));
-//        $this->text("envs",)
-//        $this->table('envs', __('Param envs'), function ($table) {
-//            $table->text('key');
-//            $table->text('value');
-//        });
+        $this->text("param_envs",__("Param Envs"))->default(json_encode($this->row->envs));
     }
 
 }

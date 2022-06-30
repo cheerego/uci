@@ -56,9 +56,12 @@ class PipelineController extends AdminController
                     $cause = "danger";
                     break;
             }
-
-
-            return "<p class='label label-$cause' >$status</p>";
+            $failed_cause = $this->failed_cause;
+            if ($failed_cause == "") {
+                return "<p class='label label-$cause' >$status</p>";
+            } else {
+                return "<p class='label label-$cause' >$status ($failed_cause)</p>";
+            }
         });
 
         $grid->column('created_at', __('Created at'));
@@ -91,6 +94,7 @@ class PipelineController extends AdminController
         $show->field('dispatch_times', __('Dispatch times'));
         $show->field('status', __('Status'));
         $show->field('status_message', __('Status message'));
+        $show->field('failed_cause', __('Failed Cause'));
         $show->field('uuid', __('Uuid'));
         $show->field('raw_log', __('Raw log'));
         $show->field('created_at', __('Created at'));
