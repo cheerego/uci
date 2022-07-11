@@ -4,9 +4,32 @@ import (
 	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/pkg/orm"
+	"github.com/cheerego/uci/pkg/ptr"
 	uuid "github.com/satori/go.uuid"
 	"time"
 )
+
+type StatusOption func(pipeline *Pipeline) string
+
+func WithFailedCause(failedCause string) StatusOption {
+	return func(pipeline *Pipeline) string {
+		pipeline.FailedCause = failedCause
+		return "FailedCause"
+	}
+}
+func WithStartedAt(at time.Time) StatusOption {
+	return func(pipeline *Pipeline) string {
+		pipeline.StartedAt = ptr.Ptr(at)
+		return "StartedAt"
+	}
+}
+
+func WithCloseAt(at time.Time) StatusOption {
+	return func(pipeline *Pipeline) string {
+		pipeline.ClosedAt = ptr.Ptr(at)
+		return "ClosedAt"
+	}
+}
 
 type Pipeline struct {
 	orm.Model

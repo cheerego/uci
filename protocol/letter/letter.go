@@ -22,7 +22,18 @@ type StartPipelinePayload struct {
 	Envs       map[string]string `json:"envs"`
 }
 
-func (s *StartPipelinePayload) LogName() string {
+func (s *StartPipelinePayload) String() string {
+	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s", s.WorkflowId, s.Uuid, s.PipelineId, s.Salt)
+}
+
+type StopPipelinePayload struct {
+	WorkflowId uint32 `json:"workflowId"`
+	PipelineId uint32 `json:"pipelineId"`
+	Salt       string `json:"salt"`
+	Uuid       string `json:"uuid"`
+}
+
+func (s *StopPipelinePayload) String() string {
 	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s", s.WorkflowId, s.Uuid, s.PipelineId, s.Salt)
 }
 
@@ -43,5 +54,21 @@ func (l *Letter) StartPipelinePayload() (*StartPipelinePayload, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &p, err
+	return &p, nil
+}
+
+func (l *Letter) StopPipelinePayload() (*StopPipelinePayload, error) {
+	marshal, err := json.Marshal(l.Payload)
+	if err != nil {
+		return nil, err
+	}
+
+	var p StopPipelinePayload
+
+	err = json.Unmarshal(marshal, &p)
+	if err != nil {
+		return nil, err
+	}
+	return &p, nil
+
 }

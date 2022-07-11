@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func Status(c echo.Context) error {
+func BuildRunning(c echo.Context) error {
 	f := new(ReportStatusForm)
 	if err := c.Bind(f); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -24,8 +24,7 @@ func Status(c echo.Context) error {
 	}
 	defer mutex.Unlock()
 	p.Status = f.Status
-	p.StatusMessage = f.FailedCause
-	_, err = service.Services.PipelineService.Update(c.Request().Context(), p)
+	_, err = service.Services.PipelineService.UpdateStatus(c.Request().Context(), f.Status)
 	if err != nil {
 		return err
 	}

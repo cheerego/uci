@@ -21,9 +21,9 @@ func (p *PipelineService) IncreaseDispatchTimes(ctx context.Context, id uint32) 
 	return repository.Repositories.PipelineRepository.IncreaseDispatchTimes(ctx, id)
 }
 
-func (p *PipelineService) UpdateStatus(ctx context.Context, pl *pipeline.Pipeline, status pipeline.Status) (int64, error) {
+func (p *PipelineService) UpdateStatus(ctx context.Context, pl *pipeline.Pipeline, status pipeline.Status, opts ...pipeline.StatusOption) (int64, error) {
 	pl.Status = status
-	return repository.Repositories.PipelineRepository.UpdateStatus(ctx, pl)
+	return repository.Repositories.PipelineRepository.UpdateStatus(ctx, pl, opts...)
 }
 
 func (p *PipelineService) UpdateEnvs(ctx context.Context, pl *pipeline.Pipeline) (int64, error) {

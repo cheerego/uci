@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cheerego/uci/app/cli/internal/config"
 	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
@@ -23,13 +22,24 @@ type IExecutor interface {
 	//PrepareWorkspace(payload *payload.StartPipelinePayload) error
 }
 
+type PipelineExecRuntime struct {
+	PipelineId uint32
+	cancelFunc context.CancelFunc
+}
+
+func NewPipelineExecRuntime(pipelineId uint32, cancelFunc context.CancelFunc) *PipelineExecRuntime {
+	return &PipelineExecRuntime{PipelineId: pipelineId, cancelFunc: cancelFunc}
+}
+
 type Executor struct {
-	HostExecutor IExecutor
+	HostExecutor         IExecutor
+	PipelineExecRuntimes map[uint32]*PipelineExecRuntime
 }
 
 func NewExecutor() *Executor {
 	return &Executor{
 		NewHostExecutor(),
+		make(map[uint32]*PipelineExecRuntime),
 	}
 }
 
@@ -41,23 +51,33 @@ func (o *Executor) Exec(letterString string) {
 		return
 	}
 
-	ctx := context.Background()
 	switch l.Action {
 	case letter.StartAction:
-		p, err := l.StartPipelinePayload()
+		payload, err := l.StartPipelinePayload()
 		if err != nil {
-			log.L().Error("parse start pipeline payload err", zap.Error(err))
+			log.L().Error("parse start pipeline payload err", zap.Error(err), zap.Any("payload", l.Payload))
 			return
 		}
-		err = o.startAction(ctx, p)
-		requests.PipelineFinishedStatus(p, err)
+		err = o.startAction(payload)
+		requests.PipelineFinishedStatus(payload, err)
 	case letter.StopAction:
+		payload, err := l.StopPipelinePayload()
+		if err != nil {
+			log.L().Error("parse stop pipeline payload err", zap.Error(err), zap.Any("payload", l.Payload))
+			return
+		}
+		err = o.stopAction(payload)
+
 	default:
 		log.L().Error("无效的 action 类型", zap.String("letterString", letterString), zap.String("action", string(l.Action)))
 	}
-
 }
-func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePayload) error {
+
+func (o *Executor) stopAction(payload *letter.StopPipelinePayload) error {
+	return nil
+}
+
+func (o *Executor) startAction(p *letter.StartPipelinePayload) error {
 
 	time.Sleep(2 * time.Second)
 	err := requests.PipelineUncompletedStatus(p, "BUILD_RUNNING")
@@ -71,18 +91,18 @@ func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePaylo
 	}
 	defer r.Close()
 
-	g, _ := errgroup.WithContext(ctx)
+	g, ctx := errgroup.WithContext(context.Background())
+	cancel, cancelFunc := context.WithCancel(ctx)
+
 	g.Go(func() error {
 		return o.reportRawlog(p, r)
 	})
-
 	g.Go(func() error {
 		defer w.Close()
-		value, err := config.UciDispatchModeItem.Value()
-		log.L().Info("dispatch mode", zap.String("pipeline", p.LogName()), zap.String("dispatchMode", value), zap.Error(err))
-		return o.HostExecutor.Start(ctx, p, w)
+		o.PipelineExecRuntimes[p.PipelineId] = NewPipelineExecRuntime(p.PipelineId, cancelFunc)
+		defer delete(o.PipelineExecRuntimes, p.PipelineId)
+		return o.HostExecutor.Start(cancel, p, w)
 	})
-
 	return g.Wait()
 }
 
@@ -98,7 +118,7 @@ func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader
 			case <-time.After(5 * time.Second):
 				err := requests.PipelineRawlog(p.Uuid, true, raws)
 				if err != nil {
-					log.L().Error("1", zap.String("pipeline", p.LogName()), zap.Error(err))
+					log.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
 				}
 				raws = ""
 			case raw, ok := <-rawCh:
@@ -107,9 +127,9 @@ func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader
 				} else {
 					err := requests.PipelineRawlog(p.Uuid, true, raws)
 					if err != nil {
-						log.L().Error("1", zap.String("pipeline", p.LogName()), zap.Error(err))
+						log.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
 					} else {
-						log.L().Info("read raw end", zap.String("pipeline", p.LogName()))
+						log.L().Info("read raw end", zap.String("pipeline", p.String()))
 					}
 					return nil
 				}

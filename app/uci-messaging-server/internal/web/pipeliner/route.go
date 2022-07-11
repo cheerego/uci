@@ -10,7 +10,9 @@ func Route(r *echo.Echo) {
 	v1 := r.Group("/api/v1")
 	{
 		v1.POST("/pipeline/report/log/raw", report.Raw)
-		v1.POST("/pipeline/report/status", report.Status)
+		v1.POST("/pipeline/report/build-running", report.Status)
+		v1.POST("/pipeline/report/build-failed", report.Status)
+		v1.POST("/pipeline/report/build-aborted", report.Status)
 	}
 
 	{

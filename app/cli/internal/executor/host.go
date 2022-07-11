@@ -53,29 +53,20 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 
 	workspaceDir, err := h.PrepareWorkspace(payload)
 	if err != nil {
-		log.L().Error("prepare workspace err", zap.String("pipeline", payload.LogName()), zap.Error(err))
+		log.L().Error("prepare workspace err", zap.String("pipeline", payload.String()), zap.Error(err))
 		return err
 	}
 
-	log.L().Info("pipeline dir", zap.String("pipeline", payload.LogName()), zap.String("pipelineWorkspace", workspaceDir))
-	cmd := exec.Command("sh", "-c", "-e", strings.Replace(payload.Yaml, "\r\n", "\n", -1))
+	log.L().Info("pipeline dir", zap.String("pipeline", payload.String()), zap.String("pipelineWorkspace", workspaceDir))
+	cmd := exec.CommandContext(ctx, "sh", "-c", "-e", strings.Replace(payload.Yaml, "\r\n", "\n", -1))
 
 	cmd.Env = h.PrepareEnviron(payload)
 	cmd.Dir = workspaceDir
-
-	//r, w, err := os.Pipe()
-	//if err != nil {
-	//	log.L().Error("new pipe err", zap.Error(err))
-	//	return err
-	//}
-	//defer r.Close()
-	//defer w.Close()
 
 	cmd.Stdout = w
 	cmd.Stderr = w
 	err = cmd.Start()
 	if err != nil {
-		log.S().Error("exec start err", zap.String("pipeline", payload.LogName()), zap.Error(err))
 		return err
 	}
 	return cmd.Wait()
