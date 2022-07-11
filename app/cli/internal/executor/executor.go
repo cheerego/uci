@@ -79,7 +79,7 @@ func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePaylo
 	g.Go(func() error {
 		defer w.Close()
 		value, err := config.UciDispatchModeItem.Value()
-		log.L().Info("dispatch mode", zap.String("dispatchMode", value), zap.Error(err))
+		log.L().Info("dispatch mode", zap.String("pipeline", p.LogName()), zap.String("dispatchMode", value), zap.Error(err))
 		return o.HostExecutor.Start(ctx, p, w)
 	})
 
@@ -112,7 +112,7 @@ func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader
 			case <-time.After(5 * time.Second):
 				err := requests.ReportRawlog(p.Uuid, true, raws)
 				if err != nil {
-					log.L().Error("1", zap.Error(err))
+					log.L().Error("1", zap.String("pipeline", p.LogName()), zap.Error(err))
 				}
 				raws = ""
 			case raw, ok := <-rawCh:
@@ -121,9 +121,9 @@ func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader
 				} else {
 					err := requests.ReportRawlog(p.Uuid, true, raws)
 					if err != nil {
-						log.L().Error("1", zap.Error(err))
+						log.L().Error("1", zap.String("pipeline", p.LogName()), zap.Error(err))
 					} else {
-						log.L().Info("read raw end")
+						log.L().Info("read raw end", zap.String("pipeline", p.LogName()))
 					}
 					return nil
 				}

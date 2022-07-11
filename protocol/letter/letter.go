@@ -23,7 +23,7 @@ type StartPipelinePayload struct {
 }
 
 func (s *StartPipelinePayload) LogName() string {
-	return fmt.Sprintf("workflower-%d-uuid-%s-pipeliner-%d-%s", s.WorkflowId, s.Uuid, s.PipelineId, s.Salt)
+	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s", s.WorkflowId, s.Uuid, s.PipelineId, s.Salt)
 }
 
 type Action string

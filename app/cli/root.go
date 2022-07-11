@@ -13,7 +13,7 @@ import (
 
 func init() {
 	dir, _ := homedir.Dir()
-	cli, err := console.Configuration(path.Join(dir, config.Name, fmt.Sprintf("%s.%s", config.Name, "log")))
+	cli, err := console.Configuration(path.Join(dir, fmt.Sprintf("%s.%s", config.Name, "log")))
 	if err != nil {
 		panic(any(err))
 	}
