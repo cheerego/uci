@@ -2,7 +2,7 @@ package requests
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/cli/internal/config/host"
+	"github.com/cheerego/uci/app/cli/internal/config"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
@@ -15,6 +15,11 @@ func ReportRawlog(uuid string, append bool, raw string) error {
 	timeout, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelFunc()
 
+	serverUrl, err := config.UciServerUrl.Value()
+	if err != nil {
+		return err
+	}
+
 	var result = make(map[string]interface{})
 	resp, err := client.R().
 		SetContext(timeout).
@@ -26,7 +31,7 @@ func ReportRawlog(uuid string, append bool, raw string) error {
 		SetQueryParams(map[string]string{
 			"append": strconv.FormatBool(append),
 		}).
-		Post(host.Host() + "/api/v1/pipeline/report/log/raw")
+		Post(serverUrl + "/api/v1/pipeline/report/log/raw")
 
 	if err != nil {
 		err := errors.Wrapf(err, "url: %s, body: %v, queryParam: %v, result: %v", resp.Request.URL, resp.Request.Body, resp.Request.QueryParam, result)

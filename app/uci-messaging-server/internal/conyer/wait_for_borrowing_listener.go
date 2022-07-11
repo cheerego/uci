@@ -39,7 +39,7 @@ func (w *WaitForBorrowingListener) Handle(msg amqp.Delivery) {
 	err = phase.Phases()[pipeline.WaitForBorrowing].Exec(ctx, uint32(atoi))
 	if err != nil {
 		if !errors.Is(err, godisson.ErrLockNotObtained) {
-			log.L().Warn("wait for borrowing, phase exec err", zap.Uint32("pipelineId", uint32(atoi)), zap.String("body", string(msg.Body)), zap.String("error", err.Error()), zap.Int("value", atoi))
+			log.L().Warn("wait for borrowing, phase exec err", zap.Uint32("pipelineId", uint32(atoi)), zap.String("body", string(msg.Body)), zap.String("error", err.Error()))
 		}
 		return
 	}

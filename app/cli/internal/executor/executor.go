@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/cheerego/uci/app/cli/internal/config"
 	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
@@ -50,7 +51,6 @@ func (o *Executor) Exec(letterString string) {
 		}
 		err = o.startAction(ctx, p)
 		o.reportPipelineFinished(p, err)
-
 	case letter.StopAction:
 	default:
 		log.L().Error("无效的 action 类型", zap.String("letterString", letterString), zap.String("action", string(l.Action)))
@@ -78,6 +78,8 @@ func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePaylo
 
 	g.Go(func() error {
 		defer w.Close()
+		value, err := config.UciDispatchModeItem.Value()
+		log.L().Info("dispatch mode", zap.String("dispatchMode", value), zap.Error(err))
 		return o.HostExecutor.Start(ctx, p, w)
 	})
 

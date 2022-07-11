@@ -15,16 +15,15 @@ type Ini struct {
 	mutex sync.RWMutex
 }
 
-func NewIni(p string) (*Ini, error) {
+func NewIni(p string) *Ini {
 	i := &Ini{p: p}
-
-	f, err := i.openFile()
-
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	return i, nil
+	//f, err := i.openFile()
+	//
+	//if err != nil {
+	//	return nil, err
+	//}
+	//defer f.Close()
+	return i
 }
 
 func (i *Ini) openFile() (*os.File, error) {

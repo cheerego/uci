@@ -2,7 +2,7 @@ package request
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/cli/internal/config/host"
+	"github.com/cheerego/uci/app/cli/internal/config"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
@@ -24,7 +24,7 @@ func ReportPipelineStatus(uuid string, status string, failedCause string) error 
 			"failedCause": failedCause,
 		}).
 		SetResult(result).
-		Post(host.Host() + "/api/v1/pipeline/report/status")
+		Post(config.Host() + "/api/v1/pipeline/report/status")
 
 	if err != nil {
 		err := errors.Wrapf(err, "url: %s, body: %v, queryParam: %v, result: %v", resp.Request.URL, resp.Request.Body, resp.Request.QueryParam, result)
