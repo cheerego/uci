@@ -3,44 +3,57 @@ package requests
 import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/config"
-	"github.com/cheerego/uci/app/cli/internal/uerror"
 	"github.com/cheerego/uci/pkg/log"
-	"github.com/cockroachdb/errors"
-	"go.uber.org/zap"
+	"github.com/cheerego/uci/protocol/letter"
 	"time"
 )
 
-func ReportPipelineStatus(uuid string, status string, failedCause string) error {
+func PipelineUncompletedStatus(payload *letter.StartPipelinePayload, status string) error {
 	timeout, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelFunc()
 
+	body := map[string]interface{}{
+		"uuid":      payload.Uuid,
+		"status":    status,
+		"timestamp": time.Now(),
+	}
 	serverUrl, err := config.UciServerUrl.Value()
 	if err != nil {
 		return err
 	}
 
-	var result = make(map[string]interface{})
-	resp, err := client.R().
+	r := client.
+		R().
 		SetContext(timeout).
-		SetBody(map[string]interface{}{
-			"uuid":        uuid,
-			"status":      status,
-			"timestamp":   time.Now(),
-			"failedCause": failedCause,
-		}).
-		SetResult(result).
-		Post(serverUrl + "/api/v1/pipeline/report/status")
+		SetBody(body)
+	return log.Tee("request uncompleted status", doPost(r, serverUrl+"/api/v1/pipeline/report/status"))
+}
 
+func PipelineFinishedStatus(payload *letter.StartPipelinePayload, err error) error {
+
+	timeout, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancelFunc()
+	var status string
+	var failedCause string
 	if err != nil {
-		err := errors.Wrapf(err, "url: %s, body: %v, queryParam: %v, result: %v", resp.Request.URL, resp.Request.Body, resp.Request.QueryParam, result)
-		log.L().Error("report pipeline status err", zap.Error(err))
-		return err
+		status = "BUILD_FAILED"
+		failedCause = err.Error()
+	} else {
+		status = "BUILD_SUCCEED"
+	}
+	body := map[string]interface{}{
+		"uuid":        payload.Uuid,
+		"status":      status,
+		"timestamp":   time.Now(),
+		"failedCause": failedCause,
 	}
 
-	if resp.StatusCode() != 200 {
-		err := errors.Wrapf(uerror.ErrHttpResponseCodeNot200, "url: %s, body: %v, queryParam: %v, statusCode: %v result: %v", resp.Request.URL, resp.Request.Body, resp.Request.QueryParam, resp.StatusCode(), result)
-		log.L().Error("report pipeline status, status code != 200", zap.Error(err))
+	r := client.R().SetContext(timeout).SetBody(body)
+
+	serverUrl, err := config.UciServerUrl.Value()
+	if err != nil {
 		return err
 	}
-	return nil
+	return log.Tee("request finished status", doPost(r, serverUrl+"/api/v1/pipeline/report/status"))
+
 }

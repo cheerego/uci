@@ -50,7 +50,7 @@ func (o *Executor) Exec(letterString string) {
 			return
 		}
 		err = o.startAction(ctx, p)
-		o.reportPipelineFinished(p, err)
+		requests.PipelineFinishedStatus(p, err)
 	case letter.StopAction:
 	default:
 		log.L().Error("无效的 action 类型", zap.String("letterString", letterString), zap.String("action", string(l.Action)))
@@ -60,7 +60,7 @@ func (o *Executor) Exec(letterString string) {
 func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePayload) error {
 
 	time.Sleep(2 * time.Second)
-	err := o.reportPipelineRunning(p)
+	err := requests.PipelineUncompletedStatus(p, "BUILD_RUNNING")
 	if err != nil {
 		return err
 	}
@@ -86,20 +86,6 @@ func (o *Executor) startAction(ctx context.Context, p *letter.StartPipelinePaylo
 	return g.Wait()
 }
 
-func (o *Executor) reportPipelineRunning(p *letter.StartPipelinePayload) error {
-	err := requests.ReportPipelineStatus(p.Uuid, "BUILD_RUNNING", "")
-	return err
-}
-
-func (o *Executor) reportPipelineFinished(p *letter.StartPipelinePayload, err error) error {
-	if err != nil {
-		err = requests.ReportPipelineStatus(p.Uuid, "BUILD_FAILED", err.Error())
-	} else {
-		err = requests.ReportPipelineStatus(p.Uuid, "BUILD_SUCCEED", "")
-	}
-	return err
-}
-
 func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 	r := bufio.NewReader(reader)
 
@@ -110,7 +96,7 @@ func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader
 		for {
 			select {
 			case <-time.After(5 * time.Second):
-				err := requests.ReportRawlog(p.Uuid, true, raws)
+				err := requests.PipelineRawlog(p.Uuid, true, raws)
 				if err != nil {
 					log.L().Error("1", zap.String("pipeline", p.LogName()), zap.Error(err))
 				}
@@ -119,7 +105,7 @@ func (o *Executor) reportRawlog(p *letter.StartPipelinePayload, reader io.Reader
 				if ok {
 					raws = fmt.Sprintf("%s%s", raws, raw)
 				} else {
-					err := requests.ReportRawlog(p.Uuid, true, raws)
+					err := requests.PipelineRawlog(p.Uuid, true, raws)
 					if err != nil {
 						log.L().Error("1", zap.String("pipeline", p.LogName()), zap.Error(err))
 					} else {
