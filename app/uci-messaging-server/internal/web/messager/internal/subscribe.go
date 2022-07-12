@@ -3,9 +3,9 @@ package internal
 import (
 	"fmt"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/facade"
-	runner "github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/labstack/echo/v4"
 )
@@ -22,13 +22,13 @@ func Subscribe(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-		subscribe, err := watcher.Subscribe(uuid)
+		subscribe, err := shim.Watcher.Subscribe(uuid)
 		if err != nil {
 			return err
 		}
 		defer func() {
 			log.S().Infof("requestId %s runner %s subscribe canceling", rid, runer.String())
-			watcher.Unsubscribe(uuid)
+			shim.Watcher.Unsubscribe(uuid)
 			log.S().Infof("requestId %s runnerr %s subscribe canceled", rid, runer.String())
 		}()
 

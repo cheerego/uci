@@ -33,7 +33,7 @@ const BuildSucceed Status = "BUILD_SUCCEED"
 const BuildFailed Status = "BUILD_FAILED"
 const BuildTimeouted Status = "BUILD_TIMEOUTED"
 
-const WaitForDispatchAborting = "WAIT_FOR_ABORTING"
+const WaitForAborting = "WAIT_FOR_ABORTING"
 const DispatchAbortSucceed = "DISPATCH_ABORT_SUCCEED"
 const BuildAborted = "BUILD_ABORTED"
 
@@ -43,3 +43,11 @@ const (
 	RunnerInternalError   Status = "RUNNER_INTERNAL_ERROR"
 	RunnerPrepareError    Status = "RUNNER_PREPARE_ERROR"
 )
+
+var Queuing = []Status{
+	BuildQueuing,
+	WaitForBorrowing,
+	WaitForDispatching,
+	DispatchSucceed,
+	BuildRunning,
+}

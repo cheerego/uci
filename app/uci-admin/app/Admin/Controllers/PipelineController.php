@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\PipelineStopAction;
+use App\Admin\Actions\TriggerWorkflowAction;
 use App\Models\Pipeline;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -71,6 +73,9 @@ class PipelineController extends AdminController
 
         $grid->filter(function (Grid\Filter $filter) {
             $filter->equal('workflow_id', 'workflow_id');
+        });
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->add(new PipelineStopAction());
         });
 
         return $grid;

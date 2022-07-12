@@ -6,6 +6,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Subscribers(c echo.Context) error {
-	return uctx.FromContext(c).Data(shim.Watcher.Subscribers())
+func Ack(ctx echo.Context) error {
+	cc := uctx.FromContext(ctx)
+	requestId := cc.Param("request_id")
+
+	shim.Watcher.Subscribers()
+
 }

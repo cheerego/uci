@@ -143,7 +143,7 @@ class WorkflowController extends AdminController
             "revision" => $revision,
             "envs" => $needle_param_envs
         ];
-        $resp = $workflowService->triggerBuild($workflow_id, $params);
+        $resp = $workflowService->trigger($workflow_id, $params);
         if ($resp->getStatusCode() != 200) {
             admin_toastr("触发构建失败" . $resp->getBody(), "error");
         }

@@ -8,7 +8,7 @@ use Encore\Admin\Actions\RowAction;
 
 class TriggerWorkflowAction extends RowAction
 {
-    public $name = '触发构建1';
+    public $name = '触发构建';
 
     public function handle(Workflow $model)
     {
@@ -24,7 +24,7 @@ class TriggerWorkflowAction extends RowAction
             "revision" => $revision,
 //            "envs" => $needle_param_envs
         ];
-        $resp = $workflowService->triggerBuild($model->id, $params);
+        $resp = $workflowService->trigger($model->id, $params);
         if ($resp->getStatusCode() != 200) {
             return $this->response()->error("触发构建失败" . $resp->getBody())->refresh();
         }
@@ -34,7 +34,7 @@ class TriggerWorkflowAction extends RowAction
     public function form()
     {
         $this->text("revision", __("Revision"));
-        $this->text("param_envs",__("Param Envs"))->default(json_encode($this->row->envs));
+        $this->text("param_envs", __("Param Envs"))->default(json_encode($this->row->envs));
     }
 
 }

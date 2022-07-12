@@ -18,11 +18,17 @@ class WorkflowService
         $this->uciMessagingClient = app(UciMessaingRpcClient::class);
     }
 
-    public function triggerBuild($workflowId, $params): \Psr\Http\Message\ResponseInterface
+    public function trigger($workflowId, $params): \Psr\Http\Message\ResponseInterface
     {
         return app(UciMessaingRpcClient::class)->request("POST", "/api/v1/inner/workflow/" . $workflowId . "/trigger", [
             "json" => $params,
         ]);
+    }
+
+
+    public function stop($pipelineId): \Psr\Http\Message\ResponseInterface
+    {
+        return app(UciMessaingRpcClient::class)->request("POST", "/api/v1/inner/pipeline/" . $pipelineId . "/stop");
     }
 }
 
