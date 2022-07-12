@@ -8,14 +8,12 @@ import (
 	"time"
 )
 
-func PipelineUncompletedStatus(payload *letter.StartPipelinePayload, status string) error {
+func PipelineBuildStatus(payload *letter.StartPipelinePayload, status string) error {
 	timeout, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelFunc()
 
 	body := map[string]interface{}{
-		"uuid":      payload.Uuid,
-		"status":    status,
-		"timestamp": time.Now(),
+		"uuid": payload.Uuid,
 	}
 	serverUrl, err := config.UciServerUrl.Value()
 	if err != nil {
@@ -26,26 +24,15 @@ func PipelineUncompletedStatus(payload *letter.StartPipelinePayload, status stri
 		R().
 		SetContext(timeout).
 		SetBody(body)
-	return log.Tee("request uncompleted status", doPost(r, serverUrl+"/api/v1/pipeline/report/status"))
+	return log.Tee("request build running", doPost(r, serverUrl+"/api/v1/pipeline/report/status/"+status))
 }
 
-func PipelineFinishedStatus(payload *letter.StartPipelinePayload, err error) error {
-
+func PipelineBuildFailed(payload *letter.StartPipelinePayload, err error) error {
 	timeout, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelFunc()
-	var status string
-	var failedCause string
-	if err != nil {
-		status = "BUILD_FAILED"
-		failedCause = err.Error()
-	} else {
-		status = "BUILD_SUCCEED"
-	}
 	body := map[string]interface{}{
 		"uuid":        payload.Uuid,
-		"status":      status,
-		"timestamp":   time.Now(),
-		"failedCause": failedCause,
+		"failedCause": err.Error(),
 	}
 
 	r := client.R().SetContext(timeout).SetBody(body)
@@ -54,6 +41,5 @@ func PipelineFinishedStatus(payload *letter.StartPipelinePayload, err error) err
 	if err != nil {
 		return err
 	}
-	return log.Tee("request finished status", doPost(r, serverUrl+"/api/v1/pipeline/report/status"))
-
+	return log.Tee("request build failed", doPost(r, serverUrl+"/api/v1/pipeline/report/status/BUILD_FAILED"))
 }

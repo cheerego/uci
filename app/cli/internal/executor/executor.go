@@ -59,7 +59,11 @@ func (o *Executor) Exec(letterString string) {
 			return
 		}
 		err = o.startAction(payload)
-		requests.PipelineFinishedStatus(payload, err)
+		if err != nil {
+			requests.PipelineBuildFailed(payload, err)
+		} else {
+			requests.PipelineBuildStatus(payload, "BUILD_SUCCEED")
+		}
 	case letter.StopAction:
 		payload, err := l.StopPipelinePayload()
 		if err != nil {
@@ -80,7 +84,7 @@ func (o *Executor) stopAction(payload *letter.StopPipelinePayload) error {
 func (o *Executor) startAction(p *letter.StartPipelinePayload) error {
 
 	time.Sleep(2 * time.Second)
-	err := requests.PipelineUncompletedStatus(p, "BUILD_RUNNING")
+	err := requests.PipelineBuildStatus(p, "BUILD_RUNNING")
 	if err != nil {
 		return err
 	}

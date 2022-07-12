@@ -7,7 +7,7 @@ type (
 		//Timestamp time.Time `json:"timestamp"`
 	}
 
-	ReportBuildRunning struct {
+	ReportPipelineStatus struct {
 		Uuid        string `json:"uuid"`
 		FailedCause string `json:"failedCause"`
 	}

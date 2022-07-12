@@ -24,8 +24,8 @@ func NewPipelineRepository(db *gorm.DB) *PipelineRepository {
 func (p *PipelineRepository) IncreaseDispatchTimes(ctx context.Context, id uint32) (int64, error) {
 	var m pipeline.Pipeline
 	tx := orm.FromContext(ctx, p.db).Model(&m).Where(id).Updates(map[string]interface{}{
-		"dispatch_times":   gorm.Expr("dispatch_times + ?", 1),
-		"last_dispatch_at": time.Now(),
+		"dispatch_times":     gorm.Expr("dispatch_times + ?", 1),
+		"last_dispatched_at": time.Now(),
 	})
 	return tx.RowsAffected, tx.Error
 
@@ -33,7 +33,7 @@ func (p *PipelineRepository) IncreaseDispatchTimes(ctx context.Context, id uint3
 
 func (p *PipelineRepository) UpdateStatus(ctx context.Context, m *pipeline.Pipeline, opts ...pipeline.StatusOption) (int64, error) {
 	var selects = make([]string, 0)
-	selects = append(selects, "LastStatusChangedAt")
+	selects = append(selects, "LastStatusChangedAt", "Status")
 	for _, opt := range opts {
 		selects = append(selects, opt(m))
 	}

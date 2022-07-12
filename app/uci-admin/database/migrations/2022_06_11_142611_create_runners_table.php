@@ -17,7 +17,7 @@ class CreateRunnersTable extends Migration
             $table->id();
             $table->string("code")->default("");
             $table->string("salt")->default("");
-            $table->string("status")->default();
+            $table->string("status")->default("");
             $table->timestamp("last_connected_at")->nullable();
             $table->timestamp("last_disconnected_at")->nullable();
             $table->timestamp("last_dispatched_at")->nullable();
