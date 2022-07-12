@@ -2,6 +2,7 @@ package report
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/labstack/echo/v4"
@@ -9,7 +10,7 @@ import (
 )
 
 func BuildRunning(c echo.Context) error {
-	f := new(ReportStatusForm)
+	f := new(ReportBuildRunning)
 	if err := c.Bind(f); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -23,8 +24,7 @@ func BuildRunning(c echo.Context) error {
 		return err
 	}
 	defer mutex.Unlock()
-	p.Status = f.Status
-	_, err = service.Services.PipelineService.UpdateStatus(c.Request().Context(), f.Status)
+	_, err = service.Services.PipelineService.UpdateStatus(c.Request().Context(), p, pipeline.BuildRunning)
 	if err != nil {
 		return err
 	}

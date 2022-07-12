@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/pkg/orm"
+	"github.com/cheerego/uci/pkg/ptr"
 	"gorm.io/gorm"
 	"time"
 )
@@ -31,7 +32,13 @@ func (p *PipelineRepository) IncreaseDispatchTimes(ctx context.Context, id uint3
 }
 
 func (p *PipelineRepository) UpdateStatus(ctx context.Context, m *pipeline.Pipeline, opts ...pipeline.StatusOption) (int64, error) {
-	tx := orm.FromContext(ctx, p.db).Select("Status").Updates(m)
+	var selects = make([]string, 0)
+	selects = append(selects, "LastStatusChangedAt")
+	for _, opt := range opts {
+		selects = append(selects, opt(m))
+	}
+	m.LastStatusChangedAt = ptr.Ptr(time.Now())
+	tx := orm.FromContext(ctx, p.db).Select(selects).Updates(m)
 	return tx.RowsAffected, tx.Error
 }
 

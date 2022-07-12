@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/TheZeroSlave/zapsentry v1.10.0
 	github.com/assembla/cony v0.3.2
+	github.com/brpaz/echozap v1.1.3
 	github.com/caarlos0/env/v6 v6.9.1
 	github.com/cheerego/go-redisson v0.0.6
 	github.com/cockroachdb/errors v1.9.0

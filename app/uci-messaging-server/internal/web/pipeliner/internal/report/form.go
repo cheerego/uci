@@ -1,9 +1,5 @@
 package report
 
-import (
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
-)
-
 type (
 	ReportRawlogForm struct {
 		Uuid string `json:"uuid"`
@@ -11,10 +7,8 @@ type (
 		//Timestamp time.Time `json:"timestamp"`
 	}
 
-	ReportStatusForm struct {
-		Uuid   string          `json:"uuid"`
-		Status pipeline.Status `json:"status"`
-		//Timestamp time.Time       `json:"timestamp"`
+	ReportBuildRunning struct {
+		Uuid        string `json:"uuid"`
 		FailedCause string `json:"failedCause"`
 	}
 )

@@ -56,10 +56,11 @@ type Pipeline struct {
 	TriggeredCause string
 	FailedCause    string
 
-	Envs          Envs
-	Status        Status
-	StatusMessage string
-	RawLog        string
+	Envs                Envs
+	Status              Status
+	LastStatusChangedAt *time.Time
+	StatusMessage       string
+	RawLog              string
 
 	//CurrentStep      string
 }

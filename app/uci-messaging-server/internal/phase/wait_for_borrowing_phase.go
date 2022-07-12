@@ -60,7 +60,7 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 	if err != nil {
 		return err
 	} else {
-		log.L().Info("pipeline borrow runner success, WaitForBorrowing -> WaitForDispatching", zap.String("pipeline", p.LogString()), zap.String("runner", borrowRunner.LogName()))
+		log.L().Info("pipeline borrow runner success, WaitForBorrowing -> WaitForDispatching", zap.String("pipeline", p.LogString()), zap.String("runner", borrowRunner.String()))
 		return nil
 	}
 

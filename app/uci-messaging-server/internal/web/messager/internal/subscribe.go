@@ -27,9 +27,9 @@ func Subscribe(c echo.Context) error {
 			return err
 		}
 		defer func() {
-			log.S().Infof("requestId %s runner %s subscribe canceling", rid, runer.LogName())
+			log.S().Infof("requestId %s runner %s subscribe canceling", rid, runer.String())
 			messaging.Unsubscribe(uuid)
-			log.S().Infof("requestId %s runnerr %s subscribe canceled", rid, runer.LogName())
+			log.S().Infof("requestId %s runnerr %s subscribe canceled", rid, runer.String())
 		}()
 
 		err = facade.Facades.RunnerFacade.UpdateStatus(c.Request().Context(), runer, runner.Running)
@@ -41,22 +41,22 @@ func Subscribe(c echo.Context) error {
 		c.Response().Write([]byte("\n"))
 		c.Response().Flush()
 
-		log.S().Infof("requestId %s runner %s subscribe success", rid, runer.LogName())
+		log.S().Infof("requestId %s runner %s subscribe success", rid, runer.String())
 		for {
 			select {
 
 			case str, ok := <-subscribe:
 				if !ok {
-					log.S().Infof("requestId %s runner %s chan not ok return", rid, runer.LogName())
+					log.S().Infof("requestId %s runner %s chan not ok return", rid, runer.String())
 					return nil
 				}
 
 				c.Logger().Info(str)
 				c.Response().Write([]byte(fmt.Sprintf("%s%s", str, "\n")))
 				c.Response().Flush()
-				log.S().Infof("requestId %s runner %s subscribe write message", rid, runer.LogName())
+				log.S().Infof("requestId %s runner %s subscribe write message", rid, runer.String())
 			case <-c.Request().Context().Done():
-				log.S().Infof("requestId %s runner %s request done", rid, runer.LogName())
+				log.S().Infof("requestId %s runner %s request done", rid, runer.String())
 
 				err = facade.Facades.RunnerFacade.UpdateStatus(c.Request().Context(), runer, runner.FakeRunning)
 				if err != nil {

@@ -26,6 +26,8 @@ class CreatePipelinesTable extends Migration
 
             $table->string("status")->default("BUILD_QUEUING");
             $table->string("status_message")->default("");
+            $table->timestamp("last_status_changed_at")->nullable();
+
             $table->json("envs")->default("[]");
 
             $table->integer("runner_id")->default(0);

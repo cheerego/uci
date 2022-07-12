@@ -4,6 +4,9 @@ github.com/TheZeroSlave/zapsentry
 # github.com/assembla/cony v0.3.2
 ## explicit
 github.com/assembla/cony
+# github.com/brpaz/echozap v1.1.3
+## explicit; go 1.12
+github.com/brpaz/echozap
 # github.com/caarlos0/env/v6 v6.9.1
 ## explicit; go 1.17
 github.com/caarlos0/env/v6
@@ -65,8 +68,6 @@ github.com/getsentry/sentry-go/internal/ratelimit
 # github.com/go-co-op/gocron v1.14.0
 ## explicit; go 1.17
 github.com/go-co-op/gocron
-# github.com/go-ole/go-ole v1.2.6
-## explicit; go 1.12
 # github.com/go-playground/locales v0.14.0
 ## explicit; go 1.13
 github.com/go-playground/locales
@@ -185,8 +186,6 @@ github.com/rogpeppe/go-internal/fmtsort
 # github.com/satori/go.uuid v1.2.0
 ## explicit
 github.com/satori/go.uuid
-# github.com/shirou/gopsutil v3.21.11+incompatible
-## explicit
 # github.com/spf13/cobra v0.0.5
 ## explicit; go 1.12
 github.com/spf13/cobra
@@ -196,20 +195,12 @@ github.com/spf13/pflag
 # github.com/streadway/amqp v1.0.0
 ## explicit; go 1.10
 github.com/streadway/amqp
-# github.com/stretchr/testify v1.7.2
-## explicit; go 1.13
-# github.com/tklauser/go-sysconf v0.3.10
-## explicit; go 1.13
-# github.com/tklauser/numcpus v0.4.0
-## explicit; go 1.11
 # github.com/valyala/bytebufferpool v1.0.0
 ## explicit
 github.com/valyala/bytebufferpool
 # github.com/valyala/fasttemplate v1.2.1
 ## explicit; go 1.12
 github.com/valyala/fasttemplate
-# github.com/yusufpapurcu/wmi v1.2.2
-## explicit; go 1.16
 # go.uber.org/atomic v1.7.0
 ## explicit; go 1.13
 go.uber.org/atomic

@@ -16,11 +16,14 @@ type Runner struct {
 	CurrentLoad int32
 	LoadMode    string
 
+	LastConnectedAt    *time.Time
+	LastDisConnectedAt *time.Time
+
 	LastStatusChangedAt time.Time
 	LastDispatchAt      time.Time
 }
 
-func (r *Runner) LogName() string {
+func (r *Runner) String() string {
 	return fmt.Sprintf("runner-%d-salt-%s-machine-%s", r.ID, r.Salt, r.MachineCode)
 }
 

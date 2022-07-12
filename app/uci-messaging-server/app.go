@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/assembla/cony"
+	"github.com/brpaz/echozap"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/conyer"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/facade"
@@ -63,6 +64,7 @@ func (a *Application) Start() error {
 
 func (a *Application) startHttp() error {
 	o := http.NewEcho()
+	o.Use(echozap.ZapLogger(log.L()))
 	o.Use(uctx.ContextMiddleware)
 	o.Debug = true
 	o.Validator = NewRequestValidator()
