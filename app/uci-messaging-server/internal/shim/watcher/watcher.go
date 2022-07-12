@@ -1,6 +1,7 @@
 package watcher
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
 	"github.com/cheerego/uci/pkg/log"
@@ -8,15 +9,21 @@ import (
 	"github.com/cheerego/uci/protocol/letter"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
+	"time"
 )
 
+type AckContext struct {
+	Ctx       context.Context
+	CtxCancel context.CancelFunc
+}
+
 type ListWatcher struct {
-	acks        *syncmap.Map[chan struct{}]
+	acks        *syncmap.Map[*AckContext]
 	subscribers *syncmap.Map[chan string]
 }
 
 func NewListWatcher() *ListWatcher {
-	return &ListWatcher{acks: syncmap.New[chan struct{}](), subscribers: syncmap.New[chan string]()}
+	return &ListWatcher{acks: syncmap.New[*AckContext](), subscribers: syncmap.New[chan string]()}
 }
 
 func (l *ListWatcher) Subscribers() []string {
@@ -67,17 +74,24 @@ func (l *ListWatcher) PublishAck(clientId string, letter *letter.Letter) error {
 	if err != nil {
 		return err
 	}
-	ch := make(chan struct{}, 10)
-	l.acks.Store(letter.RequestId, ch)
+	cancel, cancelFunc := context.WithCancel(context.Background())
+	l.acks.Store(letter.RequestId, &AckContext{Ctx: cancel, CtxCancel: cancelFunc})
+	defer l.acks.Delete(letter.RequestId)
 
-	return err
+	select {
+	case <-cancel.Done():
+		return nil
+	case <-time.After(5 * time.Second):
+		return e.ErrListWatchAckTimeout.WithStack()
+	}
+
 }
 
 func (l *ListWatcher) Ack(requestId string) error {
 	load, b := l.acks.Load(requestId)
 	if !b {
-		return e.ErrNoListWatchAckId.WithStack()
+		return e.ErrListWatchAckIdNotFound.WithStack()
 	}
-	load <- struct{}{}
+	load.CtxCancel()
 	return nil
 }

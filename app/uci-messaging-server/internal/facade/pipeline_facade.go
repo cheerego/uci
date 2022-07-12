@@ -26,7 +26,7 @@ func (p *PipelineFacade) Stop(ctx context.Context, pl *pipeline.Pipeline) error 
 		if err != nil {
 			return err
 		}
-		err = shim.Watcher.Publish(fmt.Sprintf("%d", runner.ID), &letter.Letter{
+		err = shim.Watcher.PublishAck(fmt.Sprintf("%d", runner.ID), &letter.Letter{
 			Action: letter.StopAction,
 			Payload: letter.StopPipelinePayload{
 				WorkflowId: pl.WorkflowId,

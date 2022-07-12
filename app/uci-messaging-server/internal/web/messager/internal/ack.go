@@ -9,7 +9,6 @@ import (
 func Ack(ctx echo.Context) error {
 	cc := uctx.FromContext(ctx)
 	requestId := cc.Param("request_id")
-
-	shim.Watcher.Subscribers()
-
+	err := shim.Watcher.Ack(requestId)
+	return err
 }

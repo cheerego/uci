@@ -10,7 +10,7 @@ func Route(r *echo.Echo) {
 	{
 		v1.GET("/message/:name/subscribe", internal.Subscribe)
 		v1.GET("/message/subscribers", internal.Subscribers)
-		v1.GET("/message/ack/:request_id", internal.Ack)
+		v1.POST("/message/ack/:request_id", internal.Ack)
 	}
 
 }

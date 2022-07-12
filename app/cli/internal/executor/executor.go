@@ -51,6 +51,12 @@ func (o *Executor) Exec(letterString string) {
 		return
 	}
 
+	err = requests.Ack(l.RequestId)
+	if err != nil {
+		return
+	}
+	log.L().Info("ack ", zap.String("requestId", l.RequestId))
+
 	switch l.Action {
 	case letter.StartAction:
 		payload, err := l.StartPipelinePayload()
