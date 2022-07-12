@@ -39,8 +39,8 @@ func (s *StopPipelinePayload) String() string {
 
 type Action string
 
-const StartAction = "start"
-const StopAction = "stop"
+const StartAction = "start_pipeline"
+const StopAction = "stop_pipeline"
 
 func (l *Letter) StartPipelinePayload() (*StartPipelinePayload, error) {
 	marshal, err := json.Marshal(l.Payload)

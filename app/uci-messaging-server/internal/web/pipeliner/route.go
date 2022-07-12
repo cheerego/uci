@@ -14,8 +14,11 @@ func Route(r *echo.Echo) {
 	}
 
 	{
-		v1.GET("/pipeline/:pipeline_id", pipeline.GetPipeline)
-		v1.PUT("/pipeline/:pipeline_id", pipeline.UpdatePipeline)
+		v1.GET("/pipeline/:pipeline_id", pipeline.Get)
+		v1.PUT("/pipeline/:pipeline_id", pipeline.Update)
 	}
 
+	{
+		v1.POST("/inner/pipeline/:id/stop", pipeline.Stop)
+	}
 }

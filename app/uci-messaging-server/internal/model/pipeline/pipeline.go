@@ -31,6 +31,13 @@ func WithCloseAt(at time.Time) StatusOption {
 	}
 }
 
+func WithStatusMessage(msg string) StatusOption {
+	return func(pipeline *Pipeline) string {
+		pipeline.StatusMessage = msg
+		return "StatusMessage"
+	}
+}
+
 type Pipeline struct {
 	orm.Model
 	WorkflowId uint32

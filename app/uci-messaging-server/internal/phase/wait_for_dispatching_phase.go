@@ -3,9 +3,9 @@ package phase
 import (
 	"context"
 	"fmt"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/messaging"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim/watcher"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/ptr"
 	"github.com/cheerego/uci/protocol/letter"
@@ -66,7 +66,7 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	}
 
 	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.LogString()), zap.Any("letter", l))
-	dispatchErr := messaging.Publish(fmt.Sprintf("%d", p.RunnerId), l)
+	dispatchErr := watcher.Publish(fmt.Sprintf("%d", p.RunnerId), l)
 	if dispatchErr != nil {
 		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.LogString()), zap.String("error", dispatchErr.Error()))
 	} else {

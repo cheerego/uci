@@ -78,6 +78,9 @@ func (o *Executor) Exec(letterString string) {
 }
 
 func (o *Executor) stopAction(payload *letter.StopPipelinePayload) error {
+	if cancel, ok := o.PipelineExecRuntimes[payload.PipelineId]; ok {
+		cancel.cancelFunc()
+	}
 	return nil
 }
 

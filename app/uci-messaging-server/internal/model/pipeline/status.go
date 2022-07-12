@@ -32,7 +32,10 @@ const BuildRunning = "BUILD_RUNNING"
 const BuildSucceed Status = "BUILD_SUCCEED"
 const BuildFailed Status = "BUILD_FAILED"
 const BuildTimeouted Status = "BUILD_TIMEOUTED"
-const BuildAborted Status = "BUILD_ABORTED"
+
+const WaitForDispatchAborting = "WAIT_FOR_ABORTING"
+const DispatchAbortSucceed = "DISPATCH_ABORT_SUCCEED"
+const BuildAborted = "BUILD_ABORTED"
 
 const (
 	CachePersistenceError Status = "CACHE_PERSISTENCE_ERROR"
