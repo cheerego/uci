@@ -55,7 +55,7 @@ func (o *Executor) Exec(letterString string) {
 	if err != nil {
 		return
 	}
-	log.L().Info("ack ", zap.String("requestId", l.RequestId))
+	log.S().Infof("ack requestId %s letter %s", l.RequestId, letterString)
 
 	switch l.Action {
 	case letter.StartAction:

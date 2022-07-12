@@ -57,7 +57,7 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 		return err
 	}
 
-	log.L().Info("pipeline dir", zap.String("pipeline", payload.String()), zap.String("pipelineWorkspace", workspaceDir))
+	log.S().Infof("pipeline %s workspace %s", payload.String(), workspaceDir)
 	cmd := exec.CommandContext(ctx, "sh", "-c", "-e", strings.Replace(payload.Yaml, "\r\n", "\n", -1))
 
 	cmd.Env = h.PrepareEnviron(payload)

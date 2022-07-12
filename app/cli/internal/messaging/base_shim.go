@@ -6,7 +6,6 @@ import (
 	"github.com/cheerego/uci/app/cli/internal/uerror"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
-	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"time"
 )
@@ -52,7 +51,7 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 			if !ok {
 				return errors.New("list watch consuming select chan return no ok")
 			}
-			log.L().Info("list watch consuming receive message from chan ", zap.String("msg", msg))
+			log.S().Infof("list watch consuming receive message from chan %s", msg)
 			go executor.E.Exec(msg)
 		}
 	}

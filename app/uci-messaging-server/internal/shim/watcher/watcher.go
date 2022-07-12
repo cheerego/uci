@@ -12,18 +12,13 @@ import (
 	"time"
 )
 
-type AckContext struct {
-	Ctx       context.Context
-	CtxCancel context.CancelFunc
-}
-
 type ListWatcher struct {
-	acks        *syncmap.Map[*AckContext]
+	acks        *syncmap.Map[context.CancelFunc]
 	subscribers *syncmap.Map[chan string]
 }
 
 func NewListWatcher() *ListWatcher {
-	return &ListWatcher{acks: syncmap.New[*AckContext](), subscribers: syncmap.New[chan string]()}
+	return &ListWatcher{acks: syncmap.New[context.CancelFunc](), subscribers: syncmap.New[chan string]()}
 }
 
 func (l *ListWatcher) Subscribers() []string {
@@ -75,7 +70,7 @@ func (l *ListWatcher) PublishAck(clientId string, letter *letter.Letter) error {
 		return err
 	}
 	cancel, cancelFunc := context.WithCancel(context.Background())
-	l.acks.Store(letter.RequestId, &AckContext{Ctx: cancel, CtxCancel: cancelFunc})
+	l.acks.Store(letter.RequestId, cancelFunc)
 	defer l.acks.Delete(letter.RequestId)
 
 	select {
@@ -88,10 +83,10 @@ func (l *ListWatcher) PublishAck(clientId string, letter *letter.Letter) error {
 }
 
 func (l *ListWatcher) Ack(requestId string) error {
-	load, b := l.acks.Load(requestId)
+	cancel, b := l.acks.Load(requestId)
 	if !b {
 		return e.ErrListWatchAckIdNotFound.WithStack()
 	}
-	load.CtxCancel()
+	cancel()
 	return nil
 }
