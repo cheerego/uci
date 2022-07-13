@@ -17,6 +17,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/labstack/gommon v0.3.1
+	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/cobra v0.0.5
@@ -26,6 +27,7 @@ require (
 	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/olahol/melody.v1 v1.0.0-20170518105555-d52139073376
+	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/postgres v1.3.5
 	gorm.io/gorm v1.23.5
 )
@@ -68,8 +70,8 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
-	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+	golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
-	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
+	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 )
