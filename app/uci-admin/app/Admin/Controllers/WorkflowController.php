@@ -87,19 +87,23 @@ class WorkflowController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Workflow());
-
-        $form->text('name', __('Name'))->required();
-        $form->php('yaml', __('Yaml'))->default(<<<EOF
+        $yaml = <<<EOF
 name: hello world
-on: [push]
+on: [ push ]
 jobs:
   - name: hello world
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - run: echo hello world
-EOF
-        );
+EOF;
+
+        $form = new Form(new Workflow());
+
+        $form->text('name', __('Name'))->required();
+        $form->php('yaml', __('Yaml'))->default($yaml)->placeholder($yaml);
         $form->hidden('creator_id', __('Creator id'));
         $form->table('envs', __('Envs'), function ($table) {
             $table->text('key');

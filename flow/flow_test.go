@@ -6,24 +6,23 @@ import (
 	"testing"
 )
 
+var a = `
+t
+`
+
 func TestYamlParse(t *testing.T) {
 	str := `
-
-name: learn-github-actions
-on: [push]
+name: hello world
+on: [ push ]
 jobs:
-  - name: check-bats-version
+  - name: hello world
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: script
     steps:
-      - uses: actions/checkout@v3
-      - run: echo 123
-  - name: check-bats-version123
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '14'
-      - run: npm install -g bats
-      - run: bats -v
+      - run: echo hello world
 `
 
 	var f Flow

@@ -17,7 +17,6 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/labstack/gommon v0.3.1
-	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/cobra v0.0.5
@@ -60,6 +59,7 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/orcaman/concurrent-map v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
@@ -74,4 +74,5 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )

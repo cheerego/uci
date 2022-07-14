@@ -1,7 +1,11 @@
 name: hello world
-on: [push]
+on: [ push ]
 jobs:
   - name: hello world
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: script
     steps:
       - run: echo hello world
