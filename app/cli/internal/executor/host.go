@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config"
+	"github.com/cheerego/uci/flow"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
 	"io"
 	"os"
 	"os/exec"
@@ -50,6 +52,11 @@ func (h *HostExecutor) PrepareEnviron(payload *letter.StartPipelinePayload) []st
 }
 
 func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelinePayload, w io.Writer) error {
+	var flower flow.Flow
+	err := yaml.Unmarshal([]byte(payload.Yaml), &flower)
+	if err != nil {
+		return err
+	}
 
 	workspaceDir, err := h.PrepareWorkspace(payload)
 	if err != nil {
@@ -70,4 +77,12 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 		return err
 	}
 	return cmd.Wait()
+}
+
+func runJob(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, f *flow.Flow, w io.Writer) {
+
+}
+
+func runStep() {
+
 }
