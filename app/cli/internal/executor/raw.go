@@ -62,3 +62,45 @@ func reportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 	})
 	return g.Wait()
 }
+
+func stepLog(p *letter.StartPipelinePayload, reader io.Reader) error {
+	r := bufio.NewReader(reader)
+
+	var rawCh = make(chan string, 100)
+	g, _ := errgroup.WithContext(context.TODO())
+	g.Go(func() error {
+		raws := ""
+		for {
+			select {
+			case <-time.After(5 * time.Second):
+				raws = ""
+			case raw, ok := <-rawCh:
+				if ok {
+					raws = fmt.Sprintf("%s%s", raws, raw)
+					log.S().Info("step log %s", raws)
+				} else {
+					log.L().Info("read raw end", zap.String("pipeline", p.String()))
+					return nil
+				}
+			}
+		}
+	})
+
+	g.Go(func() error {
+		defer close(rawCh)
+		for {
+			str, err := r.ReadString('\n')
+			if len(str) > 0 {
+				rawCh <- str
+			}
+			if err == io.EOF {
+				return nil
+			}
+			if err != nil {
+				rawCh <- str
+				return err
+			}
+		}
+	})
+	return g.Wait()
+}

@@ -103,7 +103,7 @@ func (o *Executor) startAction(p *letter.StartPipelinePayload) error {
 	defer r.Close()
 
 	g, ctx := errgroup.WithContext(context.Background())
-	cancel, cancelFunc := context.WithCancel(ctx)
+	stopCtx, cancelFunc := context.WithCancel(ctx)
 
 	g.Go(func() error {
 		return reportRawlog(p, r)
@@ -112,7 +112,7 @@ func (o *Executor) startAction(p *letter.StartPipelinePayload) error {
 		defer w.Close()
 		o.PipelineExecRuntimes[p.PipelineId] = NewPipelineExecRuntime(p.PipelineId, cancelFunc)
 		defer delete(o.PipelineExecRuntimes, p.PipelineId)
-		return o.HostExecutor.Start(cancel, p, w)
+		return o.HostExecutor.Start(stopCtx, p, w)
 	})
 	return g.Wait()
 }

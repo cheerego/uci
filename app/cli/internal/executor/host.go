@@ -8,6 +8,7 @@ import (
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
@@ -51,12 +52,13 @@ func (h *HostExecutor) PrepareEnviron(payload *letter.StartPipelinePayload) []st
 	return pe
 }
 
-func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelinePayload, w io.Writer) error {
+func (h *HostExecutor) Start(stopCtx context.Context, payload *letter.StartPipelinePayload, raw io.Writer) error {
 	var flower flow.Flow
 	err := yaml.Unmarshal([]byte(payload.Yaml), &flower)
 	if err != nil {
 		return err
 	}
+	log.L().Info("flow ", zap.Any("flow", flower))
 
 	workspaceDir, err := h.PrepareWorkspace(payload)
 	if err != nil {
@@ -65,24 +67,57 @@ func (h *HostExecutor) Start(ctx context.Context, payload *letter.StartPipelineP
 	}
 
 	log.S().Infof("pipeline %s workspace %s", payload.String(), workspaceDir)
-	cmd := exec.CommandContext(ctx, "sh", "-c", "-e", strings.Replace(payload.Yaml, "\r\n", "\n", -1))
+	return h.RunJobs(stopCtx, workspaceDir, payload, &flower, raw)
+}
 
-	cmd.Env = h.PrepareEnviron(payload)
-	cmd.Dir = workspaceDir
+func (h *HostExecutor) RunJobs(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, f *flow.Flow, raw io.Writer) error {
+	for _, job := range f.Jobs {
+		err := h.RunSteps(ctx, workspace, payload, job, raw)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
-	cmd.Stdout = w
-	cmd.Stderr = w
-	err = cmd.Start()
+func (h *HostExecutor) RunSteps(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, job flow.Job, raw io.Writer) error {
+	for _, step := range job.Steps {
+		err := h.RunStep(ctx, workspace, payload, step, raw)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+
+}
+
+func (h *HostExecutor) RunStep(stopCtx context.Context, workspace string, payload *letter.StartPipelinePayload, step flow.Step, raw io.Writer) error {
+	r, w, err := os.Pipe()
 	if err != nil {
 		return err
 	}
-	return cmd.Wait()
-}
+	defer r.Close()
 
-func runJob(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, f *flow.Flow, w io.Writer) {
+	g, _ := errgroup.WithContext(stopCtx)
 
-}
+	g.Go(func() error {
+		defer w.Close()
+		cmd := exec.CommandContext(stopCtx, "sh", "-c", "-e", strings.Replace(*step.Run, "\r\n", "\n", -1))
 
-func runStep() {
+		cmd.Env = h.PrepareEnviron(payload)
+		cmd.Dir = workspace
+		mw := io.MultiWriter(raw, w)
+		cmd.Stdout = mw
+		cmd.Stderr = mw
+		err = cmd.Start()
+		if err != nil {
+			return err
+		}
+		return cmd.Wait()
+	})
 
+	g.Go(func() error {
+		return stepLog(payload, r)
+	})
+	return g.Wait()
 }

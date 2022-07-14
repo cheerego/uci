@@ -13,5 +13,5 @@ type Job struct {
 type Step struct {
 	Uses *string           `json:"uses,omitempty" yaml:"uses,omitempty"`
 	With map[string]string `json:"with,omitempty" yaml:"with,omitempty"`
-	Runs *string           `json:"runs,omitempty" yaml:"runs,omitempty"`
+	Run  *string           `json:"run,omitempty" yaml:"run,omitempty"`
 }
