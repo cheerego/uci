@@ -13,6 +13,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 )
 
@@ -82,7 +83,7 @@ func (h *HostExecutor) RunJobs(ctx context.Context, workspace string, payload *l
 
 func (h *HostExecutor) RunSteps(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, job flow.Job, raw io.Writer) error {
 	for _, step := range job.Steps {
-		err := h.RunStep(ctx, workspace, payload, step, raw)
+		err := h.RunStep(ctx, workspace, payload, job, step, raw)
 		if err != nil {
 			return err
 		}
@@ -91,7 +92,7 @@ func (h *HostExecutor) RunSteps(ctx context.Context, workspace string, payload *
 
 }
 
-func (h *HostExecutor) RunStep(stopCtx context.Context, workspace string, payload *letter.StartPipelinePayload, step flow.Step, raw io.Writer) error {
+func (h *HostExecutor) RunStep(stopCtx context.Context, workspace string, payload *letter.StartPipelinePayload, job flow.Job, step flow.Step, raw io.Writer) error {
 	r, w, err := os.Pipe()
 	if err != nil {
 		return err
@@ -99,11 +100,17 @@ func (h *HostExecutor) RunStep(stopCtx context.Context, workspace string, payloa
 	defer r.Close()
 
 	g, _ := errgroup.WithContext(stopCtx)
+	var shell string = "sh"
+	if job.Defaults.Run.Shell != "" {
+		shell = job.Defaults.Run.Shell
+	}
+	if job.Defaults.Run.WorkingDirectory != "" {
+		workspace = path.Join(workspace, job.Defaults.Run.WorkingDirectory)
+	}
 
 	g.Go(func() error {
 		defer w.Close()
-		cmd := exec.CommandContext(stopCtx, "sh", "-c", "-e", strings.Replace(*step.Run, "\r\n", "\n", -1))
-
+		cmd := exec.CommandContext(stopCtx, shell, "-c", "-e", strings.Replace(*step.Run, "\r\n", "\n", -1))
 		cmd.Env = h.PrepareEnviron(payload)
 		cmd.Dir = workspace
 		mw := io.MultiWriter(raw, w)
