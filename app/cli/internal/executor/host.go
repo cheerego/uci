@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config"
-	"github.com/cheerego/uci/flow"
+	"github.com/cheerego/uci/frame/flow"
+	"github.com/cheerego/uci/frame/protocol/letter"
+	"github.com/cheerego/uci/frame/status"
 	"github.com/cheerego/uci/pkg/log"
-	"github.com/cheerego/uci/protocol/letter"
 	"github.com/robertkrimen/otto"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -99,18 +100,20 @@ func (h *HostExecutor) RunJobs(ctx context.Context, workspace string, payload *l
 	return nil
 }
 
-func (h *HostExecutor) RunSteps(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, job flow.Job, raw io.Writer) error {
+func (h *HostExecutor) RunSteps(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, job *flow.Job, raw io.Writer) error {
 	for _, step := range job.Steps {
 		err := h.RunStep(ctx, workspace, payload, job, step, raw)
 		if err != nil {
+			step.Result.Status = status.BuildFailed
 			return err
 		}
+		step.Result.Status = status.BuildRunning
 	}
 	return nil
 
 }
 
-func (h *HostExecutor) RunStep(stopCtx context.Context, workspace string, payload *letter.StartPipelinePayload, job flow.Job, step flow.Step, raw io.Writer) error {
+func (h *HostExecutor) RunStep(stopCtx context.Context, workspace string, payload *letter.StartPipelinePayload, job *flow.Job, step *flow.Step, raw io.Writer) error {
 	r, w, err := os.Pipe()
 	if err != nil {
 		return err

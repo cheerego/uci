@@ -6,7 +6,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim"
-	"github.com/cheerego/uci/protocol/letter"
+	"github.com/cheerego/uci/frame/protocol/letter"
 	uuid "github.com/satori/go.uuid"
 	"time"
 )

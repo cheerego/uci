@@ -1,7 +1,7 @@
 package flow
 
 import (
-	"github.com/cheerego/uci/protocol/letter"
+	"github.com/cheerego/uci/frame/protocol/letter"
 	"io"
 )
 

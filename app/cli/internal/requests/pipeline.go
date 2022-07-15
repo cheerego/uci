@@ -3,8 +3,8 @@ package requests
 import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/config"
+	"github.com/cheerego/uci/frame/protocol/letter"
 	"github.com/cheerego/uci/pkg/log"
-	"github.com/cheerego/uci/protocol/letter"
 	"time"
 )
 

@@ -1,9 +1,14 @@
 package flow
 
+import (
+	"github.com/cheerego/uci/frame/status"
+	"time"
+)
+
 type Flow struct {
 	Name string   `yaml:"name,omitempty" json:"name,omitempty"`
 	On   []string `yaml:"on,omitempty" json:"on,omitempty"`
-	Jobs []Job    `yaml:"jobs,omitempty" json:"jobs,omitempty"`
+	Jobs []*Job   `yaml:"jobs,omitempty" json:"jobs,omitempty"`
 }
 
 type Job struct {
@@ -11,7 +16,7 @@ type Job struct {
 	RunsOn   string   `yaml:"runs-on,omitempty" json:"runsOn,omitempty"`
 	If       string   `yaml:"if,omitempty" json:"if,omitempty"`
 	Defaults Defaults `yaml:"defaults,omitempty" json:"defaults,omitempty"`
-	Steps    []Step   `yaml:"steps,omitempty" json:"steps,omitempty"`
+	Steps    []*Step  `yaml:"steps,omitempty" json:"steps,omitempty"`
 }
 
 type Defaults struct {
@@ -24,7 +29,15 @@ type Run struct {
 }
 
 type Step struct {
-	Uses *string            `json:"uses,omitempty" yaml:"uses,omitempty"`
-	With *map[string]string `json:"with,omitempty" yaml:"with,omitempty"`
-	Run  *string            `json:"run,omitempty" yaml:"run,omitempty"`
+	Uses   *string            `yaml:"uses,omitempty" json:"uses"`
+	With   *map[string]string `yaml:"with,omitempty" json:"with"`
+	Run    *string            `yaml:"run,omitempty" json:"run"`
+	Result Result             `yaml:"result" json:"result"`
+}
+
+type Result struct {
+	Status   status.Status `json:"status" yaml:"status"`
+	Duration int64         `json:"duration" yaml:"duration"`
+	StartAt  *time.Time    `json:"startAt" yaml:"startAt"`
+	CloseAt  *time.Time    `json:"closeAt" yaml:"closeAt"`
 }
