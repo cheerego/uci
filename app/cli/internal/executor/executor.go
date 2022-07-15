@@ -49,11 +49,11 @@ func (o *Executor) Exec(letterString string) {
 		return
 	}
 
-	err = requests.Ack(l.RequestId)
+	err = requests.Ack(l.AckId)
 	if err != nil {
 		return
 	}
-	log.S().Infof("ack requestId %s letter %s", l.RequestId, letterString)
+	log.S().Infof("ack ackId %s letter %s", l.AckId, letterString)
 
 	switch l.Action {
 	case letter.StartAction:

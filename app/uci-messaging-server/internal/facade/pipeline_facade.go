@@ -35,7 +35,7 @@ func (p *PipelineFacade) Stop(ctx context.Context, pl *pipeline.Pipeline) error 
 				Uuid:       pl.Uuid,
 			},
 			Timestamp: time.Now(),
-			RequestId: uuid.NewV4().String(),
+			AckId:     uuid.NewV4().String(),
 		})
 		if err != nil {
 			return err

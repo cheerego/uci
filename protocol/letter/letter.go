@@ -10,7 +10,7 @@ type Letter struct {
 	Action    Action      `json:"action"`
 	Payload   interface{} `json:"payload"`
 	Timestamp time.Time   `json:"timestamp"`
-	RequestId string      `json:"requestId"`
+	AckId     string      `json:"ackId"`
 }
 
 type StartPipelinePayload struct {

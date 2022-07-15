@@ -8,7 +8,6 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/phase"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
 )
@@ -21,8 +20,6 @@ func NewWorkflowFacade() *WorkflowFacade {
 }
 
 func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflow, customEnvs []*workflow.Env) error {
-	// 初始化 RequestId
-	ctx = http.WithRequestId(ctx)
 	// 创建 Pipeline
 	p := pipeline.NewPipeline(workflow)
 

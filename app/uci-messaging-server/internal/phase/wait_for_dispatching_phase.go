@@ -52,8 +52,8 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	p.LastDispatchedAt = ptr.Ptr(time.Now())
 
 	l := &letter.Letter{
-		Action:    letter.StartAction,
-		RequestId: uuid.NewV4().String(),
+		Action: letter.StartAction,
+		AckId:  uuid.NewV4().String(),
 		Payload: &letter.StartPipelinePayload{
 			WorkflowId: p.WorkflowId,
 			PipelineId: p.ID,

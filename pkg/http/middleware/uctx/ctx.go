@@ -9,7 +9,7 @@ type Result struct {
 	Code      string      `json:"code"`
 	Message   string      `json:"message"`
 	Data      interface{} `json:"data,omitempty"`
-	RequestId string      `json:"RequestId,omitempty"`
+	RequestId string      `json:"ackId,omitempty"`
 }
 
 func NewResult(code string, message string, data interface{}, requestId string) *Result {

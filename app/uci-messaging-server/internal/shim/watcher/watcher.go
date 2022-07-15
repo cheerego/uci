@@ -70,8 +70,8 @@ func (l *ListWatcher) PublishAck(clientId string, letter *letter.Letter) error {
 		return err
 	}
 	cancel, cancelFunc := context.WithCancel(context.Background())
-	l.acks.Store(letter.RequestId, cancelFunc)
-	defer l.acks.Delete(letter.RequestId)
+	l.acks.Store(letter.AckId, cancelFunc)
+	defer l.acks.Delete(letter.AckId)
 
 	select {
 	case <-cancel.Done():
