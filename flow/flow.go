@@ -9,6 +9,7 @@ type Flow struct {
 type Job struct {
 	Name     string   `yaml:"name,omitempty" json:"name,omitempty"`
 	RunsOn   string   `yaml:"runs-on,omitempty" json:"runsOn,omitempty"`
+	If       string   `yaml:"if,omitempty" json:"if,omitempty"`
 	Defaults Defaults `yaml:"defaults,omitempty" json:"defaults,omitempty"`
 	Steps    []Step   `yaml:"steps,omitempty" json:"steps,omitempty"`
 }

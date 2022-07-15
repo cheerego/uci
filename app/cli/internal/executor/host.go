@@ -7,6 +7,7 @@ import (
 	"github.com/cheerego/uci/flow"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/protocol/letter"
+	"github.com/robertkrimen/otto"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v2"
@@ -73,6 +74,23 @@ func (h *HostExecutor) Start(stopCtx context.Context, payload *letter.StartPipel
 
 func (h *HostExecutor) RunJobs(ctx context.Context, workspace string, payload *letter.StartPipelinePayload, f *flow.Flow, raw io.Writer) error {
 	for _, job := range f.Jobs {
+
+		if job.If != "" {
+			vm := otto.New()
+			vm.Set("env", payload.Envs)
+			value, err := vm.Run(job.If)
+			if err != nil {
+				return err
+			}
+			b, err := value.ToBoolean()
+			log.S().Infof("paser if %s value %v", job.If, b)
+			if err != nil {
+				return err
+			}
+			if !b {
+				continue
+			}
+		}
 		err := h.RunSteps(ctx, workspace, payload, job, raw)
 		if err != nil {
 			return err

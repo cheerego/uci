@@ -17,6 +17,7 @@ on: [ push ]
 jobs:
   - name: hello world
     runs-on: ubuntu-latest
+    if: hkn==123
     defaults:
       run:
         shell: bash
