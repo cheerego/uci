@@ -15,14 +15,15 @@ class TriggerWorkflowAction extends RowAction
         $workflowService = app(WorkflowService::class);
 
         $revision = request()->input("revision");
-//        $param_envs = $request->input("envs", []);
-//        $needle_param_envs = [];
-//        foreach ($param_envs as $key => $value) {
-//            $needle_param_envs[] = $value;
-//        }
+        $param_envs_str = request()->input("envs", "[]");
+        $param_envs = json_decode($param_envs_str);
+        $envs = [];
+        foreach ($param_envs as $key => $value) {
+            $envs[] = ["key" => $key, "value" => $value];
+        }
         $params = [
             "revision" => $revision,
-//            "envs" => $needle_param_envs
+            "envs" => $envs
         ];
         $resp = $workflowService->trigger($model->id, $params);
         if ($resp->getStatusCode() != 200) {
