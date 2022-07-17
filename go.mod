@@ -19,7 +19,6 @@ require (
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/labstack/gommon v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/robertkrimen/otto v0.0.0-20211024170158-b87d35c0b86f
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/cobra v0.0.5
