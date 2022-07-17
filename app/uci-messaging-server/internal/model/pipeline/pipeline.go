@@ -88,6 +88,6 @@ func NewPipeline(workflow *workflow.Workflow) *Pipeline {
 		RunnerId:      0,
 	}
 }
-func (p Pipeline) LogString() string {
-	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s", p.WorkflowId, p.Uuid, p.ID, p.Salt)
+func (p Pipeline) String() string {
+	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s-runner-%d", p.WorkflowId, p.Uuid, p.ID, p.Salt, p.RunnerId)
 }

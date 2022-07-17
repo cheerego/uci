@@ -13,6 +13,7 @@ import (
 type Shimer interface {
 	Listening(ctx context.Context) error
 	MessageChan() <-chan string
+	Ack(msg string) error
 }
 
 type BaseShimer struct {
@@ -51,6 +52,11 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 			if !ok {
 				return errors.New("list watch consuming select chan return no ok")
 			}
+			err := b.Ack(msg)
+			if err != nil {
+				log.S().Infof("list watch ack receive message from chan %s err %v", msg, err)
+				continue
+			}
 			log.S().Infof("list watch consuming receive message from chan %s", msg)
 			go executor.E.Exec(msg)
 		}
@@ -65,9 +71,6 @@ func (b *BaseShimer) Run(ctx context.Context) error {
 	g.Go(func() error {
 		return b.Consuming(gctx)
 	})
-	//g.Go(func() error {
-	//	return b.Pinging(gctx)
-	//})
 
 	if err := g.Wait(); err != nil {
 		return err

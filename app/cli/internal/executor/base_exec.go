@@ -51,10 +51,6 @@ func (o *Executor) Exec(letterString string) {
 		return
 	}
 
-	err = requests.Ack(l.AckId)
-	if err != nil {
-		return
-	}
 	log.S().Infof("ack ackId %s letter %s", l.AckId, letterString)
 
 	switch l.Action {

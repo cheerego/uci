@@ -22,7 +22,7 @@ func (q *BuildQueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) erro
 	if err != nil {
 		return err
 	}
-	log.L().Info("queuing phase pipeline status BuildQueuing -> WaitForBorrowing", zap.String("pipeline", p.LogString()))
+	log.L().Info("queuing phase pipeline status BuildQueuing -> WaitForBorrowing", zap.String("pipeline", p.String()))
 	return nil
 }
 

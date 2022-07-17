@@ -6,10 +6,8 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim"
-	"github.com/cheerego/uci/frame/protocol/letter"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/ptr"
-	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"time"
 )
@@ -43,7 +41,7 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 		if err != nil {
 			return err
 		} else {
-			log.L().Info("pipeline dispatching timeout", zap.String("pipeline", p.LogString()))
+			log.L().Info("pipeline dispatching timeout", zap.String("pipeline", p.String()))
 			return nil
 		}
 	}
@@ -51,29 +49,16 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	p.DispatchTimes = p.DispatchTimes + 1
 	p.LastDispatchedAt = ptr.Ptr(time.Now())
 
-	l := &letter.Letter{
-		Action: letter.StartAction,
-		AckId:  uuid.NewV4().String(),
-		Payload: &letter.StartPipelinePayload{
-			WorkflowId: p.WorkflowId,
-			PipelineId: p.ID,
-			Yaml:       p.Yaml,
-			Salt:       p.Salt,
-			Uuid:       p.Uuid,
-			Envs:       service.Services.PipelineEnvService.EnvsToMap(p.Envs),
-		},
-		Timestamp: time.Now(),
-	}
-
-	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.LogString()), zap.Any("letter", l))
+	l := shim.StartLetter(p)
+	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.String()), zap.Any("letter", l))
 	dispatchErr := shim.Watcher.PublishAck(fmt.Sprintf("%d", p.RunnerId), l)
 	if dispatchErr != nil {
-		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.LogString()), zap.String("error", dispatchErr.Error()))
+		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.String()), zap.String("error", dispatchErr.Error()))
 		return dispatchErr
 	}
 	p.DispatchSucceedAt = ptr.Ptr(time.Now())
 	p.Status = pipeline.DispatchSucceed
-	log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.LogString()))
+	log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.String()))
 	_, err := service.Services.PipelineService.Update(ctx, p)
 	return err
 

@@ -6,9 +6,6 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim"
-	"github.com/cheerego/uci/frame/protocol/letter"
-	uuid "github.com/satori/go.uuid"
-	"time"
 )
 
 type PipelineFacade struct {
@@ -26,17 +23,7 @@ func (p *PipelineFacade) Stop(ctx context.Context, pl *pipeline.Pipeline) error 
 		if err != nil {
 			return err
 		}
-		err = shim.Watcher.PublishAck(fmt.Sprintf("%d", runner.ID), &letter.Letter{
-			Action: letter.StopAction,
-			Payload: letter.StopPipelinePayload{
-				WorkflowId: pl.WorkflowId,
-				PipelineId: pl.ID,
-				Salt:       pl.Salt,
-				Uuid:       pl.Uuid,
-			},
-			Timestamp: time.Now(),
-			AckId:     uuid.NewV4().String(),
-		})
+		err = shim.Watcher.PublishAck(fmt.Sprintf("%d", runner.ID), shim.StopLetter(pl))
 		if err != nil {
 			return err
 		}

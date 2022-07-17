@@ -3,8 +3,10 @@ package listwatch
 import (
 	"bufio"
 	"context"
-	"github.com/cheerego/uci/app/cli/internal/messaging"
+	"encoding/json"
+	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
+	"github.com/cheerego/uci/frame/protocol/letter"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
@@ -21,11 +23,24 @@ type ListWatch struct {
 	client      *http.Client
 }
 
+func (l *ListWatch) Ack(msg string) error {
+	var le letter.Letter
+	err := json.Unmarshal([]byte(msg), &le)
+	if err != nil {
+		log.L().Error("json.Unmarshal letterString err", zap.Error(err), zap.String("letterString", msg))
+		return err
+	}
+	err = requests.Ack(le.AckId)
+	if err != nil {
+		return err
+	}
+	log.S().Infof("ack ackId %s letter %s", le.AckId, msg)
+	return nil
+}
+
 func (l *ListWatch) MessageChan() <-chan string {
 	return l.messagingCh
 }
-
-var _ messaging.Shimer = (*ListWatch)(nil)
 
 func NewShimer() *ListWatch {
 	client := &http.Client{
