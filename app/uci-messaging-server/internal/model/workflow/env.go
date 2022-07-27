@@ -6,8 +6,8 @@ import (
 )
 
 type Env struct {
-	Key    string `json:"key"`
-	LValue string `json:"value"`
+	K string `json:"key"`
+	V string `json:"value"`
 	//Sensitive bool   `json:"sensitive"`
 }
 
@@ -24,8 +24,7 @@ func (p *Envs) Scan(data interface{}) error {
 	return json.Unmarshal(data.([]byte), p)
 }
 
-// gorm 自定义结构需要实现 LValue Scan 两个方法
-// LValue 实现方法
+// gorm 自定义结构需要实现  Scan 两个方法
 func (p Env) Value() (driver.Value, error) {
 	return json.Marshal(p)
 }

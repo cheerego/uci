@@ -28,7 +28,7 @@ func (p *PipelineEnvService) EnvsToMap(e1 []*pipeline.Env) map[string]string {
 	m := make(map[string]string)
 
 	for _, env := range e1 {
-		m[env.Key] = env.LValue
+		m[env.K] = env.V
 	}
 	return m
 }
@@ -36,16 +36,16 @@ func (p *PipelineEnvService) EnvsToMap(e1 []*pipeline.Env) map[string]string {
 func (p *PipelineEnvService) CollectSystemEnvs(pl *pipeline.Pipeline) []*pipeline.Env {
 	return []*pipeline.Env{
 		{
-			Key:    "CI",
-			LValue: "true",
+			K: "CI",
+			V: "true",
 		},
 		{
-			Key:    "PIPELINE_ID",
-			LValue: fmt.Sprintf("%d", pl.ID),
+			K: "PIPELINE_ID",
+			V: fmt.Sprintf("%d", pl.ID),
 		},
 		{
-			Key:    "WORKFLOW_ID",
-			LValue: fmt.Sprintf("%d", pl.WorkflowId),
+			K: "WORKFLOW_ID",
+			V: fmt.Sprintf("%d", pl.WorkflowId),
 		},
 	}
 }
