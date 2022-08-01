@@ -1,7 +1,9 @@
 package internal
 
 import (
+	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/signal"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -18,8 +20,13 @@ func (u *Uci) Up() *cobra.Command {
 			}
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := u.BaseShimer.Run(u.Context); err != nil {
-				log.L().Error("runner shimer run err", zap.Error(err))
+			go func() {
+				<-signal.KillSignal()
+				u.TerminateCancel()
+			}()
+			if err := u.BaseShimer.Run(u.TerminateContext); err != nil {
+				log.L().Error("runner shim run err", zap.Error(err))
+				requests.MessagingUnsubscribe("1")
 			}
 		},
 	}

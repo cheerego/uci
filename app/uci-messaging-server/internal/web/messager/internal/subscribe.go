@@ -73,3 +73,9 @@ func Subscribe(c echo.Context) error {
 
 	return c.NoContent(200)
 }
+
+func Unsubscribe(c echo.Context) error {
+	uuid := c.Param("name")
+	shim.Watcher.Unsubscribe(uuid)
+	return nil
+}

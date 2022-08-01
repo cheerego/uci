@@ -9,17 +9,17 @@ import (
 )
 
 type Uci struct {
-	BaseShimer *messaging.BaseShimer
-	Context    context.Context
-	Cancel     context.CancelFunc
+	BaseShimer       *messaging.BaseShimer
+	TerminateContext context.Context
+	TerminateCancel  context.CancelFunc
 }
 
 func NewUci(shim messaging.Shimer) *Uci {
 	cancel, cancelFunc := context.WithCancel(context.Background())
 	return &Uci{
-		BaseShimer: messaging.NewBaseShimer(shim),
-		Context:    cancel,
-		Cancel:     cancelFunc,
+		BaseShimer:       messaging.NewBaseShimer(shim),
+		TerminateContext: cancel,
+		TerminateCancel:  cancelFunc,
 	}
 }
 
