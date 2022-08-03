@@ -2,7 +2,6 @@ package host
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config"
 	"github.com/cheerego/uci/frame/flow"
@@ -85,8 +84,6 @@ func (h *HostExecutor) Start(stopCtx context.Context, payload *letter.StartPipel
 func (h *HostExecutor) RunFlow(ctx context.Context, runtime *Runtime, f *flow.Flow) error {
 	log.L().Info("job len", zap.Int("len", len(f.Jobs)))
 	for _, job := range f.Jobs {
-		marshal, err1 := json.Marshal(job)
-		log.S().Infof("job %v %s", string(marshal), err1)
 		err := h.RunJob(ctx, runtime, f, job)
 		if err != nil {
 			return err
