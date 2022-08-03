@@ -13,10 +13,16 @@ type Flow struct {
 
 type Job struct {
 	Name     string   `yaml:"name,omitempty" json:"name,omitempty"`
-	RunsOn   string   `yaml:"runs-on,omitempty" json:"runsOn,omitempty"`
+	Docker   Docker   `yaml:"docker,omitempty" json:"docker,omitempty"`
 	If       string   `yaml:"if,omitempty" json:"if,omitempty"`
 	Defaults Defaults `yaml:"defaults,omitempty" json:"defaults,omitempty"`
 	Steps    []*Step  `yaml:"steps,omitempty" json:"steps,omitempty"`
+}
+
+type Docker struct {
+	Image    string `yaml:"image,omitempty" json:"image,omitempty"`
+	Username string `yaml:"username,omitempty" json:"username,omitempty"`
+	Password string `yaml:"password,omitempty" json:"password,omitempty"`
 }
 
 type Defaults struct {

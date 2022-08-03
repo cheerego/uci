@@ -92,7 +92,8 @@ name: hello world
 on: [ push ]
 jobs:
   - name: hello world
-    runs-on: ubuntu-latest
+    docker:
+      image: ubuntu
     defaults:
       run:
         shell: bash

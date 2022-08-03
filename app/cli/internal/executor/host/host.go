@@ -2,16 +2,15 @@ package host
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config"
-	"github.com/cheerego/uci/app/cli/internal/executor/storage"
 	"github.com/cheerego/uci/frame/flow"
 	"github.com/cheerego/uci/frame/protocol/letter"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/docker/docker/api/types"
 	"github.com/robertkrimen/otto"
 	"go.uber.org/zap"
-	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
@@ -27,6 +26,16 @@ func NewHostExecutor() *HostExecutor {
 	return &HostExecutor{}
 }
 
+type Runtime struct {
+	Workspace string
+	Envs      map[string]string
+	RawWriter io.WriteCloser
+}
+
+func NewRuntime(workspace string, envs map[string]string, rawWriter io.WriteCloser) *Runtime {
+	return &Runtime{Workspace: workspace, Envs: envs, RawWriter: rawWriter}
+}
+
 func (h *HostExecutor) PrepareWorkspace(payload *letter.StartPipelinePayload) (string, error) {
 	taskWorkspaceDir, err := config.UciPipelineWorkspaceDir(payload.WorkflowId, payload.PipelineId, payload.Salt)
 	if err != nil {
@@ -40,12 +49,12 @@ func (h *HostExecutor) PrepareWorkspace(payload *letter.StartPipelinePayload) (s
 	return taskWorkspaceDir, nil
 }
 
-func (h *HostExecutor) PrepareEnviron(payload *letter.StartPipelinePayload) []string {
+func (h *HostExecutor) PrepareEnviron(envs map[string]string) []string {
 	// 操作系统变量
 	se := os.Environ()
 	// 下发下来的变量
-	pe := make([]string, len(payload.Envs))
-	for key, value := range payload.Envs {
+	pe := make([]string, len(envs))
+	for key, value := range envs {
 		pe = append(pe, fmt.Sprintf("%s=%s", key, value))
 	}
 	t := make([]string, len(se)+len(pe))
@@ -70,29 +79,27 @@ func (h *HostExecutor) Start(stopCtx context.Context, payload *letter.StartPipel
 
 	log.S().Infof("pipeline %s workspace %s", payload.String(), workspaceDir)
 
-	return h.RunFlowRuntime(stopCtx, flow.NewFlowRuntime(&flower, payload, workspaceDir, raw))
+	return h.RunFlow(stopCtx, NewRuntime(workspaceDir, payload.Envs, raw), &flower)
 }
 
-func (h *HostExecutor) RunFlowRuntime(ctx context.Context, f *flow.FlowRuntime) error {
-	for _, job := range f.Flow.Jobs {
-		return func() error {
-			jobRuntime := flow.NewJobRuntime(f, job)
-			defer jobRuntime.JobReader.Close()
-			err := h.RunJobRuntime(ctx, jobRuntime)
-			if err != nil {
-				return err
-			}
-			return nil
-		}()
+func (h *HostExecutor) RunFlow(ctx context.Context, runtime *Runtime, f *flow.Flow) error {
+	log.L().Info("job len", zap.Int("len", len(f.Jobs)))
+	for _, job := range f.Jobs {
+		marshal, err1 := json.Marshal(job)
+		log.S().Infof("job %v %s", string(marshal), err1)
+		err := h.RunJob(ctx, runtime, f, job)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func (h *HostExecutor) RunJobRuntime(stopCtx context.Context, j *flow.JobRuntime) error {
-	if j.Job.If != "" {
+func (h *HostExecutor) RunJob(stopCtx context.Context, runtime *Runtime, f *flow.Flow, j *flow.Job) error {
+	if j.If != "" {
 		vm := otto.New()
-		vm.Set("env", j.Runtime.Payload.Envs)
-		value, err := vm.Run(j.Job.If)
+		vm.Set("env", runtime.Envs)
+		value, err := vm.Run(j.If)
 		if err != nil {
 			return err
 		}
@@ -105,19 +112,19 @@ func (h *HostExecutor) RunJobRuntime(stopCtx context.Context, j *flow.JobRuntime
 		}
 	}
 	//
-	if j.Job.RunsOn != "" {
+	if j.Docker.Image != "" {
 		err := func() error {
 			docker, err := Docker()
 			if err != nil {
 				return err
 			}
-			pull, err := docker.ImagePull(context.Background(), j.Job.RunsOn, types.ImagePullOptions{})
+			pull, err := docker.ImagePull(context.Background(), j.Docker.Image, types.ImagePullOptions{})
 			if err != nil {
 				return err
 			}
 			defer pull.Close()
 
-			io.Copy(io.MultiWriter(j.Runtime.FlowWriter, j.JobWriter), pull)
+			io.Copy(runtime.RawWriter, pull)
 			return err
 		}()
 		if err != nil {
@@ -125,8 +132,8 @@ func (h *HostExecutor) RunJobRuntime(stopCtx context.Context, j *flow.JobRuntime
 		}
 	}
 
-	for _, step := range j.Job.Steps {
-		err := h.RunStep(stopCtx, flow.NewStepRuntime(j.Runtime, j, step))
+	for _, step := range j.Steps {
+		err := h.RunStep(stopCtx, runtime, f, j, step)
 		if err != nil {
 			return err
 		}
@@ -134,38 +141,24 @@ func (h *HostExecutor) RunJobRuntime(stopCtx context.Context, j *flow.JobRuntime
 	return nil
 }
 
-func (h *HostExecutor) RunStep(stopCtx context.Context, s *flow.StepRuntime) error {
-	log.S().Infof("run step")
-
-	r := s.JobRuntime.JobReader
-	w := s.JobRuntime.JobWriter
-
-	g, _ := errgroup.WithContext(stopCtx)
+func (h *HostExecutor) RunStep(stopCtx context.Context, runtime *Runtime, f *flow.Flow, j *flow.Job, s *flow.Step) error {
 	var shell string = "sh"
-	if s.Job.Defaults.Run.Shell != "" {
-		shell = s.Job.Defaults.Run.Shell
+	if j.Defaults.Run.Shell != "" {
+		shell = j.Defaults.Run.Shell
 	}
-	var workspace = s.Runtime.Workspace
-	if s.Job.Defaults.Run.WorkingDirectory != "" {
-		workspace = path.Join(workspace, s.Job.Defaults.Run.WorkingDirectory)
+	var workspace = runtime.Workspace
+	if j.Defaults.Run.WorkingDirectory != "" {
+		workspace = path.Join(workspace, j.Defaults.Run.WorkingDirectory)
 	}
 
-	g.Go(func() error {
-		defer w.Close()
-		cmd := exec.CommandContext(stopCtx, shell, "-c", "-e", strings.Replace(*s.Step.Run, "\r\n", "\n", -1))
-		cmd.Env = h.PrepareEnviron(s.Runtime.Payload)
-		cmd.Dir = workspace
-		mw := io.MultiWriter(s.Runtime.FlowWriter, w)
-		cmd.Stdout = mw
-		cmd.Stderr = mw
-		if err := cmd.Start(); err != nil {
-			return err
-		}
-		return cmd.Wait()
-	})
+	cmd := exec.CommandContext(stopCtx, shell, "-c", "-e", strings.Replace(*s.Run, "\r\n", "\n", -1))
+	cmd.Env = h.PrepareEnviron(runtime.Envs)
+	cmd.Dir = workspace
+	cmd.Stdout = runtime.RawWriter
+	cmd.Stderr = runtime.RawWriter
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	return cmd.Wait()
 
-	g.Go(func() error {
-		return storage.StepLog(s.Runtime.Payload, r)
-	})
-	return g.Wait()
 }
