@@ -7,7 +7,6 @@ import (
 	"github.com/cheerego/uci/frame/flow"
 	"github.com/cheerego/uci/frame/protocol/letter"
 	"github.com/cheerego/uci/pkg/log"
-	"github.com/docker/docker/api/types"
 	"github.com/robertkrimen/otto"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
@@ -111,18 +110,23 @@ func (h *HostExecutor) RunJob(stopCtx context.Context, runtime *Runtime, f *flow
 	//
 	if j.Docker.Image != "" {
 		err := func() error {
-			docker, err := Docker()
-			if err != nil {
-				return err
+			if j.Docker.Username != "" && j.Docker.Password != "" {
+				//docker.Login(stopCtx, j.Docker.Image)
 			}
-			pull, err := docker.ImagePull(context.Background(), j.Docker.Image, types.ImagePullOptions{})
-			if err != nil {
-				return err
-			}
-			defer pull.Close()
 
-			io.Copy(runtime.RawWriter, pull)
-			return err
+			//docker.Login(stopCtx)
+			//
+			//if err != nil {
+			//	return err
+			//}
+			//pull, err := docker.ImagePull(context.Background(), j.Docker.Image, types.ImagePullOptions{})
+			//if err != nil {
+			//	return err
+			//}
+			//defer pull.Close()
+
+			//io.Copy(runtime.RawWriter, pull)
+			//return err
 		}()
 		if err != nil {
 			return err

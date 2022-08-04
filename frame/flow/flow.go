@@ -2,6 +2,8 @@ package flow
 
 import (
 	"github.com/cheerego/uci/frame/status"
+	"github.com/docker/distribution/reference"
+	"github.com/robertkrimen/otto"
 	"time"
 )
 
@@ -46,4 +48,37 @@ type Result struct {
 	Duration int64         `json:"duration" yaml:"duration"`
 	StartAt  *time.Time    `json:"startAt" yaml:"startAt"`
 	CloseAt  *time.Time    `json:"closeAt" yaml:"closeAt"`
+}
+
+type Script struct {
+	Shell string
+	Show  string
+}
+
+func (f *Flow) Scripts(envs map[string]string) ([]Script, error) {
+	scripts := make([]Script, 0)
+	js := otto.New()
+
+	for jobIndex, job := range f.Jobs {
+		image := job.Docker.Image
+		if image != "" {
+			if job.Docker.Username != "" && job.Docker.Password != "" {
+				named, err := reference.ParseNormalizedNamed(image)
+				if err != nil {
+					return scripts, err
+				}
+				domain := reference.Domain(named)
+				if domain != "docker.io" {
+					domain = ""
+				}
+				scripts = append(scripts, Script{
+					Shell: "echo docker login ",
+					Show:  "docker login -u ",
+				})
+
+			}
+
+		}
+
+	}
 }
