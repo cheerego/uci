@@ -1,0 +1,17 @@
+
+.mysteps: &mysteps
+  - run: echo 1
+  - run: echo 2
+
+name: hello world
+on: [ push ]
+jobs:
+  - name: hello world
+    runs-on: ubuntu-latest
+    if: hkn==123
+    defaults:
+      run:
+        shell: bash
+        working-directory: script
+    steps:
+      *mysteps

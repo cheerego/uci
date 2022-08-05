@@ -1,10 +1,9 @@
 package flow
 
 import (
-	"github.com/cheerego/uci/frame/status"
+	"fmt"
 	"github.com/docker/distribution/reference"
-	"github.com/robertkrimen/otto"
-	"time"
+	"path"
 )
 
 type Flow struct {
@@ -37,29 +36,52 @@ type Run struct {
 }
 
 type Step struct {
-	Uses   *string            `yaml:"uses,omitempty" json:"uses"`
-	With   *map[string]string `yaml:"with,omitempty" json:"with"`
-	Run    *string            `yaml:"run,omitempty" json:"run"`
-	Result Result             `yaml:"result" json:"result"`
+	Uses *string            `yaml:"uses,omitempty" json:"uses"`
+	With *map[string]string `yaml:"with,omitempty" json:"with"`
+	Run  *string            `yaml:"run,omitempty" json:"run"`
+	If   string             `yaml:"if,omitempty" json:"if,omitempty"`
+	//Result Result             `yaml:"result" json:"result"`
 }
 
-type Result struct {
-	Status   status.Status `json:"status" yaml:"status"`
-	Duration int64         `json:"duration" yaml:"duration"`
-	StartAt  *time.Time    `json:"startAt" yaml:"startAt"`
-	CloseAt  *time.Time    `json:"closeAt" yaml:"closeAt"`
+//type Result struct {
+//	Status   status.Status `json:"status" yaml:"status"`
+//	Duration int64         `json:"duration" yaml:"duration"`
+//	StartAt  *time.Time    `json:"startAt" yaml:"startAt"`
+//	CloseAt  *time.Time    `json:"closeAt" yaml:"closeAt"`
+//}
+
+type WorkflowScript struct {
+	JobScripts []JobScript
+}
+
+func NewWorkflowScript() *WorkflowScript {
+	return &WorkflowScript{
+		JobScripts: make([]JobScript, 0),
+	}
+}
+
+type JobScript struct {
+	Index    string
+	Parallel bool
+	Script   []Script
+}
+
+func NewJobScript(index string, parallel bool) *JobScript {
+	return &JobScript{Index: index, Parallel: parallel, Script: make([]Script, 0)}
 }
 
 type Script struct {
+	Index string
 	Shell string
 	Show  string
+	If    bool
 }
 
-func (f *Flow) Scripts(envs map[string]string) ([]Script, error) {
-	scripts := make([]Script, 0)
-	js := otto.New()
+func (f *Flow) Scripts(workflowUuid string, envs map[string]string) ([]Script, error) {
+	var workflowScript = NewWorkflowScript()
 
 	for jobIndex, job := range f.Jobs {
+		jobScript := NewJobScript(path.Join(workflowUuid, fmt.Sprintf("job-%d", jobIndex)), false)
 		image := job.Docker.Image
 		if image != "" {
 			if job.Docker.Username != "" && job.Docker.Password != "" {

@@ -127,6 +127,7 @@ func (h *HostExecutor) RunJob(stopCtx context.Context, runtime *Runtime, f *flow
 
 			//io.Copy(runtime.RawWriter, pull)
 			//return err
+			return nil
 		}()
 		if err != nil {
 			return err

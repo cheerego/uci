@@ -1,0 +1,24 @@
+
+.mysteps: &mysteps
+  - run: echo 1
+  - run: echo 2
+
+.defaults: &defaults
+  shell: sh
+  working-directory: asdf
+
+.if: &if 123123
+
+name: hello world
+on: [ push ]
+jobs:
+  - name: hello world
+    runs-on: ubuntu-latest
+    if: *if
+    defaults:
+      run:
+        shell: bash
+        working-directory: script
+        <<: *defaults
+    steps:
+      *mysteps
