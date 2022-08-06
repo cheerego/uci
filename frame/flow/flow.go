@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/docker/distribution/reference"
 	"path"
+	"strings"
 )
 
 type Flow struct {
@@ -33,6 +34,7 @@ type Defaults struct {
 type Run struct {
 	Shell            string `yaml:"shell,omitempty" json:"shell,omitempty"`
 	WorkingDirectory string `yaml:"working-directory,omitempty" json:"workingDirectory,omitempty"`
+	Return           string `yaml:"return,omitempty" json:"return,omitempty"`
 }
 
 type Step struct {
@@ -51,56 +53,78 @@ type Step struct {
 //}
 
 type WorkflowScript struct {
-	JobScripts []JobScript
+	JobScripts []*JobScript
 }
 
 func NewWorkflowScript() *WorkflowScript {
 	return &WorkflowScript{
-		JobScripts: make([]JobScript, 0),
+		JobScripts: make([]*JobScript, 0),
 	}
+}
+
+func (w *WorkflowScript) Append(j *JobScript) {
+	w.JobScripts = append(w.JobScripts, j)
 }
 
 type JobScript struct {
 	Index    string
 	Parallel bool
-	Script   []Script
+	If       string
+	Scripts  []*Script
 }
 
-func NewJobScript(index string, parallel bool) *JobScript {
-	return &JobScript{Index: index, Parallel: parallel, Script: make([]Script, 0)}
+func NewJobScript(index string) *JobScript {
+	return &JobScript{Index: index, Parallel: false, Scripts: make([]*Script, 0)}
+}
+
+func (j *JobScript) Append(s *Script) {
+	j.Scripts = append(j.Scripts, s)
 }
 
 type Script struct {
 	Index string
 	Shell string
 	Show  string
-	If    bool
 }
 
-func (f *Flow) Scripts(workflowUuid string, envs map[string]string) ([]Script, error) {
+func NewScript(index string, show string) *Script {
+	return &Script{Index: index, Shell: "", Show: show}
+}
+
+func (f *Flow) Scripts(workflowUuid string, envs map[string]string) (*WorkflowScript, error) {
 	var workflowScript = NewWorkflowScript()
 
 	for jobIndex, job := range f.Jobs {
-		jobScript := NewJobScript(path.Join(workflowUuid, fmt.Sprintf("job-%d", jobIndex)), false)
-		image := job.Docker.Image
-		if image != "" {
-			if job.Docker.Username != "" && job.Docker.Password != "" {
-				named, err := reference.ParseNormalizedNamed(image)
-				if err != nil {
-					return scripts, err
-				}
-				domain := reference.Domain(named)
-				if domain != "docker.io" {
-					domain = ""
-				}
-				scripts = append(scripts, Script{
-					Shell: "echo docker login ",
-					Show:  "docker login -u ",
-				})
+		jobScript := NewJobScript(path.Join(workflowUuid, fmt.Sprintf("job-%d", jobIndex)))
 
+		// init script
+		initScript := NewScript(path.Join(workflowUuid, fmt.Sprintf("job-%d-init", jobIndex)), fmt.Sprintf("job.name = %s init ... docker login -u", job.Name))
+		if job.Docker.Image != "" {
+			named, err := reference.ParseNormalizedNamed(job.Docker.Image)
+			if err != nil {
+				return nil, err
+			}
+			domain := reference.Domain(named)
+			if domain != "docker.io" {
+				domain = ""
 			}
 
-		}
+			initScript.Shell = fmt.Sprintf("echo %s | docker login -u %s --password-stdin")
+			if job.Docker.Username != "" && job.Docker.Password != "" {
+				username := strings.TrimSpace(job.Docker.Username)
+				if CanExec(username) {
 
+				}
+
+			} else {
+
+			}
+		}
+		jobScript.Append(initScript)
+		// init script
+
+		workflowScript.Append(jobScript)
 	}
+
+	return workflowScript, nil
 }
