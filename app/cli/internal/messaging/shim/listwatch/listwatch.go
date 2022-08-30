@@ -34,7 +34,7 @@ func (l *ListWatch) Ack(msg string) error {
 	if err != nil {
 		return err
 	}
-	log.S().Infof("ack ackId %s letter %s", le.AckId, msg)
+	log.S().Infof("ack ackId %s", le.AckId)
 	return nil
 }
 

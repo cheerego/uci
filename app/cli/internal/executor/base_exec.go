@@ -51,8 +51,6 @@ func (o *Executor) Exec(letterString string) {
 		return
 	}
 
-	log.S().Infof("ack ackId %s letter %s", l.AckId, letterString)
-
 	switch l.Action {
 	case letter.StartAction:
 		payload, err := l.StartPipelinePayload()

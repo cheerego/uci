@@ -2,7 +2,9 @@ package phase
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim"
@@ -41,7 +43,7 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 		if err != nil {
 			return err
 		} else {
-			log.L().Info("pipeline dispatching timeout", zap.String("pipeline", p.String()))
+			log.L().Info("pipeline dispatching timeout", zap.String("pipeline", p.LogString()))
 			return nil
 		}
 	}
@@ -49,21 +51,34 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	p.DispatchTimes = p.DispatchTimes + 1
 	p.LastDispatchedAt = ptr.Ptr(time.Now())
 
-	l := shim.StartLetter(p)
-	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.String()), zap.Any("letter", l))
+	l, err := service.Services.PipelineService.StartLetter(p)
+	if errors.Is(err, e.ErrIllegalPipelineYaml) {
+		p.Status = pipeline.ErrIllegalPipelineYaml
+		p.FailedCause = err.Error()
+		service.Services.PipelineService.Update(ctx, p)
+		return err
+	}
+	if err != nil {
+		p.Status = pipeline.RunnerInternalError
+		p.FailedCause = err.Error()
+		service.Services.PipelineService.Update(ctx, p)
+		return err
+	}
+
+	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.LogString()), zap.Any("letter", l))
 	dispatchErr := shim.Watcher.PublishAck(fmt.Sprintf("%d", p.RunnerId), l)
 	if dispatchErr != nil {
 		_, err := service.Services.PipelineService.Update(ctx, p)
 		if err != nil {
 			return err
 		}
-		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.String()), zap.String("error", dispatchErr.Error()))
+		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.LogString()), zap.String("error", dispatchErr.Error()))
 		return dispatchErr
 	}
 	p.DispatchSucceedAt = ptr.Ptr(time.Now())
 	p.Status = pipeline.DispatchSucceed
-	log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.String()))
-	_, err := service.Services.PipelineService.Update(ctx, p)
+	log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.LogString()))
+	_, err = service.Services.PipelineService.Update(ctx, p)
 
 	return err
 

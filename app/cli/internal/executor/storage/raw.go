@@ -25,7 +25,7 @@ func ReportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 			case <-time.After(5 * time.Second):
 				err := requests.PipelineRawlog(p.Uuid, true, raws)
 				if err != nil {
-					log.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
+					log.L().Error("1", zap.String("pipeline", p.TaskName), zap.Error(err))
 				}
 				raws = ""
 			case raw, ok := <-rawCh:
@@ -34,9 +34,9 @@ func ReportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 				} else {
 					err := requests.PipelineRawlog(p.Uuid, true, raws)
 					if err != nil {
-						log.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
+						log.L().Error("1", zap.String("pipeline", p.TaskName), zap.Error(err))
 					} else {
-						log.L().Info("read raw end", zap.String("pipeline", p.String()))
+						log.L().Info("read raw end", zap.String("pipeline", p.TaskName))
 					}
 					return nil
 				}
@@ -79,7 +79,7 @@ func StepLog(p *letter.StartPipelinePayload, reader io.Reader) error {
 					raws = fmt.Sprintf("%s%s", raws, raw)
 					log.S().Info("step log %s", raws)
 				} else {
-					log.L().Info("read raw end", zap.String("pipeline", p.String()))
+					log.L().Info("read raw end", zap.String("pipeline", p.TaskName))
 					return nil
 				}
 			}

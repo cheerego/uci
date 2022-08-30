@@ -8,17 +8,18 @@ import (
 )
 
 type FlowYaml struct {
-	Name string   `yaml:"name,omitempty" json:"name,omitempty"`
-	On   []string `yaml:"on,omitempty" json:"on,omitempty"`
-	Jobs []*Job   `yaml:"jobs,omitempty" json:"jobs,omitempty"`
+	Name   string   `yaml:"name,omitempty" json:"name,omitempty"`
+	On     []string `yaml:"on,omitempty" json:"on,omitempty"`
+	Docker Docker   `yaml:"docker,omitempty" json:"docker,omitempty"`
+	Jobs   []*Job   `yaml:"jobs,omitempty" json:"jobs,omitempty"`
 }
 
 type Job struct {
-	Name     string   `yaml:"name,omitempty" json:"name,omitempty"`
-	Docker   Docker   `yaml:"docker,omitempty" json:"docker,omitempty"`
-	If       string   `yaml:"if,omitempty" json:"if,omitempty"`
-	Defaults Defaults `yaml:"defaults,omitempty" json:"defaults,omitempty"`
-	Steps    []*Step  `yaml:"steps,omitempty" json:"steps,omitempty"`
+	Name   string `yaml:"name,omitempty" json:"name,omitempty"`
+	Docker Docker `yaml:"docker,omitempty" json:"docker,omitempty"`
+	If     string `yaml:"if,omitempty" json:"if,omitempty"`
+	//Defaults Defaults `yaml:"defaults,omitempty" json:"defaults,omitempty"`
+	Steps []*Step `yaml:"steps,omitempty" json:"steps,omitempty"`
 }
 
 type Docker struct {
@@ -27,14 +28,14 @@ type Docker struct {
 	Password string `yaml:"password,omitempty" json:"password,omitempty"`
 }
 
-type Defaults struct {
-	Run Run `yaml:"run,omitempty" json:"run,omitempty"`
-}
-
-type Run struct {
-	Sh               string `yaml:"sh,omitempty" json:"sh,omitempty"`
-	WorkingDirectory string `yaml:"working-directory,omitempty" json:"workingDirectory,omitempty"`
-}
+//type Defaults struct {
+//	Run Run `yaml:"run,omitempty" json:"run,omitempty"`
+//}
+//
+//type Run struct {
+//	Sh               string `yaml:"sh,omitempty" json:"sh,omitempty"`
+//	WorkingDirectory string `yaml:"working-directory,omitempty" json:"workingDirectory,omitempty"`
+//}
 
 type Step struct {
 	Uses *string            `yaml:"uses,omitempty" json:"uses"`
@@ -81,10 +82,10 @@ func (j *JobScript) Append(s *Script) {
 }
 
 type Script struct {
-	Index    string   `yaml:"index,omitempty" json:"index,omitempty"`
-	Shell    string   `yaml:"Shell,omitempty" json:"shell,omitempty"`
-	Show     string   `yaml:"show,omitempty" json:"show,omitempty" json:"show,omitempty"`
-	Defaults Defaults `yaml:"defaults,omitempty" json:"defaults,omitempty" json:"defaults"`
+	Index string `yaml:"index,omitempty" json:"index,omitempty"`
+	Shell string `yaml:"Shell,omitempty" json:"shell,omitempty"`
+	Show  string `yaml:"show,omitempty" json:"show,omitempty" json:"show,omitempty"`
+	//Defaults Defaults `yaml:"defaults,omitempty" json:"defaults,omitempty" json:"defaults"`
 }
 
 func NewScript(index string) *Script {
@@ -97,17 +98,17 @@ func (f *FlowYaml) Scripts(workflowUuid string, envs map[string]string) (*Workfl
 	for jobIndex, job := range f.Jobs {
 		jobScript := NewJobScript(path.Join(workflowUuid, fmt.Sprintf("job-%d", jobIndex)))
 
-		if job.Defaults.Run.Sh == "" {
-			job.Defaults.Run.Sh = "bash"
-		}
-
-		if job.Defaults.Run.WorkingDirectory == "" {
-			job.Defaults.Run.WorkingDirectory = "/workspace"
-		}
+		//if job.Defaults.Run.Sh == "" {
+		//	job.Defaults.Run.Sh = "bash"
+		//}
+		//
+		//if job.Defaults.Run.WorkingDirectory == "" {
+		//	job.Defaults.Run.WorkingDirectory = "/workspace"
+		//}
 
 		// init script
 		initScript := NewScript(path.Join(workflowUuid, fmt.Sprintf("job-%d-init", jobIndex)))
-		initScript.Defaults = job.Defaults
+		//initScript.Defaults = job.Defaults
 		if job.Docker.Image != "" {
 			named, err := reference.ParseNormalizedNamed(job.Docker.Image)
 			if err != nil {

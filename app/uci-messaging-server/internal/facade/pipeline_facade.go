@@ -23,7 +23,7 @@ func (p *PipelineFacade) Stop(ctx context.Context, pl *pipeline.Pipeline) error 
 		if err != nil {
 			return err
 		}
-		err = shim.Watcher.PublishAck(fmt.Sprintf("%d", runner.ID), shim.StopLetter(pl))
+		err = shim.Watcher.PublishAck(fmt.Sprintf("%d", runner.ID), service.Services.PipelineService.StopLetter(pl))
 		if err != nil {
 			return err
 		}

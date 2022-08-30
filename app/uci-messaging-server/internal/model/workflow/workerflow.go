@@ -14,7 +14,7 @@ type Workflow struct {
 }
 
 //func NewWorkflow(name string, repoId uint32, yaml string, enable bool) *Workflow {
-//	return &Workflow{Name: name, RepoId: repoId, Yaml: yaml, Enable: enable}
+//	return &Workflow{Name: name, RepoId: repoId, Scripts: yaml, Enable: enable}
 //}
 
 func (p *Workflow) TableName() string {

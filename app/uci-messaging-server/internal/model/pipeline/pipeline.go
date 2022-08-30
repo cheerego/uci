@@ -5,7 +5,9 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/pkg/orm"
 	"github.com/cheerego/uci/pkg/ptr"
+	"github.com/cheerego/uci/protocol/flow"
 	uuid "github.com/satori/go.uuid"
+	"gopkg.in/yaml.v2"
 	"time"
 )
 
@@ -88,6 +90,22 @@ func NewPipeline(workflow *workflow.Workflow) *Pipeline {
 		RunnerId:      0,
 	}
 }
-func (p Pipeline) String() string {
-	return fmt.Sprintf("workflow-%d-uuid-%s-pipeline-%d-%s-runner-%d", p.WorkflowId, p.Uuid, p.ID, p.Salt, p.RunnerId)
+
+func (p *Pipeline) TaskName() string {
+	return fmt.Sprintf("workflow-%d-pipeline-%d-%s", p.WorkflowId, p.ID, p.Salt)
+}
+
+func (p *Pipeline) LogString() string {
+	return fmt.Sprintf("workflow-%d-pipeline-%d-%s-runner-%d", p.WorkflowId, p.ID, p.Salt, p.RunnerId)
+}
+
+func (p *Pipeline) FlowYaml() (*flow.FlowYaml, error) {
+	var fy flow.FlowYaml
+
+	err := yaml.Unmarshal([]byte(p.Yaml), &fy)
+	if err != nil {
+		return nil, err
+	}
+
+	return &fy, nil
 }

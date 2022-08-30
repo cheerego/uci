@@ -10,9 +10,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/pkg/log"
-	"github.com/cheerego/uci/protocol/flow"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v2"
 )
 
 type WorkflowFacade struct {
@@ -32,8 +30,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 		return err
 	}
 	// 解析 yaml 是否合法
-	var fy flow.FlowYaml
-	err = yaml.Unmarshal([]byte(p.Yaml), &fy)
+	_, err = p.FlowYaml()
 	if err != nil {
 		p.Status = pipeline.ErrIllegalPipelineYaml
 		p.FailedCause = err.Error()
