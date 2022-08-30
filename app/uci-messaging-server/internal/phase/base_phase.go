@@ -67,11 +67,11 @@ func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 }
 
 func Phases() map[pipeline.Status]*BasePhase {
-	return map[pipeline.Status]*BasePhase{
-		pipeline.BuildQueuing:       NewBasePhase(NewBuildQueuingPhase()),
-		pipeline.WaitForBorrowing:   NewBasePhase(NewWaitForBorrowingPhase()),
-		pipeline.WaitForDispatching: NewBasePhase(NewWaitForDispatchingPhase()),
+	m := make(map[pipeline.Status]*BasePhase)
+	for _, phase := range PhaseList() {
+		m[phase.IPhaser.Status()] = phase
 	}
+	return m
 }
 
 func PhaseList() []*BasePhase {

@@ -64,7 +64,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 		}
 	}()
 
-	phase.RemainsExec(ctx, pipeline.BuildQueuing, p.ID)
+	phase.RemainsExec(ctx, p.Status, p.ID)
 
 	return nil
 }
