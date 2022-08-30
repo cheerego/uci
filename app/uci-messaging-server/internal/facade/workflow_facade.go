@@ -3,14 +3,10 @@ package facade
 import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/phase"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/pkg/log"
-	"go.uber.org/zap"
 )
 
 type WorkflowFacade struct {
@@ -50,21 +46,6 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 	if err != nil {
 		return err
 	}
-
-	key := lock.GetPipelineLifecycleLockKey(p.ID)
-	rlock := provider.Godisson().NewRLock(key)
-	err = rlock.TryLock(-1, -1)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		_, err := rlock.Unlock()
-		if err != nil {
-			log.L().Error("queuing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
-		}
-	}()
-
-	phase.RemainsExec(ctx, p.Status, p.ID)
-
+	phase.Phases()[p.Status].Exec(context.TODO(), p.ID)
 	return nil
 }
