@@ -1,7 +1,6 @@
 package uerror
 
 import (
-	"fmt"
 	"github.com/cockroachdb/errors"
 )
 
@@ -35,14 +34,12 @@ func (e *UError) Error() string {
 	return e.Code
 }
 
-func (e *UError) WithMessage(msg string) *UError {
-	e.Message = msg
-	return e
+func (e *UError) WithMessage(msg string) error {
+	return errors.Wrap(e, msg)
 }
 
-func (e *UError) WithMessagef(format string, args ...interface{}) *UError {
-	e.Message = fmt.Sprintf(format, args...)
-	return e
+func (e *UError) WithMessagef(format string, args ...interface{}) error {
+	return errors.Wrapf(e, format, args...)
 }
 
 func (e *UError) WithStack() error {

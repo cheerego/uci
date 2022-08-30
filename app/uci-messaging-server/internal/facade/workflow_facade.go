@@ -2,6 +2,7 @@ package facade
 
 import (
 	"context"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/workflow"
@@ -9,7 +10,9 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/protocol/flow"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
 )
 
 type WorkflowFacade struct {
@@ -28,6 +31,19 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 	if err != nil {
 		return err
 	}
+	// 解析 yaml 是否合法
+	var fy flow.FlowYaml
+	err = yaml.Unmarshal([]byte(p.Yaml), &fy)
+	if err != nil {
+		p.Status = pipeline.ErrIllegalPipelineYaml
+		p.FailedCause = err.Error()
+		_, err := service.Services.PipelineService.Update(ctx, p)
+		if err != nil {
+			return err
+		}
+		return e.ErrIllegalPipelineYaml
+	}
+
 	// 收集环境变量
 	systemEnv := service.Services.PipelineEnvService.CollectSystemEnvs(p)
 	mergeEnvs := service.Services.PipelineEnvService.MergeEnvs(systemEnv, workflow.Envs, customEnvs)

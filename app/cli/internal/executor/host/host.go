@@ -62,7 +62,7 @@ func (h *HostExecutor) PrepareEnviron(envs map[string]string) []string {
 }
 
 func (h *HostExecutor) Start(stopCtx context.Context, payload *letter.StartPipelinePayload, raw io.WriteCloser) error {
-	var flower flow.Flow
+	var flower flow.FlowYaml
 	err := yaml.Unmarshal([]byte(payload.Yaml), &flower)
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func (h *HostExecutor) Start(stopCtx context.Context, payload *letter.StartPipel
 	return h.RunFlow(stopCtx, NewRuntime(workspaceDir, payload.Envs, raw), &flower)
 }
 
-func (h *HostExecutor) RunFlow(ctx context.Context, runtime *Runtime, f *flow.Flow) error {
+func (h *HostExecutor) RunFlow(ctx context.Context, runtime *Runtime, f *flow.FlowYaml) error {
 	log.L().Info("job len", zap.Int("len", len(f.Jobs)))
 	for _, job := range f.Jobs {
 		err := h.RunJob(ctx, runtime, f, job)
@@ -91,7 +91,7 @@ func (h *HostExecutor) RunFlow(ctx context.Context, runtime *Runtime, f *flow.Fl
 	return nil
 }
 
-func (h *HostExecutor) RunJob(stopCtx context.Context, runtime *Runtime, f *flow.Flow, j *flow.Job) error {
+func (h *HostExecutor) RunJob(stopCtx context.Context, runtime *Runtime, f *flow.FlowYaml, j *flow.Job) error {
 	if j.If != "" {
 		vm := otto.New()
 		vm.Set("env", runtime.Envs)
@@ -143,7 +143,7 @@ func (h *HostExecutor) RunJob(stopCtx context.Context, runtime *Runtime, f *flow
 	return nil
 }
 
-func (h *HostExecutor) RunStep(stopCtx context.Context, runtime *Runtime, f *flow.Flow, j *flow.Job, s *flow.Step) error {
+func (h *HostExecutor) RunStep(stopCtx context.Context, runtime *Runtime, f *flow.FlowYaml, j *flow.Job, s *flow.Step) error {
 	var shell string = "sh"
 	if j.Defaults.Run.Sh != "" {
 		shell = j.Defaults.Run.Sh

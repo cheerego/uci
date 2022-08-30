@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-type Flow struct {
+type FlowYaml struct {
 	Name string   `yaml:"name,omitempty" json:"name,omitempty"`
 	On   []string `yaml:"on,omitempty" json:"on,omitempty"`
 	Jobs []*Job   `yaml:"jobs,omitempty" json:"jobs,omitempty"`
@@ -91,7 +91,7 @@ func NewScript(index string) *Script {
 	return &Script{Index: index, Shell: "", Show: ""}
 }
 
-func (f *Flow) Scripts(workflowUuid string, envs map[string]string) (*WorkflowScript, error) {
+func (f *FlowYaml) Scripts(workflowUuid string, envs map[string]string) (*WorkflowScript, error) {
 	var workflowScript = NewWorkflowScript()
 
 	for jobIndex, job := range f.Jobs {

@@ -21,7 +21,7 @@ func Test1(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var f Flow
+	var f FlowYaml
 	yaml.Unmarshal(fileBytes, &f)
 
 	fmt.Printf("%+v", f)
@@ -39,7 +39,7 @@ func Test2(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var f Flow
+	var f FlowYaml
 	yaml.Unmarshal(fileBytes, &f)
 
 	fmt.Printf("%+v", f)
@@ -57,7 +57,7 @@ func Test3(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var f Flow
+	var f FlowYaml
 	yaml.Unmarshal(fileBytes, &f)
 
 	fmt.Printf("%+v", f)
@@ -75,7 +75,7 @@ func TestScripts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var f Flow
+	var f FlowYaml
 	yaml.Unmarshal(fileBytes, &f)
 
 	scripts, err := f.Scripts("123", map[string]string{})

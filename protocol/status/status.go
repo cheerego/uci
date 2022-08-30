@@ -4,6 +4,8 @@ type Status string
 
 const PreCheckFailed Status = "PRE_CHECK_FAILED"
 
+const ErrIllegalPipelineYaml = "ILLEGAL_PIPELINE_YAML"
+
 const BuildQueuing Status = "BUILD_QUEUING"
 const WaitForBorrowing Status = "WAIT_FOR_BORROWING"
 

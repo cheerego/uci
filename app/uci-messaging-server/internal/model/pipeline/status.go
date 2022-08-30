@@ -42,8 +42,9 @@ const DispatchAbortSucceed Status = status.DispatchAbortSucceed
 const BuildAborted Status = status.BuildAborted
 
 const (
-	CachePersistenceError Status = status.CachePersistenceError
-	LogPersistenceError   Status = status.LogPersistenceError
-	RunnerInternalError   Status = status.RunnerInternalError
-	RunnerPrepareError    Status = status.RunnerPrepareError
+	ErrIllegalPipelineYaml Status = status.ErrIllegalPipelineYaml
+	CachePersistenceError  Status = status.CachePersistenceError
+	LogPersistenceError    Status = status.LogPersistenceError
+	RunnerInternalError    Status = status.RunnerInternalError
+	RunnerPrepareError     Status = status.RunnerPrepareError
 )

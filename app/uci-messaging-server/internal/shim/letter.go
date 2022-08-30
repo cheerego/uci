@@ -23,6 +23,7 @@ func StopLetter(pl *pipeline.Pipeline) *letter.Letter {
 }
 
 func StartLetter(pl *pipeline.Pipeline) *letter.Letter {
+
 	return &letter.Letter{
 		Action: letter.StartAction,
 		AckId:  fmt.Sprintf("%s-%s", letter.StartAction, pl.String()),
