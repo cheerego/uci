@@ -1,4 +1,4 @@
-package conyer
+package declare
 
 import (
 	"github.com/assembla/cony"

@@ -2,11 +2,9 @@ package scheduler
 
 import (
 	"context"
-	"github.com/assembla/cony"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/conyer"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/snapshot"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/rabbit/publisher"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/streadway/amqp"
 	"go.uber.org/zap"
@@ -30,15 +28,20 @@ func (s *SmembersPipelineStatusScheduler) Exec(params ...interface{}) {
 	status := params[0].(pipeline.Status)
 	ctx := context.TODO()
 
-	ids, err := snapshot.SMembersSet(ctx, status)
+	ids, err := SMembersSet(ctx, status)
 	if err != nil {
 		log.L().Error("SMembers PipelineStatusScheduler set err", zap.Error(err), zap.String("status", string(status)))
 		return
 	}
 
-	publisher := s.SwitchPublisher(status)
+	pub, err := publisher.SwitchPublisher(status)
+	if err != nil {
+		log.L().Error("switch publisher err", zap.Error(err))
+		return
+	}
+
 	for _, id := range ids {
-		err := publisher.Publish(amqp.Publishing{
+		err := pub.Publish(amqp.Publishing{
 			ContentType: "application/json",
 			Body:        []byte(strconv.Itoa(int(id))),
 		})
@@ -47,16 +50,4 @@ func (s *SmembersPipelineStatusScheduler) Exec(params ...interface{}) {
 			continue
 		}
 	}
-}
-
-func (s *SmembersPipelineStatusScheduler) SwitchPublisher(status pipeline.Status) *cony.Publisher {
-	switch status {
-	case pipeline.BuildQueuing:
-		return conyer.BuildQueuingPublisher
-	case pipeline.WaitForBorrowing:
-		return conyer.WaitForBorrowingPublisher
-	case pipeline.WaitForDispatching:
-		return conyer.WaitForDispatchingPublisher
-	}
-	return nil
 }

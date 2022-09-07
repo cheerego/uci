@@ -7,9 +7,9 @@ import (
 	"github.com/assembla/cony"
 	"github.com/brpaz/echozap"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/conyer"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/facade"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider/storage"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/rabbit"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/scheduler"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/messager"
@@ -117,7 +117,7 @@ func (a *Application) startCron() error {
 	return nil
 }
 func (a *Application) startCony() error {
-	cli := conyer.New(cony.URL(config.Configs.RabbitAddrUrl))
+	cli := rabbit.New(cony.URL(config.Configs.RabbitAddrUrl))
 	for cli.Loop() {
 		select {
 		case err := <-cli.Errors():
@@ -132,7 +132,7 @@ func (a *Application) register() error {
 		return err
 	}
 
-	if err := provider.Register(); err != nil {
+	if err := storage.Register(); err != nil {
 		return err
 	}
 

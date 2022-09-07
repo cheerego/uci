@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider/storage"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/scheduler"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/snapshot"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
@@ -28,7 +28,7 @@ func NewBasePhase(IPhaser IPhaser) *BasePhase {
 
 func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 	key := lock.GetPipelineLifecycleLockKey(id)
-	rlock := provider.Godisson().NewRLock(key)
+	rlock := storage.Godisson().NewRLock(key)
 	err := rlock.TryLock(-1, -1)
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 	p, err := service.Services.PipelineService.FindById(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			_, err := snapshot.SRem(ctx, b.IPhaser.Status(), id)
+			_, err := scheduler.SRem(ctx, b.IPhaser.Status(), id)
 			if err != nil {
 				return err
 			}
@@ -50,7 +50,7 @@ func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 		return err
 	}
 	if p.Status != b.IPhaser.Status() {
-		_, err := snapshot.SRem(ctx, b.IPhaser.Status(), p.ID)
+		_, err := scheduler.SRem(ctx, b.IPhaser.Status(), p.ID)
 		return err
 	}
 
@@ -59,7 +59,7 @@ func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 		return err
 	}
 
-	_, err = snapshot.SRem(ctx, b.IPhaser.Status(), p.ID)
+	_, err = scheduler.SRem(ctx, b.IPhaser.Status(), p.ID)
 
 	RemainsExec(ctx, b.IPhaser.Status(), p.ID)
 

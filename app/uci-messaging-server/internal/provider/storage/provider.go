@@ -1,4 +1,4 @@
-package provider
+package storage
 
 import (
 	"context"
@@ -11,16 +11,16 @@ import (
 	"gorm.io/gorm"
 )
 
-var Providers *Provider
+var Providers *Storage
 
-type Provider struct {
+type Storage struct {
 	masterDB *gorm.DB
 	redis    *redis.Client
 	godisson *godisson.Godisson
 }
 
-func NewStorage(masterDB *gorm.DB, redis *redis.Client, godisson *godisson.Godisson) *Provider {
-	return &Provider{masterDB: masterDB, redis: redis, godisson: godisson}
+func NewStorage(masterDB *gorm.DB, redis *redis.Client, godisson *godisson.Godisson) *Storage {
+	return &Storage{masterDB: masterDB, redis: redis, godisson: godisson}
 }
 
 func MasterDB() *gorm.DB {

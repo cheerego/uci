@@ -1,23 +1,26 @@
-package conyer
+package listener
 
-import "github.com/assembla/cony"
+import (
+	"github.com/assembla/cony"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/rabbit/declare"
+)
 
 var BuildQueuingConsumer = cony.NewConsumer(
-	BuildQueuingPhaseQueue,
+	declare.BuildQueuingPhaseQueue,
 	cony.AutoAck(), // Auto sign the deliveries
 	cony.AutoTag(),
 	cony.Qos(20),
 )
 
 var WaitForBorrowingConsumer = cony.NewConsumer(
-	WaitForBorrowingPhaseQueue,
+	declare.WaitForBorrowingPhaseQueue,
 	cony.AutoAck(), // Auto sign the deliveries
 	cony.AutoTag(),
 	cony.Qos(20),
 )
 
 var WaitForDispatchingConsumer = cony.NewConsumer(
-	WaitForDispatchingPhaseQueue,
+	declare.WaitForDispatchingPhaseQueue,
 	cony.AutoAck(), // Auto sign the deliveries
 	cony.AutoTag(),
 	cony.Qos(20),

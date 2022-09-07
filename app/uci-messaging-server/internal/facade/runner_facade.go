@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider/storage"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"net"
 	"time"
@@ -34,18 +34,18 @@ func (f *RunnerFacade) UpdateStatus(ctx context.Context, run *runner.Runner, sta
 
 func (f *RunnerFacade) SetEXDiscovery(ctx context.Context, run *runner.Runner) error {
 	ips := getClientIps()
-	_, err := provider.Redis().SetEX(ctx, lock.GetRunnerDiscoveryKey(run.ID), ips[0], 100*time.Second).Result()
+	_, err := storage.Redis().SetEX(ctx, lock.GetRunnerDiscoveryKey(run.ID), ips[0], 100*time.Second).Result()
 	return err
 }
 
 func (f *RunnerFacade) DelDiscovery(ctx context.Context, run *runner.Runner) error {
-	_, err := provider.Redis().Del(ctx, lock.GetRunnerDiscoveryKey(run.ID)).Result()
+	_, err := storage.Redis().Del(ctx, lock.GetRunnerDiscoveryKey(run.ID)).Result()
 	return err
 }
 
 func (f *RunnerFacade) GetDiscoveryIpAndTTL(ctx context.Context, run *runner.Runner) error {
 	ips := getClientIps()
-	_, err := provider.Redis().SetEX(ctx, lock.GetRunnerDiscoveryKey(run.ID), ips[0], 100*time.Second).Result()
+	_, err := storage.Redis().SetEX(ctx, lock.GetRunnerDiscoveryKey(run.ID), ips[0], 100*time.Second).Result()
 	return err
 }
 

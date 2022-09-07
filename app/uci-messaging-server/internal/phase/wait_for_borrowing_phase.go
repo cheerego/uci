@@ -6,7 +6,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider/storage"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/ptr"
@@ -78,7 +78,7 @@ func (b *WaitForBorrowingPhase) tryBorrowRunner(ctx context.Context) (*runner.Ru
 		return nil, e.ErrBorrowRunnerNoIdle.WithStack()
 	}
 	firstRunner := idles[0]
-	mutex := provider.Godisson().NewMutex(lock.GetRunnerBorrowLockKey(firstRunner.ID))
+	mutex := storage.Godisson().NewMutex(lock.GetRunnerBorrowLockKey(firstRunner.ID))
 	err = mutex.TryLock(-1, -1)
 	if err != nil {
 		return nil, err

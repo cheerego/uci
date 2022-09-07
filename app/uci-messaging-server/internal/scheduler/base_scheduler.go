@@ -2,7 +2,7 @@ package scheduler
 
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
-	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
+	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider/storage"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/go-co-op/gocron"
 	"go.uber.org/zap"
@@ -26,7 +26,7 @@ func NewBaseScheduler(IScheduler IScheduler) *BaseScheduler {
 func (b *BaseScheduler) Do(params ...interface{}) {
 	enable, lockKey := b.IScheduler.Enable(params...)
 	if enable {
-		mutex := provider.Godisson().NewMutex(lockKey)
+		mutex := storage.Godisson().NewMutex(lockKey)
 		err := mutex.TryLock(-1, -1)
 		if err != nil {
 			return
