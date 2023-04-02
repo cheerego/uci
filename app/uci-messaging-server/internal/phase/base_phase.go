@@ -99,7 +99,7 @@ func Remains(status pipeline.Status) []*BasePhase {
 	return remain
 }
 
-func ListExec(ctx context.Context, status pipeline.Status, id uint32) {
+func ListExec(ctx context.Context, id uint32) {
 	for _, phase := range PhaseList() {
 		err := phase.Exec(ctx, id)
 		if err != nil {
@@ -108,11 +108,12 @@ func ListExec(ctx context.Context, status pipeline.Status, id uint32) {
 	}
 }
 
-func RemainsExec(ctx context.Context, status pipeline.Status, id uint32) {
+func RemainsExec(ctx context.Context, status pipeline.Status, id uint32) error {
 	for _, phase := range Remains(status) {
 		err := phase.Exec(ctx, id)
 		if err != nil {
-			return
+			return err
 		}
 	}
+	return nil
 }

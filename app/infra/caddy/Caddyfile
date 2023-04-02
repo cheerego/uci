@@ -1,0 +1,18 @@
+{
+    auto_https off
+    admin :2019 {
+        origins 0.0.0.0
+        enforce_origin
+    }
+}
+
+
+:80 {
+
+  import sites-enabled/*
+
+   handle {
+        respond "not found"
+   }
+}
+

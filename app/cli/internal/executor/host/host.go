@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config"
-	"github.com/cheerego/uci/frame/flow"
-	"github.com/cheerego/uci/frame/protocol/letter"
 	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/protocol/flow"
+	"github.com/cheerego/uci/protocol/letter"
 	"github.com/robertkrimen/otto"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
@@ -145,8 +145,8 @@ func (h *HostExecutor) RunJob(stopCtx context.Context, runtime *Runtime, f *flow
 
 func (h *HostExecutor) RunStep(stopCtx context.Context, runtime *Runtime, f *flow.Flow, j *flow.Job, s *flow.Step) error {
 	var shell string = "sh"
-	if j.Defaults.Run.Shell != "" {
-		shell = j.Defaults.Run.Shell
+	if j.Defaults.Run.Sh != "" {
+		shell = j.Defaults.Run.Sh
 	}
 	var workspace = runtime.Workspace
 	if j.Defaults.Run.WorkingDirectory != "" {

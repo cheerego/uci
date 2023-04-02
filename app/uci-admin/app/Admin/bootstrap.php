@@ -20,5 +20,5 @@
 
 use App\Admin\Extensions\PHPEditor;
 
-Encore\Admin\Form::forget(['map', 'editor']);
-Encore\Admin\Form::extend('php', PHPEditor::class);
+//Encore\Admin\Form::forget(['map', 'editor']);
+//Encore\Admin\Form::extend('php', PHPEditor::class);

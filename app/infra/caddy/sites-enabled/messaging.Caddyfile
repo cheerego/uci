@@ -1,0 +1,4 @@
+@messaging host messaging.{$UCI_HTTP_DOMAIN}
+handle @messaging {
+  reverse_proxy uci-messaging-server:8080
+}

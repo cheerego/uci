@@ -104,7 +104,7 @@ EOF;
         $form = new Form(new Workflow());
 
         $form->text('name', __('Name'))->required();
-        $form->php('yaml', __('Yaml'))->default($yaml)->placeholder($yaml);
+        $form->textarea('yaml', __('Yaml'))->default($yaml)->placeholder($yaml);
         $form->hidden('creator_id', __('Creator id'));
         $form->table('envs', __('Envs'), function ($table) {
             $table->text('key');

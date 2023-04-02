@@ -53,6 +53,10 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.String()), zap.Any("letter", l))
 	dispatchErr := shim.Watcher.PublishAck(fmt.Sprintf("%d", p.RunnerId), l)
 	if dispatchErr != nil {
+		_, err := service.Services.PipelineService.Update(ctx, p)
+		if err != nil {
+			return err
+		}
 		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.String()), zap.String("error", dispatchErr.Error()))
 		return dispatchErr
 	}
@@ -60,6 +64,7 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	p.Status = pipeline.DispatchSucceed
 	log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.String()))
 	_, err := service.Services.PipelineService.Update(ctx, p)
+
 	return err
 
 }

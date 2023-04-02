@@ -1,6 +1,8 @@
 package pipeline
 
-import "github.com/cheerego/uci/frame/status"
+import (
+	"github.com/cheerego/uci/protocol/status"
+)
 
 //UCI 流水线状态设计
 //
