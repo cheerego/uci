@@ -19,16 +19,16 @@ class CreatePipelinesTable extends Migration
             $table->integer("number")->default(0);
             $table->string("uuid")->default("");
             $table->string("salt")->default("");
-            $table->text("yaml")->default("");
+            $table->text("yaml");
 
-            $table->text("triggered_cause")->default("");
-            $table->text("failed_cause")->default("");
+            $table->text("triggered_cause");
+            $table->text("failed_cause");
 
             $table->string("status")->default("BUILD_QUEUING");
             $table->string("status_message")->default("");
             $table->timestamp("last_status_changed_at")->nullable();
 
-            $table->json("envs")->default("[]");
+            $table->text("envs");
 
             $table->integer("runner_id")->default(0);
             $table->timestamp("first_borrow_runner_at")->nullable();
@@ -41,8 +41,8 @@ class CreatePipelinesTable extends Migration
             $table->integer("duration")->default(0);
 
 
-            $table->text("raw_log")->default("");
-            $table->text("prepare_log")->default("");
+            $table->text("raw_log");
+            $table->text("prepare_log");
 
             $table->integer("dispatch_times")->default(0);
             $table->timestamp("first_dispatched_at")->nullable();

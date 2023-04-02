@@ -109,7 +109,7 @@ EOF;
         $form->table('envs', __('Envs'), function ($table) {
             $table->text('key');
             $table->text('value');
-        });
+        })->default("[]");
 
 
         $form->saving(function (Form $form) {

@@ -8,11 +8,11 @@ services:
       - 8080
     environment:
       - TZ=Asia/Shanghai
-      - GORM_MASTER_DSN=postgresql://uci:uci123@postgres:5432/uci?sslmode=disable&TimeZone=Asia/Shanghai
+      - GORM_MASTER_DSN=root:uci123@tcp(mysql:3306)/uci?charset=utf8mb4&parseTime=True&loc=Local
       - HTTP_PORT=8080
       - RABBIT_ADDR_URL=amqp://guest:guest@rabbitmq
     depends_on:
-      - postgres
+      - mysql
       - redis
       - rabbitmq
 #  uci-dispatch-server:
@@ -28,9 +28,5 @@ services:
 #      - postgres
 #      - redis
 #      - rabbitmq
-volumes:
-  redis-data: {}
-  pg-data: {}
-
 
 #failed to initialize database, got error failed to connect to `host=/tmp user=uci database=uci`: dial error (dial unix /tmp/.s.PGSQL.5432: connect: no such file or directory)

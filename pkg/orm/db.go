@@ -3,7 +3,7 @@ package orm
 import (
 	"database/sql"
 	"github.com/cockroachdb/errors"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
@@ -14,7 +14,7 @@ import (
 func New(dsn string, dbPoolConfig string) (*gorm.DB, error) {
 	//host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai
 	//MaxOpenConns=256&MaxIdleConns=100&ConnMaxIdleTime=1200&ConnMaxLifetime=1800
-	g, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	g, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		SkipDefaultTransaction: true,
 		Logger: logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
 			SlowThreshold:             200 * time.Millisecond,

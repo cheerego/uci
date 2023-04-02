@@ -20,7 +20,7 @@ class CreateWorkflowsTable extends Migration
             $table->integer("creator_id");
 //            $table->text("trigger_method");
 //            $table->text("scheduler");
-            $table->json("envs")->default("[]");
+            $table->text("envs");
 
             $table->integer("latest_pipeline_id")->default(0)->comment("最后一次流水线 ID");
             $table->integer("latest_success_pipeline_id")->default(0)->comment("最后一次成功构建流水线 ID");

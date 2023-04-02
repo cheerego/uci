@@ -38,19 +38,21 @@ services:
       - "./infra/nginx/proxy.conf:/etc/nginx/proxy.conf"
       - "./infra/nginx/conf.d:/etc/nginx/conf.d"
     restart: always
-  postgres:
-    image: postgres:14.2
+  mysql:
+#    image: bitnami/mysql:8.0.32
+    image: mysql:8.0.32
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       - TZ=Asia/Shanghai
-      - POSTGRES_USER=uci
-      - POSTGRES_PASSWORD=uci123
-      - PGDATA=/var/lib/postgresql/data/pgdata
+      - MYSQL_ROOT_PASSWORD=uci123
     expose:
-      - "5432"
+      - "3306"
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - pg-data:/var/lib/postgresql/data/pgdata
+      - mysql-data:/bitnami/mysql/data
+      - "./infra/mysql:/docker-entrypoint-initdb.d"
 volumes:
   redis-data: {}
-  pg-data: {}
+  mysql-data: {}

@@ -1,4 +1,0 @@
-   @hello host hello.{$UCI_HTTP_DOMAIN}
-   handle @hello {
-       respond "hello world!1"
-   }

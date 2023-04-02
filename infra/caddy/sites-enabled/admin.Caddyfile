@@ -1,4 +1,0 @@
-   @admin host admin.{$UCI_HTTP_DOMAIN}
-   handle @admin {
-       reverse_proxy uci-admin-caddy:80
-   }
