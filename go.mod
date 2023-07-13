@@ -11,6 +11,7 @@ require (
 	github.com/cockroachdb/errors v1.9.0
 	github.com/dimiro1/banner v1.1.0
 	github.com/docker/docker v20.10.12+incompatible
+	github.com/elazarl/goproxy v0.0.0-20221015165544-a0805db90819
 	github.com/getsentry/sentry-go v0.12.0
 	github.com/go-co-op/gocron v1.14.0
 	github.com/go-playground/validator v9.31.0+incompatible
