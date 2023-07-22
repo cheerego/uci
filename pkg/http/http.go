@@ -21,9 +21,9 @@ func NewEcho() *echo.Echo {
 	//}))
 
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
-		StackSize:       1 << 10, // 1 KB
+		StackSize:       8 * 1024, // 1 KB
 		LogLevel:        log.ERROR,
-		DisableStackAll: true,
+		DisableStackAll: false,
 	}))
 
 	e.Use(middleware.RequestIDWithConfig(middleware.RequestIDConfig{
