@@ -5,9 +5,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/cheerego/uci/pkg/z"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"io"
 	"os/exec"
 	"time"
@@ -18,39 +18,6 @@ type ExecForm struct {
 	// 单位秒
 	Timeout int64 `json:"timeout,omitempty" form:"timeout" query:"timeout"`
 	Watch   bool  `json:"watch,omitempty" form:"watch" query:"watch"`
-}
-
-func ExecWatch(ctx echo.Context) error {
-	form := &ExecForm{}
-	err := ctx.Bind(form)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	timeout, _ := context.WithTimeout(context.Background(), time.Duration(form.Timeout)*time.Second)
-	cmd := exec.CommandContext(timeout, "bash", "-c", "-e", form.Script)
-
-	pipe, _ := cmd.StdoutPipe()
-	cmd.Stderr = cmd.Stdout
-
-	err = cmd.Start()
-	if err != nil {
-		return err
-	}
-
-	reader := bufio.NewReader(pipe)
-	ctx.Response().Header().Set("Transfer-Encoding", "chunked")
-	for {
-		line, err2 := reader.ReadString('\n')
-		if err2 != nil || io.EOF == err2 {
-			break
-		}
-		log.Infof(line)
-		ctx.Response().Write([]byte(line))
-		ctx.Response().Flush()
-	}
-	return nil
-
 }
 
 func Exec(ctx echo.Context) error {
@@ -80,7 +47,7 @@ func Exec(ctx echo.Context) error {
 			if err2 != nil || io.EOF == err2 {
 				break
 			}
-			log.Infof(line)
+			z.S().Infof(line)
 			ctx.Response().Write([]byte(line))
 			ctx.Response().Flush()
 		}
@@ -100,7 +67,7 @@ func Exec(ctx echo.Context) error {
 			if err2 != nil || io.EOF == err2 {
 				break
 			}
-			log.Infof(line)
+			z.S().Infof(line)
 			buffer.Write([]byte(line))
 		}
 		err = cmd.Wait()

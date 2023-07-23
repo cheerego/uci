@@ -17,41 +17,55 @@ func TextHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 		var httpCode int = http.StatusInternalServerError
 		var message string = http.StatusText(http.StatusInternalServerError)
 		var code string = http.StatusText(http.StatusInternalServerError)
+		httpTargetErr := &echo.HTTPError{}
 
-		cause := errors.Cause(er)
+		var uTargetErr UError
+		if errors.As(er, &httpTargetErr) {
+			unwrapErr := er
+			for {
+				if he, ok := unwrapErr.(*echo.HTTPError); ok {
+					httpCode = he.Code
+					if m, ok := he.Message.(string); ok {
+						message = m
+					} else {
+						message = he.Error()
+					}
+					code = message
+					if httpCode == 404 {
+						message = "Route " + message
+					}
+					break
+				} else {
+					unwrapErr = errors.Unwrap(er)
+				}
+			}
+		} else if errors.As(er, &uTargetErr) {
 
-		switch cause.(type) {
-		case *echo.HTTPError:
-			he := cause.(*echo.HTTPError)
-			httpCode = he.Code
-			if m, ok := he.Message.(string); ok {
-				message = m
-			} else {
-				message = he.Error()
+			unwrapErr := er
+			for {
+				if ue, ok := unwrapErr.(*UError); ok {
+					if ue.HttpCode != 0 {
+						httpCode = ue.HttpCode
+					}
+					message = ue.Message
+					code = ue.Code
+					break
+				} else {
+					unwrapErr = errors.Unwrap(er)
+				}
 			}
-			code = message
-			if httpCode == 404 {
-				message = "Route " + message
-			}
-		case *UError:
-
-			u := cause.(*UError)
-			if u.HttpCode != 0 {
-				httpCode = u.HttpCode
-			}
-			message = u.Message
-			code = u.Code
-		default:
-			if IsRecordNotFoundErr(cause) {
+		} else {
+			if IsRecordNotFoundErr(er) {
 				httpCode = http.StatusNotFound
 				message = http.StatusText(httpCode)
 				code = http.StatusText(httpCode)
 			} else {
 				httpCode = http.StatusInternalServerError
-				message = cause.Error()
+				message = er.Error()
 				code = http.StatusText(httpCode)
 			}
 		}
+
 		_ = code
 		// Send response
 		var rerr error

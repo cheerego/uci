@@ -7,8 +7,11 @@ import (
 	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/cheerego/uci/pkg/z/backend"
 	"github.com/cockroachdb/errors"
+	"github.com/go-playground/validator"
+	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
+	http2 "net/http"
 )
 
 type Application struct {
@@ -29,10 +32,23 @@ func (a *Application) Start(ctx context.Context, cancel context.CancelFunc) erro
 }
 
 func (a *Application) startHttp() error {
+
 	engine := http.NewEcho()
+	engine.Validator = &CustomValidator{validator: validator.New()}
 	route.Routes(engine)
 	engine.HTTPErrorHandler = uerror.TextHttpErrorHandler(engine)
 	return engine.Start(":8081")
+}
+
+type CustomValidator struct {
+	validator *validator.Validate
+}
+
+func (cv *CustomValidator) Validate(i interface{}) error {
+	if err := cv.validator.Struct(i); err != nil {
+		return echo.NewHTTPError(http2.StatusBadRequest, err.Error()).SetInternal(err)
+	}
+	return nil
 }
 
 func (a *Application) ConfigLog() error {

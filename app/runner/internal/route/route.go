@@ -6,5 +6,4 @@ import (
 
 func Routes(engine *echo.Echo) {
 	engine.Any("/runner/exec", Exec)
-	engine.Any("/runner/exec-watch", ExecWatch)
 }
