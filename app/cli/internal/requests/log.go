@@ -24,5 +24,5 @@ func PipelineRawlog(uuid string, append bool, raw string) error {
 		SetQueryParams(map[string]string{
 			"append": strconv.FormatBool(append),
 		})
-	return doPost(r, serverUrl+"/api/v1/pipeline/report/log/raw")
+	return doPost(r, serverUrl+"/api/v1/pipeline/report/z/raw")
 }

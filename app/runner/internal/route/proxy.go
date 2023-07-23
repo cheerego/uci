@@ -25,19 +25,19 @@ import (
 //    <script type="text/javascript">
 //        var websocket = new WebSocket("ws://127.0.0.1:8081/ws");
 //        websocket.onopen = function(){
-//            console.log("websocket open");
+//            console.z("websocket open");
 //            document.getElementById("recv").innerHTML = "Connected";
 //        }
 //        websocket.inclose = function(){
-//            console.log('websocket close');
+//            console.z('websocket close');
 //        }
 //        websocket.onmessage = function(e){
-//            console.log(e.data);
+//            console.z(e.data);
 //            document.getElementById("recv").innerHTML = e.data;
 //        }
 //        document.getElementById("sendBtn").onclick = function(){
 //            var txt = document.getElementById("sendTxt").value;
-//			console.log(txt);
+//			console.z(txt);
 //            websocket.send(txt);
 //        }
 //

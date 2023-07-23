@@ -6,7 +6,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/snapshot"
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"go.uber.org/zap"
 )
 
@@ -29,7 +29,7 @@ func (r *RevealPipelineStatusScheduler) Exec(params ...interface{}) {
 	ctx := context.TODO()
 	pipelines, err := service.Services.PipelineService.FindByStatus(ctx, status)
 	if err != nil {
-		log.L().Error("check build queuing scheduler, find by status err", zap.Error(err), zap.String("status", string(status)))
+		z.L().Error("check build queuing scheduler, find by status err", zap.Error(err), zap.String("status", string(status)))
 		return
 	}
 	if len(pipelines) == 0 {
@@ -38,7 +38,7 @@ func (r *RevealPipelineStatusScheduler) Exec(params ...interface{}) {
 
 	_, err = snapshot.PublishSet(ctx, status, pipelines...)
 	if err != nil {
-		log.L().Error("check build queuing scheduler, publish build queueing set", zap.Error(err), zap.String("status", string(status)), zap.Any("pipelines", pipelines))
+		z.L().Error("check build queuing scheduler, publish build queueing set", zap.Error(err), zap.String("status", string(status)), zap.Any("pipelines", pipelines))
 		return
 	}
 }

@@ -1,7 +1,7 @@
 package precheck
 
 import (
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"golang.org/x/net/http/httpproxy"
 )
 
@@ -25,14 +25,14 @@ func (d Proxy) CheckDescription() string {
 func (d Proxy) RunCheck() error {
 	config := httpproxy.FromEnvironment()
 	if config.HTTPProxy != "" || config.HTTPSProxy != "" {
-		log.S().Infof("***************************************************************************************************************")
-		log.S().Infof("****  %s                                                                                                   ", d.CheckDescription())
-		log.S().Infof("***************************************************************************************************************")
-		log.S().Infof("****                                                                                                       ****")
-		log.S().Infof("****     UCI Runner web proxy check                                                                                ")
-		log.S().Infof("****     http_proxy: %s   https_proxy: %s   no_proxy: %s                                    ", config.HTTPProxy, config.HTTPSProxy, config.NoProxy)
-		log.S().Infof("****                                                                                                       ****")
-		log.S().Infof("***************************************************************************************************************")
+		z.S().Infof("***************************************************************************************************************")
+		z.S().Infof("****  %s                                                                                                   ", d.CheckDescription())
+		z.S().Infof("***************************************************************************************************************")
+		z.S().Infof("****                                                                                                       ****")
+		z.S().Infof("****     UCI Runner web proxy check                                                                                ")
+		z.S().Infof("****     http_proxy: %s   https_proxy: %s   no_proxy: %s                                    ", config.HTTPProxy, config.HTTPSProxy, config.NoProxy)
+		z.S().Infof("****                                                                                                       ****")
+		z.S().Infof("***************************************************************************************************************")
 	}
 	return nil
 }

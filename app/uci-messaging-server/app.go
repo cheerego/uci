@@ -17,10 +17,10 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/web/workflower"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/http/middleware/uctx"
-	"github.com/cheerego/uci/pkg/log"
-	"github.com/cheerego/uci/pkg/log/backend"
 	"github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
+	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/z/backend"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -64,7 +64,7 @@ func (a *Application) Start() error {
 
 func (a *Application) startHttp() error {
 	o := http.NewEcho()
-	o.Use(echozap.ZapLogger(log.L()))
+	o.Use(echozap.ZapLogger(z.L()))
 	o.Use(uctx.ContextMiddleware)
 	o.Debug = true
 	o.Validator = NewRequestValidator()
@@ -121,7 +121,7 @@ func (a *Application) startCony() error {
 	for cli.Loop() {
 		select {
 		case err := <-cli.Errors():
-			log.L().Error("cony client err", zap.Error(err))
+			z.L().Error("cony client err", zap.Error(err))
 		}
 	}
 	return nil

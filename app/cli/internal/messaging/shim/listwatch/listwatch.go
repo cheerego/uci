@@ -7,7 +7,7 @@ import (
 	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
 	"github.com/cheerego/uci/frame/protocol/letter"
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -27,14 +27,14 @@ func (l *ListWatch) Ack(msg string) error {
 	var le letter.Letter
 	err := json.Unmarshal([]byte(msg), &le)
 	if err != nil {
-		log.L().Error("json.Unmarshal letterString err", zap.Error(err), zap.String("letterString", msg))
+		z.L().Error("json.Unmarshal letterString err", zap.Error(err), zap.String("letterString", msg))
 		return err
 	}
 	err = requests.Ack(le.AckId)
 	if err != nil {
 		return err
 	}
-	log.S().Infof("ack ackId %s letter %s", le.AckId, msg)
+	z.S().Infof("ack ackId %s letter %s", le.AckId, msg)
 	return nil
 }
 
@@ -57,13 +57,13 @@ func (l *ListWatch) Listening(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
-			log.L().Info("list watch listening canceled")
+			z.L().Info("list watch listening canceled")
 			return uerror.ErrContextCanceledOrTimeout.WithStack()
 		default:
-			log.S().Info("list watch start ...")
+			z.S().Info("list watch start ...")
 			rid, err := l.Watching(ctx)
 			if err != nil {
-				log.S().Infof("%s list watch err, %v", rid, err)
+				z.S().Infof("%s list watch err, %v", rid, err)
 				time.Sleep(2 * time.Second)
 			}
 		}
@@ -91,10 +91,10 @@ func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 	}
 
 	rid := resp.Header.Get(echo.HeaderXRequestID)
-	log.L().Info("list watch success! 🎉", zap.String("requestId", rid))
+	z.L().Info("list watch success! 🎉", zap.String("requestId", rid))
 
 	defer func() {
-		log.L().Info("list and watch end", zap.String("requestId", rid))
+		z.L().Info("list and watch end", zap.String("requestId", rid))
 	}()
 
 	reader := bufio.NewReader(resp.Body)
@@ -102,7 +102,7 @@ func (l *ListWatch) Watching(ctx context.Context) (string, error) {
 	for {
 		line, err := reader.ReadString('\n')
 		if len(line) > 0 {
-			log.L().Info("list watch watching receive message", zap.String("line", line), zap.String("requestId", rid))
+			z.L().Info("list watch watching receive message", zap.String("line", line), zap.String("requestId", rid))
 			line = strings.TrimRight(line, "\n")
 			if line != "" {
 				l.messagingCh <- line

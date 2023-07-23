@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/config"
 	"github.com/cheerego/uci/frame/protocol/letter"
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"time"
 )
 
@@ -24,7 +24,7 @@ func PipelineBuildStatus(payload *letter.StartPipelinePayload, status string) er
 		R().
 		SetContext(timeout).
 		SetBody(body)
-	return log.Tee("request build running", doPost(r, serverUrl+"/api/v1/pipeline/report/status/"+status))
+	return z.Tee("request build running", doPost(r, serverUrl+"/api/v1/pipeline/report/status/"+status))
 }
 
 func PipelineBuildFailed(payload *letter.StartPipelinePayload, err error) error {
@@ -41,5 +41,5 @@ func PipelineBuildFailed(payload *letter.StartPipelinePayload, err error) error 
 	if err != nil {
 		return err
 	}
-	return log.Tee("request build failed", doPost(r, serverUrl+"/api/v1/pipeline/report/status/BUILD_FAILED"))
+	return z.Tee("request build failed", doPost(r, serverUrl+"/api/v1/pipeline/report/status/BUILD_FAILED"))
 }

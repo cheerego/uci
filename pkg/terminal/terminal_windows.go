@@ -29,7 +29,7 @@ func AttachConsole() error {
 	const ATTACH_PARENT_PROCESS = ^uintptr(0)
 	proc := syscall.MustLoadDLL("kernel32.dll").MustFindProc("AttachConsole")
 	_, _, err := proc.Call(ATTACH_PARENT_PROCESS)
-	ioutil.WriteFile("hhh.log", []byte(fmt.Sprintln(err)), 0644)
+	ioutil.WriteFile("hhh.z", []byte(fmt.Sprintln(err)), 0644)
 
 	hout, err1 := syscall.GetStdHandle(syscall.STD_OUTPUT_HANDLE)
 	if err1 != nil {

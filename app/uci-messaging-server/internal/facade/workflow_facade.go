@@ -8,7 +8,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/phase"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"go.uber.org/zap"
 )
 
@@ -47,7 +47,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 	defer func() {
 		_, err := rlock.Unlock()
 		if err != nil {
-			log.L().Error("queuing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
+			z.L().Error("queuing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
 		}
 	}()
 

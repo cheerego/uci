@@ -19,7 +19,7 @@ var globalFile *os.File
 
 func InitPanicFile() error {
 	dir, _ := homedir.Dir()
-	panicpath := path.Join(dir, "panic.log")
+	panicpath := path.Join(dir, "panic.z")
 	fmt.Println("init panic file in windows mode " + panicpath)
 	file, err := os.OpenFile(panicpath, os.O_CREATE|os.O_APPEND, 0666)
 	globalFile = file

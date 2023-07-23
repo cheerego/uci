@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/executor"
 	"github.com/cheerego/uci/app/cli/internal/uerror"
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"github.com/cockroachdb/errors"
 	"golang.org/x/sync/errgroup"
 	"time"
@@ -36,7 +36,7 @@ func (b *BaseShimer) Pinging(ctx context.Context) error {
 	for {
 		select {
 		case <-ticker.C:
-			log.L().Info("pinging")
+			z.L().Info("pinging")
 		case <-ctx.Done():
 			return uerror.ErrContextCanceledOrTimeout.WithStack()
 		}
@@ -46,7 +46,7 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
-			log.L().Info("base shimer consuming canceled")
+			z.L().Info("base shimer consuming canceled")
 			return uerror.ErrContextCanceledOrTimeout.WithStack()
 		case msg, ok := <-b.Shimer.MessageChan():
 			if !ok {
@@ -54,10 +54,10 @@ func (b *BaseShimer) Consuming(ctx context.Context) error {
 			}
 			err := b.Ack(msg)
 			if err != nil {
-				log.S().Infof("list watch ack receive message from chan %s err %v", msg, err)
+				z.S().Infof("list watch ack receive message from chan %s err %v", msg, err)
 				continue
 			}
-			log.S().Infof("list watch consuming receive message from chan %s", msg)
+			z.S().Infof("list watch consuming receive message from chan %s", msg)
 			go executor.E.Exec(msg)
 		}
 	}

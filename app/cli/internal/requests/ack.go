@@ -3,7 +3,7 @@ package requests
 import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/config"
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"time"
 )
 
@@ -19,5 +19,5 @@ func Ack(requestId string) error {
 	r := client.
 		R().
 		SetContext(timeout)
-	return log.Tee("request ack err", doPost(r, serverUrl+"/api/v1/message/ack/"+requestId))
+	return z.Tee("request ack err", doPost(r, serverUrl+"/api/v1/message/ack/"+requestId))
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/snapshot"
-	"github.com/cheerego/uci/pkg/log"
+	"github.com/cheerego/uci/pkg/z"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -36,7 +36,7 @@ func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 	defer func() {
 		_, err := rlock.Unlock()
 		if err != nil {
-			log.L().Error("base phase", zap.String("status", string(b.IPhaser.Status())), zap.Uint32("pipelineId", id), zap.Error(err))
+			z.L().Error("base phase", zap.String("status", string(b.IPhaser.Status())), zap.Uint32("pipelineId", id), zap.Error(err))
 		}
 	}()
 	p, err := service.Services.PipelineService.FindById(ctx, id)
