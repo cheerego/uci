@@ -1,0 +1,61 @@
+package twilight
+
+import (
+	"context"
+	"github.com/cheerego/uci/app/twilight/internal/route"
+	"github.com/cheerego/uci/pkg/http"
+	"github.com/cheerego/uci/pkg/uerror"
+	"github.com/cheerego/uci/pkg/z/backend"
+	"github.com/cockroachdb/errors"
+	"github.com/go-playground/validator"
+	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
+	http2 "net/http"
+)
+
+type Application struct {
+}
+
+func NewApplication() *Application {
+	return &Application{}
+}
+
+func (a *Application) Start(ctx context.Context, cancel context.CancelFunc) error {
+	err := errors.CombineErrors(a.ConfigLog(), nil)
+	if err != nil {
+		return err
+	}
+	g, _ := errgroup.WithContext(ctx)
+	g.Go(a.startHttp)
+	return g.Wait()
+}
+
+func (a *Application) startHttp() error {
+
+	engine := http.NewEcho()
+	engine.Validator = &CustomValidator{validator: validator.New()}
+	route.Routes(engine)
+	engine.HTTPErrorHandler = uerror.JSONHttpErrorHandler(engine)
+	return engine.Start(":8082")
+}
+
+type CustomValidator struct {
+	validator *validator.Validate
+}
+
+func (cv *CustomValidator) Validate(i interface{}) error {
+	if err := cv.validator.Struct(i); err != nil {
+		return echo.NewHTTPError(http2.StatusBadRequest, err.Error()).SetInternal(err)
+	}
+	return nil
+}
+
+func (a *Application) ConfigLog() error {
+	configuration, err := backend.Configuration()
+	if err != nil {
+		return err
+	}
+	zap.ReplaceGlobals(configuration)
+	return nil
+}
