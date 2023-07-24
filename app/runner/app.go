@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/runner/internal/route"
 	"github.com/cheerego/uci/pkg/http"
+	signal2 "github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/cheerego/uci/pkg/z/backend"
 	"github.com/cockroachdb/errors"
@@ -15,25 +16,44 @@ import (
 )
 
 type Application struct {
+	engine *echo.Echo
 }
 
 func NewApplication() *Application {
 	return &Application{}
 }
 
-func (a *Application) Start(ctx context.Context, cancel context.CancelFunc) error {
+func (a *Application) Start() error {
 	err := errors.CombineErrors(a.ConfigLog(), nil)
 	if err != nil {
 		return err
 	}
-	g, _ := errgroup.WithContext(ctx)
+	ctx, cancel := context.WithCancel(context.Background())
+	g, gctx := errgroup.WithContext(ctx)
 	g.Go(a.startHttp)
+
+	g.Go(func() error {
+		<-gctx.Done()
+		return a.engine.Shutdown(gctx)
+	})
+	//
+	//waiting exit signal
+	g.Go(func() error {
+		quit := signal2.KillSignal()
+		select {
+		case <-gctx.Done():
+			return gctx.Err()
+		case <-quit:
+			cancel()
+			return errors.New("ErrExitSignal1")
+		}
+	})
 	return g.Wait()
 }
 
 func (a *Application) startHttp() error {
-
 	engine := http.NewEcho()
+	a.engine = engine
 	engine.Validator = &CustomValidator{validator: validator.New()}
 	route.Routes(engine)
 	engine.HTTPErrorHandler = uerror.TextHttpErrorHandler(engine)

@@ -11,7 +11,6 @@ require (
 	github.com/cockroachdb/errors v1.9.0
 	github.com/dimiro1/banner v1.1.0
 	github.com/docker/docker v20.10.12+incompatible
-	github.com/elazarl/goproxy v0.0.0-20221015165544-a0805db90819
 	github.com/getsentry/sentry-go v0.12.0
 	github.com/go-co-op/gocron v1.14.0
 	github.com/go-playground/validator v9.31.0+incompatible
@@ -22,7 +21,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/robertkrimen/otto v0.0.0-20211024170158-b87d35c0b86f
 	github.com/satori/go.uuid v1.2.0
-	github.com/spf13/cobra v0.0.5
+	github.com/spf13/cobra v0.0.6
 	github.com/streadway/amqp v1.0.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2
