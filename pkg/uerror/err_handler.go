@@ -45,7 +45,7 @@ func convertErrToCode(er error) (httpCode int, message string, code string) {
 	code = http.StatusText(http.StatusInternalServerError)
 
 	httpTargetErr := &echo.HTTPError{}
-	var uTargetErr UError
+	uTargetErr := &UError{}
 	if errors.As(er, &httpTargetErr) {
 		unwrapErr := er
 		for {
