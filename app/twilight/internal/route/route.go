@@ -51,7 +51,7 @@ func Routes(engine *echo.Echo) {
 		return c.String(200, "/a/*")
 	})
 
-	engine.Any("/vscodeserver*", func(c echo.Context) error {
+	engine.Any("/vscode/*", func(c echo.Context) error {
 		//if c.Path() == "/vscode/manifest.json" {
 		//	return c.String(200, ``)
 		//}
@@ -72,12 +72,10 @@ func Routes(engine *echo.Echo) {
 		res := c.Response().Writer
 		req.URL.Host = targetUrl.Host
 		req.URL.Scheme = targetUrl.Scheme
-		if strings.HasPrefix(req.URL.Path, "/vscodeserver/ci") {
+		if strings.HasPrefix(req.URL.Path, "/vscode/ci") {
 			req.URL.Path = "/"
-			res.Header().Set("sn", "ci-123123")
-			c.Response().Header().Set("SN", "123123")
 		} else {
-			req.URL.Path = c.ParamValues()[0]
+			req.URL.Path = c.ParamValues()[1]
 			z.L().Error("123")
 		}
 
