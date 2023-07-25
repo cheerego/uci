@@ -99,7 +99,7 @@ func convertErrToCode(er error) (httpCode int, message string, code string) {
 
 func TextHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 	return func(er error, c echo.Context) {
-		z.L().Error("[HTTP_ERR] "+c.Path(), zap.String("query", c.QueryString()), zap.Error(er))
+		z.L().Error("[HTTP_ERR] "+c.Request().URL.Path, zap.String("query", c.QueryString()), zap.Error(er))
 		if c.Response().Committed {
 			return
 		}
