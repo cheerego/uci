@@ -1,11 +1,14 @@
 package route
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/cockroachdb/errors"
+	"github.com/elazarl/goproxy"
 	"github.com/labstack/echo/v4"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 )
 
@@ -37,15 +40,33 @@ func RunnerExec(ip string, port int, shell string, timeoutSecond int) (string, e
 }
 
 func Routes(engine *echo.Echo) {
-	engine.Any("/", func(c echo.Context) error {
-		return c.String(200, "hello world")
-	})
 	engine.Any("/api/start", func(c echo.Context) error {
-		exec, _ := RunnerExec("127.0.0.1", 8081, "docker run -d nginx", 10)
+		exec, _ := RunnerExec("127.0.0.1", 8081, "docker run -it -p 8083:8083 -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --bind-addr=0.0.0.0:8083", 10)
 		return c.String(200, exec)
 	})
-	engine.Any("/web/*", func(c echo.Context) error {
 
+	engine.Any("/*", func(c echo.Context) error {
+		scheme := "http"
+		if c.IsWebSocket() {
+			scheme = "ws"
+		}
+		httpAgent := func(r *http.Request) (*url.URL, error) {
+			return url.Parse(fmt.Sprintf("%s://localhost:8081", "http"))
+		}
+		targetUrl, _ := url.Parse(fmt.Sprintf("%s://localhost:8083", scheme))
+
+		proxy := goproxy.NewProxyHttpServer()
+
+		proxy.Tr = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, Proxy: httpAgent}
+
+		req := c.Request()
+		res := c.Response().Writer
+
+		//Update the headers to allow for SSL redirection
+		//req.Host = targetUrl.Host
+		req.URL.Host = targetUrl.Host
+		req.URL.Scheme = targetUrl.Scheme
+		proxy.ServeHTTP(res, req)
 		return nil
 	})
 }

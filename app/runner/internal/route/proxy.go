@@ -1,7 +1,12 @@
 package route
 
 import (
+	"crypto/tls"
+	"fmt"
+	"github.com/elazarl/goproxy"
 	"github.com/labstack/echo/v4"
+	"net/http"
+	"net/url"
 )
 
 //func () {
@@ -63,7 +68,27 @@ import (
 
 //}
 
-func Proxy(ctx echo.Context) error {
-	//targetUrl, _ := url.Parse("ws://localhost:9091")
+func Proxy(c echo.Context) error {
+	scheme := "http"
+	if c.IsWebSocket() {
+		scheme = "ws"
+	}
+	//httpAgent := func(r *http.Request) (*url.URL, error) {
+	//	return url.Parse("http://localhost:8081")
+	//}
+	targetUrl, _ := url.Parse(fmt.Sprintf("%s://localhost:8083", scheme))
+
+	proxy := goproxy.NewProxyHttpServer()
+
+	proxy.Tr = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+
+	req := c.Request()
+	res := c.Response().Writer
+
+	//Update the headers to allow for SSL redirection
+	req.Host = targetUrl.Host
+	req.URL.Host = targetUrl.Host
+	req.URL.Scheme = targetUrl.Scheme
+	proxy.ServeHTTP(res, req)
 	return nil
 }
