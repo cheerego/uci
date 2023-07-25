@@ -3,6 +3,7 @@ package route
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/cheerego/uci/pkg/z"
 	"github.com/cockroachdb/errors"
 	"github.com/elazarl/goproxy"
 	"github.com/labstack/echo/v4"
@@ -10,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 func RunnerExec(ip string, port int, shell string, timeoutSecond int) (string, error) {
@@ -41,11 +43,18 @@ func RunnerExec(ip string, port int, shell string, timeoutSecond int) (string, e
 
 func Routes(engine *echo.Echo) {
 	engine.Any("/api/start", func(c echo.Context) error {
-		exec, _ := RunnerExec("127.0.0.1", 8081, "docker run -it -p 8083:8083 -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --bind-addr=0.0.0.0:8083", 10)
+		exec, _ := RunnerExec("127.0.0.1", 8081, "docker run -it -p 8083:8083 -w /root/workspace -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --bind-addr=0.0.0.0:8083", 10)
 		return c.String(200, exec)
 	})
 
-	engine.Any("/*", func(c echo.Context) error {
+	engine.Any("/a*", func(c echo.Context) error {
+		return c.String(200, "/a/*")
+	})
+
+	engine.Any("/vscodeserver*", func(c echo.Context) error {
+		//if c.Path() == "/vscode/manifest.json" {
+		//	return c.String(200, ``)
+		//}
 		scheme := "http"
 		if c.IsWebSocket() {
 			scheme = "ws"
@@ -61,11 +70,17 @@ func Routes(engine *echo.Echo) {
 
 		req := c.Request()
 		res := c.Response().Writer
-
-		//Update the headers to allow for SSL redirection
-		//req.Host = targetUrl.Host
 		req.URL.Host = targetUrl.Host
 		req.URL.Scheme = targetUrl.Scheme
+		if strings.HasPrefix(req.URL.Path, "/vscodeserver/ci") {
+			req.URL.Path = "/"
+			res.Header().Set("sn", "ci-123123")
+			c.Response().Header().Set("SN", "123123")
+		} else {
+			req.URL.Path = c.ParamValues()[0]
+			z.L().Error("123")
+		}
+
 		proxy.ServeHTTP(res, req)
 		return nil
 	})

@@ -86,7 +86,6 @@ func Proxy(c echo.Context) error {
 	res := c.Response().Writer
 
 	//Update the headers to allow for SSL redirection
-	req.Host = targetUrl.Host
 	req.URL.Host = targetUrl.Host
 	req.URL.Scheme = targetUrl.Scheme
 	proxy.ServeHTTP(res, req)
