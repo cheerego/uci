@@ -1,4 +1,4 @@
-package route
+package twilight
 
 import (
 	"crypto/tls"
@@ -47,17 +47,36 @@ func Routes(engine *echo.Echo) {
 		return c.String(200, exec)
 	})
 
-	engine.Any("/a*", func(c echo.Context) error {
-		return c.String(200, "/a/*")
-	})
-
 	engine.Any("/vscode/*", func(c echo.Context) error {
 		split := lo.Filter(strings.Split(c.Request().URL.Path, "/"), func(item string, index int) bool {
 			return item != ""
 		})
+
 		rootPath := fmt.Sprintf("/vscode/%s", split[1])
 		if c.Request().URL.Path == rootPath {
 			return c.Redirect(302, rootPath+"/")
+		}
+		manifestPath := fmt.Sprintf("%s/%s", rootPath, "manifest.json")
+		if c.Request().URL.Path == manifestPath {
+			return c.String(200, `{
+  "name": "hkn code-server",
+  "short_name": "hkn code-server",
+  "start_url": ".",
+  "display": "fullscreen",
+  "description": "Run Code on a remote server.",
+  "icons": [
+    {
+      "src": "./_static/src/browser/media/pwa-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./_static/src/browser/media/pwa-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}`)
 		}
 
 		scheme := "http"

@@ -2,7 +2,6 @@ package twilight
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/twilight/internal/route"
 	"github.com/cheerego/uci/pkg/http"
 	signal2 "github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
@@ -55,8 +54,8 @@ func (a *Application) startHttp() error {
 	engine := http.NewEcho()
 	a.engine = engine
 	engine.Validator = &CustomValidator{validator: validator.New()}
-	route.Routes(engine)
-	engine.HTTPErrorHandler = uerror.TextHttpErrorHandler(engine)
+	Routes(engine)
+	engine.HTTPErrorHandler = uerror.JSONHttpErrorHandler(engine)
 	return engine.Start(":8082")
 }
 
