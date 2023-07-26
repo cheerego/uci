@@ -52,6 +52,14 @@ func Routes(engine *echo.Echo) {
 	})
 
 	engine.Any("/vscode/*", func(c echo.Context) error {
+		split := lo.Filter(strings.Split(c.Request().URL.Path, "/"), func(item string, index int) bool {
+			return item != ""
+		})
+		rootPath := fmt.Sprintf("/vscode/%s", split[1])
+		if c.Request().URL.Path == rootPath {
+			return c.Redirect(302, rootPath+"/")
+		}
+
 		scheme := "http"
 		if c.IsWebSocket() {
 			scheme = "ws"
@@ -69,20 +77,9 @@ func Routes(engine *echo.Echo) {
 		res := c.Response().Writer
 		req.URL.Host = targetUrl.Host
 		req.URL.Scheme = targetUrl.Scheme
-		split := lo.Filter(strings.Split(req.URL.Path, "/"), func(item string, index int) bool {
-			return item != ""
-		})
 
-		join3 := "/" + strings.Join([]string{"vscode", split[1], "run"}, "/")
-		if strings.HasPrefix(req.URL.Path, join3) {
-			if len(split) == 3 {
-				req.URL.Path = "/"
-			} else {
-				req.URL.Path = "/" + strings.Join(split[3:], "/")
-			}
-		} else {
-			req.URL.Path = "/" + strings.Join(split[2:], "/")
-		}
+		//join3 := "/" + strings.Join([]string{"vscode", split[1], "run"}, "/")
+		req.URL.Path = "/" + strings.Join(split[2:], "/")
 
 		proxy.ServeHTTP(res, req)
 		return nil
