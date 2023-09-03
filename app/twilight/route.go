@@ -7,6 +7,6 @@ import (
 )
 
 func Routes(engine *echo.Echo) {
-	engine.Group("/api/start", start.WithContext, start.EventInit, start.StartVsCode)
+	engine.Group("/api/start", start.WithContext, start.EventInit, start.GitCheck, start.StartVsCode)
 	engine.Any("/vscode/*", vscode.VsCode)
 }
