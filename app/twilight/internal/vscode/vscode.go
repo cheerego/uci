@@ -3,11 +3,13 @@ package vscode
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/cheerego/uci/pkg/types"
 	"github.com/elazarl/goproxy"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -50,7 +52,7 @@ func VsCode(c echo.Context) error {
 	httpAgent := func(r *http.Request) (*url.URL, error) {
 		return url.Parse(fmt.Sprintf("%s://localhost:8081", "http"))
 	}
-	targetUrl, _ := url.Parse(fmt.Sprintf("%s://localhost:8083", scheme))
+	targetUrl, _ := url.Parse(fmt.Sprintf("%s://172.10.0.3:8080", scheme))
 
 	proxy := goproxy.NewProxyHttpServer()
 
@@ -60,6 +62,12 @@ func VsCode(c echo.Context) error {
 	res := c.Response().Writer
 	req.URL.Host = targetUrl.Host
 	req.URL.Scheme = targetUrl.Scheme
+	header := req.Header
+	header.Set(types.VSCODE_TASK_NAME_HEADER, "")
+	header.Set(types.VSCODE_TASK_IP_HEADER, "172.10.0.3")
+	header.Set(types.VSCODE_PORT_HEADER, strconv.Itoa(types.VSCODE_PORT))
+
+	req.Header = header
 
 	//join3 := "/" + strings.Join([]string{"vscode", split[1], "run"}, "/")
 	req.URL.Path = "/" + strings.Join(split[2:], "/")

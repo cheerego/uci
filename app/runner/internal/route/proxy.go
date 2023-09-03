@@ -3,6 +3,7 @@ package route
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/cheerego/uci/pkg/types"
 	"github.com/elazarl/goproxy"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -73,10 +74,9 @@ func Proxy(c echo.Context) error {
 	if c.IsWebSocket() {
 		scheme = "ws"
 	}
-	//httpAgent := func(r *http.Request) (*url.URL, error) {
-	//	return url.Parse("http://localhost:8081")
-	//}
-	targetUrl, _ := url.Parse(fmt.Sprintf("%s://localhost:8083", scheme))
+	ip := c.Request().Header.Get(types.VSCODE_TASK_IP_HEADER)
+	port := c.Request().Header.Get(types.VSCODE_PORT_HEADER)
+	targetUrl, _ := url.Parse(fmt.Sprintf("%s://%s:%s", scheme, ip, port))
 
 	proxy := goproxy.NewProxyHttpServer()
 
