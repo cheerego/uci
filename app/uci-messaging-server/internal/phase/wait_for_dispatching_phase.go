@@ -6,8 +6,8 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/shim"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/ptr"
-	"github.com/cheerego/uci/pkg/z"
 	"go.uber.org/zap"
 	"time"
 )
@@ -41,7 +41,7 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 		if err != nil {
 			return err
 		} else {
-			z.L().Info("pipeline dispatching timeout", zap.String("pipeline", p.String()))
+			log.L().Info("pipeline dispatching timeout", zap.String("pipeline", p.String()))
 			return nil
 		}
 	}
@@ -50,15 +50,15 @@ func (w WaitForDispatchingPhase) Exec(ctx context.Context, p *pipeline.Pipeline)
 	p.LastDispatchedAt = ptr.Ptr(time.Now())
 
 	l := shim.StartLetter(p)
-	z.L().Info("publishing start pipeline letter", zap.String("pipeline", p.String()), zap.Any("letter", l))
+	log.L().Info("publishing start pipeline letter", zap.String("pipeline", p.String()), zap.Any("letter", l))
 	dispatchErr := shim.Watcher.PublishAck(fmt.Sprintf("%d", p.RunnerId), l)
 	if dispatchErr != nil {
-		z.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.String()), zap.String("error", dispatchErr.Error()))
+		log.L().Info("publishing start pipeline letter err", zap.String("pipeline", p.String()), zap.String("error", dispatchErr.Error()))
 		return dispatchErr
 	}
 	p.DispatchSucceedAt = ptr.Ptr(time.Now())
 	p.Status = pipeline.DispatchSucceed
-	z.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.String()))
+	log.L().Info(" pipeline letter WaitForDispatching -> DispatchSucceed", zap.String("pipeline", p.String()))
 	_, err := service.Services.PipelineService.Update(ctx, p)
 	return err
 

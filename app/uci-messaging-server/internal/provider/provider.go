@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/cheerego/go-redisson"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/config"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/orm"
-	"github.com/cheerego/uci/pkg/z"
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -51,7 +51,7 @@ func Register() error {
 }
 
 func initDB() (*gorm.DB, error) {
-	z.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
+	log.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
 	g, err := orm.New(config.Configs.GormMasterDSN, config.Configs.GormMasterPoolConfig)
 	if err != nil {
 		return nil, err

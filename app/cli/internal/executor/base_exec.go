@@ -7,7 +7,7 @@ import (
 	"github.com/cheerego/uci/app/cli/internal/executor/storage"
 	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/frame/protocol/letter"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"io"
@@ -47,17 +47,17 @@ func (o *Executor) Exec(letterString string) {
 	var l letter.Letter
 	err := json.Unmarshal([]byte(letterString), &l)
 	if err != nil {
-		z.L().Error("json.Unmarshal letterString err", zap.Error(err), zap.String("letterString", letterString))
+		log.L().Error("json.Unmarshal letterString err", zap.Error(err), zap.String("letterString", letterString))
 		return
 	}
 
-	z.S().Infof("ack ackId %s letter %s", l.AckId, letterString)
+	log.S().Infof("ack ackId %s letter %s", l.AckId, letterString)
 
 	switch l.Action {
 	case letter.StartAction:
 		payload, err := l.StartPipelinePayload()
 		if err != nil {
-			z.L().Error("parse start pipeline payload err", zap.Error(err), zap.Any("payload", l.Payload))
+			log.L().Error("parse start pipeline payload err", zap.Error(err), zap.Any("payload", l.Payload))
 			return
 		}
 		err = o.startAction(payload)
@@ -69,13 +69,13 @@ func (o *Executor) Exec(letterString string) {
 	case letter.StopAction:
 		payload, err := l.StopPipelinePayload()
 		if err != nil {
-			z.L().Error("parse stop pipeline payload err", zap.Error(err), zap.Any("payload", l.Payload))
+			log.L().Error("parse stop pipeline payload err", zap.Error(err), zap.Any("payload", l.Payload))
 			return
 		}
 		err = o.stopAction(payload)
 
 	default:
-		z.L().Error("无效的 action 类型", zap.String("letterString", letterString), zap.String("action", string(l.Action)))
+		log.L().Error("无效的 action 类型", zap.String("letterString", letterString), zap.String("action", string(l.Action)))
 	}
 }
 

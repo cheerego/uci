@@ -5,7 +5,7 @@ import (
 	"github.com/assembla/cony"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/phase"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/streadway/amqp"
 	"go.uber.org/zap"
 	"strconv"
@@ -21,14 +21,14 @@ func NewBuildQueuingListener() *BuildQueuingListener {
 func (b *BuildQueuingListener) Handle(msg amqp.Delivery) {
 	atoi, err := strconv.Atoi(string(msg.Body))
 	if err != nil {
-		z.L().Error("build queuing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
+		log.L().Error("build queuing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
 		return
 	}
 	ctx := context.TODO()
 
 	err = phase.Phases()[pipeline.BuildQueuing].Exec(ctx, uint32(atoi))
 	if err != nil {
-		z.L().Error("build queuing consumer, phase exec err", zap.Error(err), zap.Int("value", atoi))
+		log.L().Error("build queuing consumer, phase exec err", zap.Error(err), zap.Int("value", atoi))
 		return
 	}
 }

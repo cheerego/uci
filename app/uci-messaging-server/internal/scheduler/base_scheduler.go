@@ -3,7 +3,7 @@ package scheduler
 import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/go-co-op/gocron"
 	"go.uber.org/zap"
 	"runtime/debug"
@@ -67,8 +67,8 @@ func (s *Scheduler) Start() {
 
 func panicHandler(jobName string, e interface{}) {
 	if err, ok := e.(error); ok {
-		z.L().Error("scheduler recover a err", zap.String("jobName", jobName), zap.Error(err), zap.String("stack", string(debug.Stack())))
+		log.L().Error("scheduler recover a err", zap.String("jobName", jobName), zap.Error(err), zap.String("stack", string(debug.Stack())))
 	} else {
-		z.L().Error("scheduler recover a err", zap.String("jobName", jobName), zap.String("stack", string(debug.Stack())), zap.Any("error", e))
+		log.L().Error("scheduler recover a err", zap.String("jobName", jobName), zap.String("stack", string(debug.Stack())), zap.Any("error", e))
 	}
 }

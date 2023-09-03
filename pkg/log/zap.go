@@ -1,4 +1,4 @@
-package z
+package log
 
 import (
 	"github.com/TheZeroSlave/zapsentry"

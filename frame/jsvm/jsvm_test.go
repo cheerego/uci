@@ -11,6 +11,6 @@ func TestJsVM(t *testing.T) {
 	vm.Set("env", m)
 
 	vm.Run(`
-	console.z(env.hkn.length)
+	console.log(env.hkn.length)
 `)
 }

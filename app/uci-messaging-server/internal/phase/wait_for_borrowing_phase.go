@@ -8,8 +8,8 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/provider"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/ptr"
-	"github.com/cheerego/uci/pkg/z"
 	"go.uber.org/zap"
 	"time"
 )
@@ -39,7 +39,7 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 		if err != nil {
 			return err
 		} else {
-			z.L().Info("pipeline borrow runner timeout ", zap.String("pipeline", p.String()))
+			log.L().Info("pipeline borrow runner timeout ", zap.String("pipeline", p.String()))
 			return nil
 		}
 	}
@@ -60,7 +60,7 @@ func (b *WaitForBorrowingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) 
 	if err != nil {
 		return err
 	} else {
-		z.L().Info("pipeline borrow runner success, WaitForBorrowing -> WaitForDispatching", zap.String("pipeline", p.String()), zap.String("runner", borrowRunner.String()))
+		log.L().Info("pipeline borrow runner success, WaitForBorrowing -> WaitForDispatching", zap.String("pipeline", p.String()), zap.String("runner", borrowRunner.String()))
 		return nil
 	}
 

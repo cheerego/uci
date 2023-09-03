@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/e"
 	"github.com/cheerego/uci/frame/protocol/letter"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/syncmap"
-	"github.com/cheerego/uci/pkg/z"
 	"github.com/cockroachdb/errors"
 	"go.uber.org/zap"
 	"time"
@@ -47,7 +47,7 @@ func (l *ListWatcher) Load(name string) (any, bool) {
 func (l *ListWatcher) Unsubscribe(name string) {
 	_, loaded := l.subscribers.LoadAndDelete(name)
 	if !loaded {
-		z.L().Warn("取消监听，但监听不存在", zap.String("Name", name))
+		log.L().Warn("取消监听，但监听不存在", zap.String("Name", name))
 	}
 }
 

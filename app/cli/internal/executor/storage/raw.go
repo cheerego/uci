@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/requests"
 	"github.com/cheerego/uci/frame/protocol/letter"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"io"
@@ -25,7 +25,7 @@ func ReportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 			case <-time.After(5 * time.Second):
 				err := requests.PipelineRawlog(p.Uuid, true, raws)
 				if err != nil {
-					z.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
+					log.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
 				}
 				raws = ""
 			case raw, ok := <-rawCh:
@@ -34,9 +34,9 @@ func ReportRawlog(p *letter.StartPipelinePayload, reader io.Reader) error {
 				} else {
 					err := requests.PipelineRawlog(p.Uuid, true, raws)
 					if err != nil {
-						z.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
+						log.L().Error("1", zap.String("pipeline", p.String()), zap.Error(err))
 					} else {
-						z.L().Info("read raw end", zap.String("pipeline", p.String()))
+						log.L().Info("read raw end", zap.String("pipeline", p.String()))
 					}
 					return nil
 				}
@@ -77,9 +77,9 @@ func StepLog(p *letter.StartPipelinePayload, reader io.Reader) error {
 			case raw, ok := <-rawCh:
 				if ok {
 					raws = fmt.Sprintf("%s%s", raws, raw)
-					z.S().Info("step z %s", raws)
+					log.S().Info("step log %s", raws)
 				} else {
-					z.L().Info("read raw end", zap.String("pipeline", p.String()))
+					log.L().Info("read raw end", zap.String("pipeline", p.String()))
 					return nil
 				}
 			}

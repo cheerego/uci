@@ -7,7 +7,7 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/lock"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/snapshot"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/streadway/amqp"
 	"go.uber.org/zap"
 	"strconv"
@@ -32,7 +32,7 @@ func (s *SmembersPipelineStatusScheduler) Exec(params ...interface{}) {
 
 	ids, err := snapshot.SMembersSet(ctx, status)
 	if err != nil {
-		z.L().Error("SMembers PipelineStatusScheduler set err", zap.Error(err), zap.String("status", string(status)))
+		log.L().Error("SMembers PipelineStatusScheduler set err", zap.Error(err), zap.String("status", string(status)))
 		return
 	}
 
@@ -43,7 +43,7 @@ func (s *SmembersPipelineStatusScheduler) Exec(params ...interface{}) {
 			Body:        []byte(strconv.Itoa(int(id))),
 		})
 		if err != nil {
-			z.L().Error("SMembers PipelineStatusScheduler publish err", zap.Error(err), zap.String("status", string(status)), zap.Uint32("id", id))
+			log.L().Error("SMembers PipelineStatusScheduler publish err", zap.Error(err), zap.String("status", string(status)), zap.Uint32("id", id))
 			continue
 		}
 	}

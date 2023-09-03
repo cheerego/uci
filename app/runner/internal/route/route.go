@@ -28,10 +28,10 @@ func Routes(engine *echo.Echo) {
 	           document.getElementById("recv").innerHTML = "Connected";
 	       }
 	       websocket.inclose = function(){
-	           console.z('websocket close');
+	           console.log('websocket close');
 	       }
 	       websocket.onmessage = function(e){
-	           console.z(e.data);
+	           console.log(e.data);
 	           document.getElementById("recv").innerHTML = e.data;
 	       }
 	       document.getElementById("sendBtn").onclick = function(){

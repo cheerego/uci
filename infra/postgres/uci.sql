@@ -321,7 +321,7 @@ INSERT INTO "public"."admin_menu" ("id", "parent_id", "order", "title", "icon", 
 ('4', '2', '7', 'Roles', 'fa-user', 'auth/roles', NULL, NULL, '2022-06-28 19:10:42'),
 ('5', '2', '8', 'Permission', 'fa-ban', 'auth/permissions', NULL, NULL, '2022-06-28 19:10:42'),
 ('6', '2', '9', 'Menu', 'fa-bars', 'auth/menu', NULL, NULL, '2022-06-28 19:10:42'),
-('7', '2', '10', 'Operation z', 'fa-history', 'auth/logs', NULL, NULL, '2022-06-28 19:10:42'),
+('7', '2', '10', 'Operation log', 'fa-history', 'auth/logs', NULL, NULL, '2022-06-28 19:10:42'),
 ('8', '0', '1', 'Workflow', 'fa-bars', '/workflows', NULL, '2022-05-28 15:13:31', '2022-06-28 19:10:42'),
 ('9', '0', '2', 'Pipeline', 'fa-bars', '/pipelines', NULL, '2022-05-28 15:13:45', '2022-06-28 19:10:42'),
 ('10', '0', '3', 'Runner', 'fa-bars', '/runners', NULL, '2022-06-28 14:39:00', '2022-06-28 19:10:42');

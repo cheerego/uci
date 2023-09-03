@@ -31,19 +31,19 @@ import (
 //    <script type="text/javascript">
 //        var websocket = new WebSocket("ws://127.0.0.1:8081/ws");
 //        websocket.onopen = function(){
-//            console.z("websocket open");
+//            console.log("websocket open");
 //            document.getElementById("recv").innerHTML = "Connected";
 //        }
 //        websocket.inclose = function(){
-//            console.z('websocket close');
+//            console.log('websocket close');
 //        }
 //        websocket.onmessage = function(e){
-//            console.z(e.data);
+//            console.log(e.data);
 //            document.getElementById("recv").innerHTML = e.data;
 //        }
 //        document.getElementById("sendBtn").onclick = function(){
 //            var txt = document.getElementById("sendTxt").value;
-//			console.z(txt);
+//			console.log(txt);
 //            websocket.send(txt);
 //        }
 //

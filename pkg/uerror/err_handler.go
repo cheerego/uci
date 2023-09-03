@@ -2,7 +2,7 @@ package uerror
 
 import (
 	"fmt"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -12,7 +12,7 @@ import (
 
 func JSONHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 	return func(er error, c echo.Context) {
-		z.L().Error("[HTTP_ERR] "+c.Path(), zap.String("query", c.QueryString()), zap.Error(er))
+		log.L().Error("[HTTP_ERR] "+c.Path(), zap.String("query", c.QueryString()), zap.Error(er))
 		if c.Response().Committed {
 			return
 		}
@@ -94,7 +94,7 @@ func convertErrToCode(er error) (httpCode int, message string, code string) {
 
 func TextHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 	return func(er error, c echo.Context) {
-		z.L().Error("[HTTP_ERR] "+c.Request().URL.Path, zap.String("query", c.QueryString()), zap.Error(er))
+		log.L().Error("[HTTP_ERR] "+c.Request().URL.Path, zap.String("query", c.QueryString()), zap.Error(er))
 		if c.Response().Committed {
 			return
 		}

@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/caarlos0/env/v6"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
 )
 
@@ -21,6 +21,6 @@ func Register() error {
 	if err := env.Parse(&Configs); err != nil {
 		return err
 	}
-	z.L().Info("config: ", zap.Any("Config", Configs))
+	log.L().Info("config: ", zap.Any("Config", Configs))
 	return nil
 }

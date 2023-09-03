@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
 	"io"
@@ -47,7 +47,7 @@ func Exec(ctx echo.Context) error {
 			if err2 != nil || io.EOF == err2 {
 				break
 			}
-			z.S().Infof(line)
+			log.S().Infof(line)
 			ctx.Response().Write([]byte(line))
 			ctx.Response().Flush()
 		}
@@ -67,7 +67,7 @@ func Exec(ctx echo.Context) error {
 			if err2 != nil || io.EOF == err2 {
 				break
 			}
-			z.S().Infof(line)
+			log.S().Infof(line)
 			buffer.Write([]byte(line))
 		}
 		err = cmd.Wait()

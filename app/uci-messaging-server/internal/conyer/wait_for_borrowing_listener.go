@@ -7,7 +7,7 @@ import (
 	godisson "github.com/cheerego/go-redisson"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/phase"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/streadway/amqp"
 	"go.uber.org/zap"
 	"strconv"
@@ -31,7 +31,7 @@ func (w *WaitForBorrowingListener) Concurrent() int {
 func (w *WaitForBorrowingListener) Handle(msg amqp.Delivery) {
 	atoi, err := strconv.Atoi(string(msg.Body))
 	if err != nil {
-		z.L().Error("wait for borrowing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
+		log.L().Error("wait for borrowing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
 		return
 	}
 	ctx := context.TODO()
@@ -39,7 +39,7 @@ func (w *WaitForBorrowingListener) Handle(msg amqp.Delivery) {
 	err = phase.Phases()[pipeline.WaitForBorrowing].Exec(ctx, uint32(atoi))
 	if err != nil {
 		if !errors.Is(err, godisson.ErrLockNotObtained) {
-			z.L().Warn("wait for borrowing, phase exec err", zap.Uint32("pipelineId", uint32(atoi)), zap.String("body", string(msg.Body)), zap.String("error", err.Error()))
+			log.L().Warn("wait for borrowing, phase exec err", zap.Uint32("pipelineId", uint32(atoi)), zap.String("body", string(msg.Body)), zap.String("error", err.Error()))
 		}
 		return
 	}

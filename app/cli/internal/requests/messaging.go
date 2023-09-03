@@ -3,7 +3,7 @@ package requests
 import (
 	"context"
 	"github.com/cheerego/uci/app/cli/internal/config"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"time"
 )
 
@@ -20,5 +20,5 @@ func MessagingUnsubscribe(uuid string) error {
 		R().
 		SetContext(timeout)
 
-	return z.Tee("request build running", doPost(r, serverUrl+"/api/v1/message/1/unsubscribe"))
+	return log.Tee("request build running", doPost(r, serverUrl+"/api/v1/message/1/unsubscribe"))
 }

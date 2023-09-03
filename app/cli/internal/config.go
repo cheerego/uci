@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/cheerego/uci/app/cli/internal/config"
 	"github.com/cheerego/uci/pkg/ini"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"strings"
@@ -92,7 +92,7 @@ func (u *Uci) ConfigDelete() *cobra.Command {
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			z.L().Info("stop uci runner", zap.Any("args", args))
+			log.L().Info("stop uci runner", zap.Any("args", args))
 		},
 	}
 }

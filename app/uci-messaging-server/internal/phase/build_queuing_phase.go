@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +22,7 @@ func (q *BuildQueuingPhase) Exec(ctx context.Context, p *pipeline.Pipeline) erro
 	if err != nil {
 		return err
 	}
-	z.L().Info("queuing phase pipeline status BuildQueuing -> WaitForBorrowing", zap.String("pipeline", p.String()))
+	log.L().Info("queuing phase pipeline status BuildQueuing -> WaitForBorrowing", zap.String("pipeline", p.String()))
 	return nil
 }
 

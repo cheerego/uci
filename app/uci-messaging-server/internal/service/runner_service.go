@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/runner"
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/service/internal/repository"
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 )
 
 type RunnerService struct {
@@ -31,7 +31,7 @@ func (r *RunnerService) UpdateStatus(ctx context.Context, runner *runner.Runner,
 	runner.Status = status
 	rows, err := repository.Repositories.RunnerRepository.UpdateStatus(ctx, runner)
 	if err == nil {
-		z.S().Infof("runner %s status %s -> %s", runner.String(), oldStatus, status)
+		log.S().Infof("runner %s status %s -> %s", runner.String(), oldStatus, status)
 	}
 	return rows, err
 }

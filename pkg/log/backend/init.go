@@ -1,16 +1,16 @@
 package backend
 
 import (
-	"github.com/cheerego/uci/pkg/z"
+	"github.com/cheerego/uci/pkg/log"
 	"go.uber.org/zap"
 )
 
 func Configuration() (*zap.Logger, error) {
-	backend, err := z.Backend(z.DefaultLogLevel())
+	backend, err := log.Backend(log.DefaultLogLevel())
 	if err != nil {
 		return nil, err
 	}
-	return z.WrapperSentry(backend)
+	return log.WrapperSentry(backend)
 }
 
 //func init() {
