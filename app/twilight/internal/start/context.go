@@ -1,21 +1,34 @@
 package start
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+)
 
-type Event string
-
-const EventPush Event = "push"
-const EventMergeRequest Event = "merge_request"
-const EventAPI Event = "api"
-
-type Context struct {
+type StartContext struct {
 	echo.Context
-	Event    Event
-	WithRepo bool
+	Event        EventType
+	WithRepo     bool
+	StartRequest *StartRequest
+}
+
+type StartRequest struct {
+	GitUsername   string
+	GitPassword   string
+	GitHttpUrl    string
+	GitCiFilePath string
+
+	CiFileContent string
+
+	Event EventType
 }
 
 func WithContext(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return next(&Context{Context: c})
+		req := &StartRequest{}
+		err := c.Bind(req)
+		if err != nil {
+			return nil
+		}
+		return next(&StartContext{Context: c, StartRequest: req})
 	}
 }

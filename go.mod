@@ -21,6 +21,7 @@ require (
 	github.com/labstack/gommon v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/robertkrimen/otto v0.0.0-20211024170158-b87d35c0b86f
+	github.com/samber/lo v1.38.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/cobra v0.0.6
 	github.com/streadway/amqp v1.0.0
@@ -80,7 +81,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
-	github.com/samber/lo v1.38.1 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

@@ -20,9 +20,9 @@ func JSONHttpErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 		httpCode, message, code := convertErrToCode(er)
 		var resp echo.Map
 		if e.Debug {
-			resp = echo.Map{"message": message, "code": code, "error": errors.GetAllDetails(er)}
+			resp = echo.Map{"message": message, "code": code, "detail": errors.GetAllSafeDetails(er), "error": er.Error()}
 		} else {
-			resp = echo.Map{"message": message, "code": code}
+			resp = echo.Map{"message": message, "code": code, "detail": errors.GetAllSafeDetails(er), "error": er.Error()}
 		}
 
 		var rid = c.Request().Header.Get(echo.HeaderXRequestID)
@@ -70,18 +70,13 @@ func convertErrToCode(er error) (httpCode int, message string, code string) {
 		}
 	} else if errors.As(er, &uTargetErr) {
 
-		unwrapErr := er
-		for {
-			if ue, ok := unwrapErr.(*UError); ok {
-				if ue.HttpCode != 0 {
-					httpCode = ue.HttpCode
-				}
-				message = ue.Message
-				code = ue.Code
-				break
-			} else {
-				unwrapErr = errors.Unwrap(er)
+		unwrapErr := errors.UnwrapAll(er)
+		if ue, ok := unwrapErr.(*UError); ok {
+			if ue.HttpCode != 0 {
+				httpCode = ue.HttpCode
 			}
+			message = ue.Message
+			code = ue.Code
 		}
 	} else {
 		if IsRecordNotFoundErr(er) {
