@@ -1,6 +1,7 @@
 package start
 
 import (
+	"github.com/cheerego/uci/app/twilight/internal/types"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 	"go.uber.org/zap"
@@ -8,7 +9,7 @@ import (
 
 func GitCheck(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		cc := c.(*StartContext)
+		cc := types.StartContextFromContext(c)
 		if lo.IsNotEmpty(cc.StartRequest.GitHttpUrl) &&
 			lo.IsNotEmpty(cc.StartRequest.GitUsername) &&
 			lo.IsNotEmpty(cc.StartRequest.GitPassword) {

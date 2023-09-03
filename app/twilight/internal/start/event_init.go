@@ -1,30 +1,19 @@
 package start
 
 import (
-	"github.com/cheerego/uci/pkg/uerror"
+	"github.com/cheerego/uci/app/twilight/internal/types"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 )
 
-type EventType string
-
-const EventPush EventType = "push"
-const EventTag EventType = "tag"
-const EventMergeRequest EventType = "merge_request"
-const EventAPI EventType = "api"
-
-var ErrInvalidEventType = uerror.NewUError(400, "ErrInvalidEventType", "无效的事件类型")
-
-var EventTypeList = []EventType{EventPush, EventTag, EventAPI, EventMergeRequest}
-
 func EventInit(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		cc := c.(*StartContext)
+		cc := types.StartContextFromContext(c)
 		event := cc.StartRequest.Event
-		if lo.Contains(EventTypeList, event) {
+		if lo.Contains(types.EventTypeList, event) {
 			cc.Event = event
 		} else {
-			return ErrInvalidEventType.WithMessagef("event type is '%s'", event)
+			return types.ErrInvalidEventType.WithMessagef("event type is '%s'", event)
 		}
 		return next(cc)
 	}
