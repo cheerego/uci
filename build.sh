@@ -6,8 +6,8 @@ cur_dir=$(cd $(dirname $0); pwd)
 version_build=`git rev-parse HEAD`
 import_path="github.com/cheerego/uci"
 
-BUILD_IMAGE=${BUILD_IMAGE:-golang:1.18.0-bullseye}
-RUNTIME_IMAGE=${RUNTIME_IMAGE:-golang:1.18.0-bullseye}
+BUILD_IMAGE=${BUILD_IMAGE:-golang:1.20.2-buster}
+RUNTIME_IMAGE=${RUNTIME_IMAGE:-golang:1.20.2-buster}
 
 
 function status() {
@@ -37,12 +37,12 @@ function build_docker_image() {
 
 
 case "$1" in
-    uci-messaging-server|uci-dispatch-server)
+    uci-messaging-server|uci-dispatch-server|twilight)
         build_go $1
         build_docker_image $1
         ;;
     *)
-        echo "Usage: $0 uci-messaging-server | uci-dispatch-server"
+        echo "Usage: $0 uci-messaging-server | uci-dispatch-server | twilight"
         ;;
 esac
 

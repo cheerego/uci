@@ -2,19 +2,19 @@
 version: '2.2'
 
 services:
-  uci-messaging-server:
-    image: ${UCI_MESSAGING_SERVER:-uci-messaging-server:latest}
-    expose:
-      - 8080
-    environment:
-      - TZ=Asia/Shanghai
-      - GORM_MASTER_DSN=root:uci123@tcp(mysql:3306)/uci?charset=utf8mb4&parseTime=True&loc=Local
-      - HTTP_PORT=8080
-      - RABBIT_ADDR_URL=amqp://guest:guest@rabbitmq
-    depends_on:
-      - mysql
-      - redis
-      - rabbitmq
+#  uci-messaging-server:
+#    image: ${UCI_MESSAGING_SERVER:-uci-messaging-server:latest}
+#    expose:
+#      - 8080
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - GORM_MASTER_DSN=root:uci123@tcp(mysql:3306)/uci?charset=utf8mb4&parseTime=True&loc=Local
+#      - HTTP_PORT=8080
+#      - RABBIT_ADDR_URL=amqp://guest:guest@rabbitmq
+#    depends_on:
+#      - mysql
+#      - redis
+#      - rabbitmq
 #  uci-dispatch-server:
 #    image: ${UCI_DISPATCH_SERVER:-uci-dispatch-server:latest}
 #    expose:
@@ -28,5 +28,19 @@ services:
 #      - postgres
 #      - redis
 #      - rabbitmq
+
+  twilight:
+    image: ${twilight:-twilight:latest}
+    expose:
+      - 8080
+    environment:
+      - TZ=Asia/Shanghai
+      - GORM_MASTER_DSN=root:uci123@tcp(mysql:3306)/uci?charset=utf8mb4&parseTime=True&loc=Local
+      - HTTP_PORT=8080
+      - RABBIT_ADDR_URL=amqp://guest:guest@rabbitmq
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
 
 #failed to initialize database, got error failed to connect to `host=/tmp user=uci database=uci`: dial error (dial unix /tmp/.s.PGSQL.5432: connect: no such file or directory)

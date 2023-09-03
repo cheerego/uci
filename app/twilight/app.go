@@ -56,7 +56,7 @@ func (a *Application) startHttp() error {
 	engine.Validator = &CustomValidator{validator: validator.New()}
 	Routes(engine)
 	engine.HTTPErrorHandler = uerror.JSONHttpErrorHandler(engine)
-	return engine.Start(":8082")
+	return engine.Start(":8080")
 }
 
 type CustomValidator struct {
