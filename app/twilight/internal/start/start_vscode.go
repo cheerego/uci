@@ -24,7 +24,7 @@ func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
 git clone %s://%s:%s@%s%s %s
 
 `, urlParser.Scheme, cc.GitUsername, cc.GitPassword, urlParser.Host, urlParser.Path, codeDir)
-		gitCloneLog, err := runner.Exec(taskName, "127.0.0.1", 8081, script, 100)
+		gitCloneLog, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, script, 100)
 		if err != nil {
 			return errors.WithMessage(err, gitCloneLog)
 		}

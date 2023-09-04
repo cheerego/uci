@@ -26,12 +26,10 @@ class RunnerController extends AdminController
     {
         $grid = new Grid(new Runner());
 
-        $grid->column('id', __('Id'));
-        $grid->column('code', __('Code'));
-        $grid->column('salt', __('Salt'));
-        $grid->column('status', __('Status'));
-        $grid->column('last_status_changed_at', __('Last status changed at'));
-        $grid->column('last_dispatched_at', __('Last dispatched at'));
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('host', __('Host'));
+        $grid->column('port', __('Port'));
+        $grid->column('enable', __('Enable'))->switch();
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
         $grid->column('deleted_at', __('Deleted at'));
@@ -50,11 +48,9 @@ class RunnerController extends AdminController
         $show = new Show(Runner::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('code', __('Code'));
-        $show->field('salt', __('Salt'));
-        $show->field('status', __('Status'));
-        $show->field('last_status_changed_at', __('Last status changed at'));
-        $show->field('last_dispatched_at', __('Last dispatched at'));
+        $show->field('host', __('Host'));
+        $show->field('port', __('Port'));
+        $show->field('enable', __('Enable'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->field('deleted_at', __('Deleted at'));
@@ -71,11 +67,9 @@ class RunnerController extends AdminController
     {
         $form = new Form(new Runner());
 
-        $form->text('code', __('Code'));
-        $form->text('salt', __('Salt'));
-        $form->text('status', __('Status'))->default('1');
-        $form->datetime('last_status_changed_at', __('Last status changed at'))->default(date('Y-m-d H:i:s'));
-        $form->datetime('last_dispatched_at', __('Last dispatched at'))->default(date('Y-m-d H:i:s'));
+        $form->text('host', __('Host'));
+        $form->number('port', __('Port'))->default(8080);
+        $form->switch('enable', __('Enable'));
 
         return $form;
     }

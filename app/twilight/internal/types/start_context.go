@@ -1,6 +1,9 @@
 package types
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/cheerego/uci/pkg/dao/model"
+	"github.com/labstack/echo/v4"
+)
 
 type StartContext struct {
 	echo.Context
@@ -14,6 +17,7 @@ type StartContext struct {
 	GitUsername string
 	GitPassword string
 	GitHttpUrl  string
+	Runner      *model.Runner
 }
 
 func StartContextFromContext(c echo.Context) *StartContext {

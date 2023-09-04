@@ -13,5 +13,6 @@ var BUILD_TIME string
 func main() {
 	banner.Render("twilight", VERSION, BUILD_TIME)
 	//ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	log.L().Error("start twilight err", zap.Error(twilight.NewApplication().Start()))
+	err := twilight.NewApplication().Start()
+	log.L().Error("start twilight err", zap.Error(err))
 }

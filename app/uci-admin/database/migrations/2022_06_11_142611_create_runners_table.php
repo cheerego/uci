@@ -14,13 +14,10 @@ class CreateRunnersTable extends Migration
     public function up()
     {
         Schema::create('runners', function (Blueprint $table) {
-            $table->id();
-            $table->string("code")->default("");
-            $table->string("salt")->default("");
-            $table->string("status")->default("");
-            $table->timestamp("last_connected_at")->nullable();
-            $table->timestamp("last_disconnected_at")->nullable();
-            $table->timestamp("last_dispatched_at")->nullable();
+            $table->bigInteger();
+            $table->string("host")->default("");
+            $table->integer("port")->default(8080);
+            $table->integer("enable")->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

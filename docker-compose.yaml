@@ -38,6 +38,7 @@ services:
       - GORM_MASTER_DSN=root:uci123@tcp(mysql:3306)/uci?charset=utf8mb4&parseTime=True&loc=Local
       - HTTP_PORT=8080
       - RABBIT_ADDR_URL=amqp://guest:guest@rabbitmq
+      - REDIS_DSN=redis:6379
     depends_on:
       - mysql
       - redis

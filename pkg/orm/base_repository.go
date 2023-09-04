@@ -13,7 +13,7 @@ func NewBaseRepository[T any](db *gorm.DB) BaseRepository[T] {
 	return BaseRepository[T]{db: db}
 }
 
-func (b *BaseRepository[T]) FindById(ctx context.Context, id uint32) (*T, error) {
+func (b *BaseRepository[T]) FindById(ctx context.Context, id int64) (*T, error) {
 	var m T
 	err := FromContext(ctx, b.db).First(&m, id).Error
 	if err != nil {
@@ -22,7 +22,7 @@ func (b *BaseRepository[T]) FindById(ctx context.Context, id uint32) (*T, error)
 	return &m, err
 }
 
-func (b *BaseRepository[T]) FindByIdWithDeleted(ctx context.Context, id uint32) (*T, error) {
+func (b *BaseRepository[T]) FindByIdWithDeleted(ctx context.Context, id int64) (*T, error) {
 	var m T
 	err := FromContext(ctx, b.db).Unscoped().First(&m, id).Error
 	if err != nil {
@@ -31,7 +31,7 @@ func (b *BaseRepository[T]) FindByIdWithDeleted(ctx context.Context, id uint32) 
 	return &m, err
 }
 
-func (b *BaseRepository[T]) FindByIds(ctx context.Context, id ...uint32) ([]*T, error) {
+func (b *BaseRepository[T]) FindByIds(ctx context.Context, id ...int64) ([]*T, error) {
 	m := make([]*T, 0)
 
 	err := FromContext(ctx, b.db).Find(&m, id).Error
@@ -41,7 +41,7 @@ func (b *BaseRepository[T]) FindByIds(ctx context.Context, id ...uint32) ([]*T, 
 	return m, err
 }
 
-func (b *BaseRepository[T]) FindByIdsWithDeleted(ctx context.Context, id ...uint32) ([]*T, error) {
+func (b *BaseRepository[T]) FindByIdsWithDeleted(ctx context.Context, id ...int64) ([]*T, error) {
 	m := make([]*T, 0)
 	err := FromContext(ctx, b.db).Unscoped().Find(&m, id).Error
 	if err != nil {
@@ -60,25 +60,25 @@ func (b *BaseRepository[T]) BatchInsert(ctx context.Context, m []*T) (int64, err
 	return tx.RowsAffected, tx.Error
 }
 
-func (b *BaseRepository[T]) DeleteById(ctx context.Context, id uint32) (int64, error) {
+func (b *BaseRepository[T]) DeleteById(ctx context.Context, id int64) (int64, error) {
 	var m T
 	tx := FromContext(ctx, b.db).Delete(&m, id)
 	return tx.RowsAffected, tx.Error
 }
 
-func (b *BaseRepository[T]) DeleteByIds(ctx context.Context, ids uint32) (int64, error) {
+func (b *BaseRepository[T]) DeleteByIds(ctx context.Context, ids int64) (int64, error) {
 	var m T
 	tx := FromContext(ctx, b.db).Delete(&m, ids)
 	return tx.RowsAffected, tx.Error
 }
 
-func (b *BaseRepository[T]) ForceDeleteById(ctx context.Context, id uint32) (int64, error) {
+func (b *BaseRepository[T]) ForceDeleteById(ctx context.Context, id int64) (int64, error) {
 	var m T
 	tx := FromContext(ctx, b.db).Unscoped().Delete(&m, id)
 	return tx.RowsAffected, tx.Error
 }
 
-func (b *BaseRepository[T]) ForceDeleteByIds(ctx context.Context, ids ...uint32) (int64, error) {
+func (b *BaseRepository[T]) ForceDeleteByIds(ctx context.Context, ids ...int64) (int64, error) {
 	var m T
 	tx := FromContext(ctx, b.db).Unscoped().Delete(&m, ids)
 	return tx.RowsAffected, tx.Error
