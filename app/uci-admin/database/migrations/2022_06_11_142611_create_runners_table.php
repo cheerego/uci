@@ -14,7 +14,7 @@ class CreateRunnersTable extends Migration
     public function up()
     {
         Schema::create('runners', function (Blueprint $table) {
-            $table->bigInteger();
+            $table->bigIncrements("id");
             $table->string("host")->default("");
             $table->integer("port")->default(8080);
             $table->integer("enable")->default(0);

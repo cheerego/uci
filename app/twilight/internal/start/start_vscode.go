@@ -30,12 +30,12 @@ git clone %s://%s:%s@%s%s %s
 		}
 		zap.L().Info("git clone log", zap.String("log", gitCloneLog))
 
-		exec, err := runner.Exec(taskName, "127.0.0.1", 8081, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=:8080`, taskName, codeDir), 10)
+		exec, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=:8080`, taskName, codeDir), 10)
 		if err != nil {
 			return errors.WithMessage(err, exec)
 		}
 
-		s, err := runner.Exec(taskName, "127.0.0.1", 8081, fmt.Sprintf("docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' %s", taskName), 10)
+		s, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf("docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' %s", taskName), 10)
 		if err != nil {
 			return errors.WithMessage(err, "获取容器 IP 报错")
 		}

@@ -37,12 +37,12 @@ function build_docker_image() {
 
 
 case "$1" in
-    uci-messaging-server|uci-dispatch-server|twilight)
+    uci-messaging-server|uci-dispatch-server|twilight|runner)
         build_go $1
         build_docker_image $1
         ;;
     *)
-        echo "Usage: $0 uci-messaging-server | uci-dispatch-server | twilight"
+        echo "Usage: $0 uci-messaging-server | uci-dispatch-server | twilight | runner"
         ;;
 esac
 

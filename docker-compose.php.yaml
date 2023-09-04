@@ -6,8 +6,8 @@ services:
     image: cheerego-docker.pkg.coding.net/registry/public/php:8-fpm-20220409
     volumes:
       - ./app/uci-admin:/var/www/html/
-  uci-admin-server:
-    image: nginx
+  uci-admin-nginx:
+    image: nginx:1.25.2
     environment:
       - TZ=Asia/Shanghai
     volumes:
