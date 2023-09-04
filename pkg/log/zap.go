@@ -74,6 +74,7 @@ func Backend(logLevel string) (*zap.Logger, error) {
 	opts := []zap.Option{
 		zap.AddCaller(),
 		zap.AddStacktrace(zapcore.ErrorLevel),
+		zap.AddCallerSkip(1),
 	}
 	return config.Build(opts...)
 }

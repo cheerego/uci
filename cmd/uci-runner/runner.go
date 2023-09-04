@@ -12,6 +12,7 @@ var BUILD_TIME string
 
 func main() {
 	banner.Render("uci-master", VERSION, BUILD_TIME)
+	log.Info("1231231")
 	err := uci_runner.NewApplication().Start()
 	log.Error("start uci-runner err", zap.Error(err))
 }

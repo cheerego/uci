@@ -5,9 +5,9 @@ import (
 	"github.com/cheerego/uci/app/uci-master/internal/provider"
 	"github.com/cheerego/uci/app/uci-master/internal/runner"
 	"github.com/cheerego/uci/app/uci-master/internal/types"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"go.uber.org/zap"
 	"net/url"
 	"strings"
@@ -43,9 +43,7 @@ git clone %s://%s:%s@%s%s %s
 			return errors.WithMessage(err, "获取容器 IP 报错")
 		}
 
-		containerIP := strings.ReplaceAll(s, "\\n", "")
-		log.Info(strings.ReplaceAll(s, "\\n", ""))
-		log.Info(strings.ReplaceAll(s, "\n", ""))
+		containerIP := strings.ReplaceAll(s, "\n", "")
 		_, err = provider.Redis().Set(c.Request().Context(), fmt.Sprintf("%s_container_ip", taskName), containerIP, 0).Result()
 		_, err = provider.Redis().Set(c.Request().Context(), fmt.Sprintf("%s_runner_addr", taskName), cc.Runner.Addr(), 0).Result()
 
