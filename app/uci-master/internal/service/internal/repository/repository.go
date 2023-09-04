@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/cheerego/uci/app/twilight/internal/provider"
+	"github.com/cheerego/uci/app/uci-master/internal/provider"
 	"github.com/cheerego/uci/pkg/dao"
 )
 

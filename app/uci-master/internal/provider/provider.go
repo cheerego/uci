@@ -3,7 +3,7 @@ package provider
 import (
 	"context"
 	godisson "github.com/cheerego/go-redisson"
-	"github.com/cheerego/uci/app/twilight/internal/config"
+	"github.com/cheerego/uci/app/uci-master/internal/config"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cheerego/uci/pkg/orm"
 	"github.com/go-redis/redis/v8"

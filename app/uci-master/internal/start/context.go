@@ -3,7 +3,7 @@ package start
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/cheerego/uci/app/twilight/internal/types"
+	"github.com/cheerego/uci/app/uci-master/internal/types"
 	"github.com/labstack/echo/v4"
 )
 

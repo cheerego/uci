@@ -24,7 +24,7 @@ type Runner struct {
 }
 
 func (r *Runner) String() string {
-	return fmt.Sprintf("runner-%d-salt-%s-machine-%s", r.ID, r.Salt, r.MachineCode)
+	return fmt.Sprintf("uci-uci-runner-%d-salt-%s-machine-%s", r.ID, r.Salt, r.MachineCode)
 }
 
 func (r Runner) TableName() string {

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/cheerego/uci/app/twilight/internal/service/internal/repository"
+	"github.com/cheerego/uci/app/uci-master/internal/service/internal/repository"
 )
 
 var Services *Service

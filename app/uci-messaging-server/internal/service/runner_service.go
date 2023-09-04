@@ -31,7 +31,7 @@ func (r *RunnerService) UpdateStatus(ctx context.Context, runner *runner.Runner,
 	runner.Status = status
 	rows, err := repository.Repositories.RunnerRepository.UpdateStatus(ctx, runner)
 	if err == nil {
-		log.S().Infof("runner %s status %s -> %s", runner.String(), oldStatus, status)
+		log.S().Infof("uci-uci-runner %s status %s -> %s", runner.String(), oldStatus, status)
 	}
 	return rows, err
 }

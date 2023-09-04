@@ -2,8 +2,8 @@ package start
 
 import (
 	"fmt"
-	"github.com/cheerego/uci/app/twilight/internal/runner"
-	"github.com/cheerego/uci/app/twilight/internal/types"
+	"github.com/cheerego/uci/app/uci-master/internal/runner"
+	"github.com/cheerego/uci/app/uci-master/internal/types"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"

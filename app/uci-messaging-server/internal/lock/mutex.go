@@ -10,11 +10,11 @@ func GetPipelineLifecycleLockKey(pipelineId uint32) string {
 }
 
 func GetRunnerBorrowLockKey(runnerId uint32) string {
-	return fmt.Sprintf("uci-messaging-server:lock:borrow:runner-%d", runnerId)
+	return fmt.Sprintf("uci-messaging-server:lock:borrow:uci-uci-runner-%d", runnerId)
 }
 
 func GetRunnerDiscoveryKey(runnerId uint32) string {
-	return fmt.Sprintf("uci-messaging-server:discovery:runner:%d", runnerId)
+	return fmt.Sprintf("uci-messaging-server:discovery:uci-uci-runner:%d", runnerId)
 }
 
 // 定时任务

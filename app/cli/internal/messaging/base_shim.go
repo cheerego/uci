@@ -28,7 +28,7 @@ func NewBaseShimer(shimer Shimer) *BaseShimer {
 	}
 }
 
-var dbName = "uci-runner.db"
+var dbName = "uci-uci-uci-runner.db"
 
 func (b *BaseShimer) Pinging(ctx context.Context) error {
 	ticker := time.NewTicker(5 * time.Second)

@@ -7,7 +7,7 @@ import (
 )
 
 func Routes(engine *echo.Echo) {
-	engine.Any("/runner/exec", Exec)
+	engine.Any("/uci-uci-runner/exec", Exec)
 	engine.Any("/*", Proxy)
 	engine.GET("/console", func(c echo.Context) error {
 		return c.HTML(200, `<!DOCTYPE html>

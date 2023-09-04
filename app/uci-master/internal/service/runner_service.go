@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/cheerego/uci/app/twilight/internal/provider"
-	"github.com/cheerego/uci/app/twilight/internal/service/internal/repository"
+	"github.com/cheerego/uci/app/uci-master/internal/provider"
+	"github.com/cheerego/uci/app/uci-master/internal/service/internal/repository"
 	"github.com/cheerego/uci/pkg/dao/model"
 	"gorm.io/gorm"
 	"io"

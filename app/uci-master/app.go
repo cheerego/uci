@@ -1,8 +1,11 @@
-package runner
+package uci_master
 
 import (
 	"context"
-	"github.com/cheerego/uci/app/runner/internal/route"
+	"fmt"
+	"github.com/cheerego/uci/app/uci-master/internal/config"
+	"github.com/cheerego/uci/app/uci-master/internal/provider"
+	"github.com/cheerego/uci/app/uci-master/internal/service"
 	"github.com/cheerego/uci/pkg/http"
 	"github.com/cheerego/uci/pkg/log/backend"
 	signal2 "github.com/cheerego/uci/pkg/signal"
@@ -24,10 +27,26 @@ func NewApplication() *Application {
 }
 
 func (a *Application) Start() error {
-	err := errors.CombineErrors(a.ConfigLog(), nil)
+	err := a.ConfigLog()
+
 	if err != nil {
 		return err
 	}
+
+	err = config.Register()
+	if err != nil {
+		return err
+	}
+	err = provider.Register()
+	if err != nil {
+		return err
+	}
+
+	err = service.Register()
+	if err != nil {
+		return err
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	g, gctx := errgroup.WithContext(ctx)
 	g.Go(a.startHttp)
@@ -55,9 +74,9 @@ func (a *Application) startHttp() error {
 	engine := http.NewEcho()
 	a.engine = engine
 	engine.Validator = &CustomValidator{validator: validator.New()}
-	route.Routes(engine)
-	engine.HTTPErrorHandler = uerror.TextHttpErrorHandler(engine)
-	return engine.Start(":8081")
+	Routes(engine)
+	engine.HTTPErrorHandler = uerror.JSONHttpErrorHandler(engine)
+	return engine.Start(fmt.Sprintf(":%d", config.Configs.HttpPort))
 }
 
 type CustomValidator struct {

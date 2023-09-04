@@ -31,7 +31,7 @@ func Exec(taskName string, ip string, port int, shell string, timeoutSecond int)
 
 	var returnErr error = nil
 	if do.StatusCode != 200 {
-		returnErr = errors.New("dispatch runner status code != 200")
+		returnErr = errors.New("dispatch uci-uci-runner status code != 200")
 	}
 	return string(all), returnErr
 }

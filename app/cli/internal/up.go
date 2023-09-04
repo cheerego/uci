@@ -25,7 +25,7 @@ func (u *Uci) Up() *cobra.Command {
 				u.TerminateCancel()
 			}()
 			if err := u.BaseShimer.Run(u.TerminateContext); err != nil {
-				log.L().Error("runner shim run err", zap.Error(err))
+				log.L().Error("uci-uci-runner shim run err", zap.Error(err))
 				requests.MessagingUnsubscribe("1")
 			}
 		},

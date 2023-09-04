@@ -8,10 +8,10 @@ import (
 func (u *Uci) Stop() *cobra.Command {
 	return &cobra.Command{
 		Use:   "stop",
-		Short: "Stop UCI runner",
-		Long:  "Stop UCI runner",
+		Short: "Stop UCI uci-uci-runner",
+		Long:  "Stop UCI uci-uci-runner",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.L().Info("stop uci runner")
+			log.L().Info("stop uci uci-uci-runner")
 			return nil
 		},
 	}

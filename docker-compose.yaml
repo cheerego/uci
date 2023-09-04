@@ -29,8 +29,8 @@ services:
 #      - redis
 #      - rabbitmq
 
-  twilight:
-    image: ${twilight:-twilight:latest}
+  uci-master:
+    image: ${UCI_MASTER_IMAGE:-uci-master:latest}
     expose:
       - 8080
     environment:
