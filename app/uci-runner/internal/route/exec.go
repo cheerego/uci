@@ -47,7 +47,7 @@ func Exec(ctx echo.Context) error {
 			if err2 != nil || io.EOF == err2 {
 				break
 			}
-			log.S().Infof(line)
+			log.Infof(line)
 			ctx.Response().Write([]byte(line))
 			ctx.Response().Flush()
 		}
@@ -67,7 +67,7 @@ func Exec(ctx echo.Context) error {
 			if err2 != nil || io.EOF == err2 {
 				break
 			}
-			log.S().Infof(line)
+			log.Infof(line)
 			buffer.Write([]byte(line))
 		}
 		err = cmd.Wait()

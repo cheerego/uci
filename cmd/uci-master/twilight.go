@@ -14,5 +14,5 @@ func main() {
 	banner.Render("uci-master", VERSION, BUILD_TIME)
 	//ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	err := uci_master.NewApplication().Start()
-	log.L().Error("start uci-master err", zap.Error(err))
+	log.Error("start uci-master err", zap.Error(err))
 }

@@ -7,13 +7,11 @@ import (
 	"github.com/cheerego/uci/app/uci-master/internal/provider"
 	"github.com/cheerego/uci/app/uci-master/internal/service"
 	"github.com/cheerego/uci/pkg/http"
-	"github.com/cheerego/uci/pkg/log/backend"
 	signal2 "github.com/cheerego/uci/pkg/signal"
 	"github.com/cheerego/uci/pkg/uerror"
 	"github.com/cockroachdb/errors"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
-	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	http2 "net/http"
 )
@@ -27,13 +25,7 @@ func NewApplication() *Application {
 }
 
 func (a *Application) Start() error {
-	err := a.ConfigLog()
-
-	if err != nil {
-		return err
-	}
-
-	err = config.Register()
+	err := config.Register()
 	if err != nil {
 		return err
 	}
@@ -87,14 +79,5 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	if err := cv.validator.Struct(i); err != nil {
 		return echo.NewHTTPError(http2.StatusBadRequest, err.Error()).SetInternal(err)
 	}
-	return nil
-}
-
-func (a *Application) ConfigLog() error {
-	configuration, err := backend.Configuration()
-	if err != nil {
-		return err
-	}
-	zap.ReplaceGlobals(configuration)
 	return nil
 }

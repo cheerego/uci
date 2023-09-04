@@ -13,10 +13,10 @@ func PickRunner(next echo.HandlerFunc) echo.HandlerFunc {
 		cc := types.StartContextFromContext(c)
 		runner, err := service.Services.RunnerService.PickOneEnableRunner(c.Request().Context())
 		if err != nil {
-			log.L().Error("taskName pick uci-uci-runner err", zap.String("taskName", cc.TaskName), zap.Any("uci-uci-runner", runner), zap.Error(err))
+			log.Error("taskName pick uci-uci-runner err", zap.String("taskName", cc.TaskName), zap.Any("uci-uci-runner", runner), zap.Error(err))
 			return err
 		}
-		log.L().Info("taskName pick uci-uci-runner", zap.String("taskName", cc.TaskName), zap.Any("uci-uci-runner", runner))
+		log.Info("taskName pick uci-uci-runner", zap.String("taskName", cc.TaskName), zap.Any("uci-uci-runner", runner))
 		cc.Runner = runner
 		return next(cc)
 	}

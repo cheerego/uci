@@ -92,10 +92,38 @@ func WrapperSentry(l *zap.Logger) (*zap.Logger, error) {
 	return modifyToSentryLogger(l, client)
 }
 
-func S() *zap.SugaredLogger {
-	return zap.S()
+var logger *zap.Logger
+var suger *zap.SugaredLogger
+
+func init() {
+	backend, err := Backend(DefaultLogLevel())
+	if err != nil {
+		panic(err)
+	}
+	logger = backend
+	suger = backend.Sugar()
 }
 
-func L() *zap.Logger {
-	return zap.L()
+func Info(msg string, fields ...zap.Field) {
+	logger.Info(msg, fields...)
+}
+
+func Error(msg string, fields ...zap.Field) {
+	logger.Error(msg, fields...)
+}
+
+func Warn(msg string, fields ...zap.Field) {
+	logger.Warn(msg, fields...)
+}
+
+func Infof(template string, args ...interface{}) {
+	suger.Infof(template, args...)
+}
+
+func Errorf(template string, args ...interface{}) {
+	suger.Errorf(template, args...)
+}
+
+func Warnf(template string, args ...interface{}) {
+	suger.Warnf(template, args...)
 }

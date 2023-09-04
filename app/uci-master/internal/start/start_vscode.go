@@ -2,12 +2,15 @@ package start
 
 import (
 	"fmt"
+	"github.com/cheerego/uci/app/uci-master/internal/provider"
 	"github.com/cheerego/uci/app/uci-master/internal/runner"
 	"github.com/cheerego/uci/app/uci-master/internal/types"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"go.uber.org/zap"
 	"net/url"
+	"strings"
 )
 
 func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
@@ -28,7 +31,7 @@ git clone %s://%s:%s@%s%s %s
 		if err != nil {
 			return errors.WithMessage(err, gitCloneLog)
 		}
-		zap.L().Info("git clone log", zap.String("log", gitCloneLog))
+		log.Info("git clone log", zap.String("log", gitCloneLog))
 
 		exec, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=:8080`, taskName, codeDir), 10)
 		if err != nil {
@@ -40,9 +43,18 @@ git clone %s://%s:%s@%s%s %s
 			return errors.WithMessage(err, "获取容器 IP 报错")
 		}
 
+		containerIP := strings.ReplaceAll(s, "\\n", "")
+		log.Info(strings.ReplaceAll(s, "\\n", ""))
+		log.Info(strings.ReplaceAll(s, "\n", ""))
+		_, err = provider.Redis().Set(c.Request().Context(), fmt.Sprintf("%s_container_ip", taskName), containerIP, 0).Result()
+		_, err = provider.Redis().Set(c.Request().Context(), fmt.Sprintf("%s_runner_addr", taskName), cc.Runner.Addr(), 0).Result()
+
+		if err != nil {
+			return err
+		}
 		return c.JSON(200, echo.Map{
-			"taskName": taskName,
-			"ip":       s,
+			"taskName":    taskName,
+			"containerIP": containerIP,
 		})
 		//return next(c)
 	}

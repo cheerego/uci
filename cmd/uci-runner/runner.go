@@ -12,5 +12,6 @@ var BUILD_TIME string
 
 func main() {
 	banner.Render("uci-master", VERSION, BUILD_TIME)
-	log.L().Error("start uci-uci-runner err", zap.Error(uci_runner.NewApplication().Start()))
+	err := uci_runner.NewApplication().Start()
+	log.Error("start uci-runner err", zap.Error(err))
 }

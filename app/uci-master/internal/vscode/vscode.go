@@ -3,6 +3,7 @@ package vscode
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/cheerego/uci/app/uci-master/internal/provider"
 	"github.com/cheerego/uci/pkg/types"
 	"github.com/elazarl/goproxy"
 	"github.com/labstack/echo/v4"
@@ -18,7 +19,8 @@ func VsCode(c echo.Context) error {
 		return item != ""
 	})
 
-	rootPath := fmt.Sprintf("/vscode/%s", split[1])
+	taskName := split[1]
+	rootPath := fmt.Sprintf("/vscode/%s", taskName)
 	if c.Request().URL.Path == rootPath {
 		return c.Redirect(302, rootPath+"/")
 	}
@@ -52,7 +54,17 @@ func VsCode(c echo.Context) error {
 	httpAgent := func(r *http.Request) (*url.URL, error) {
 		return url.Parse(fmt.Sprintf("%s://localhost:8081", "http"))
 	}
-	targetUrl, _ := url.Parse(fmt.Sprintf("%s://172.10.0.3:8080", scheme))
+
+	containerIP, err := provider.Redis().Get(c.Request().Context(), fmt.Sprintf("%s_container_ip", taskName)).Result()
+	if err != nil {
+		return err
+	}
+	runnerAddr, err := provider.Redis().Get(c.Request().Context(), fmt.Sprintf("%s_runner_addr", taskName)).Result()
+	if err != nil {
+		return err
+	}
+
+	targetUrl, _ := url.Parse(fmt.Sprintf("%s://%s", scheme, runnerAddr))
 
 	proxy := goproxy.NewProxyHttpServer()
 
@@ -63,8 +75,8 @@ func VsCode(c echo.Context) error {
 	req.URL.Host = targetUrl.Host
 	req.URL.Scheme = targetUrl.Scheme
 	header := req.Header
-	header.Set(types.VSCODE_TASK_NAME_HEADER, "")
-	header.Set(types.VSCODE_TASK_IP_HEADER, "172.10.0.3")
+	header.Set(types.VSCODE_TASK_NAME_HEADER, taskName)
+	header.Set(types.VSCODE_TASK_IP_HEADER, containerIP)
 	header.Set(types.VSCODE_PORT_HEADER, strconv.Itoa(types.VSCODE_PORT))
 
 	req.Header = header

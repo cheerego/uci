@@ -38,8 +38,6 @@ services:
       - "./infra/nginx/proxy.conf:/etc/nginx/proxy.conf"
       - "./infra/nginx/conf.d:/etc/nginx/conf.d"
     restart: always
-    depends_on:
-      - uci-master
   mysql:
 #    image: bitnami/mysql:8.0.32
     image: mysql:8.0.32

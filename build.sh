@@ -37,7 +37,7 @@ function build_docker_image() {
 
 
 case "$1" in
-    uci-messaging-server|uci-dispatch-server|uci-master|uci-uci-runner)
+    uci-messaging-server|uci-dispatch-server|uci-master|uci-runner)
         build_go $1
         build_docker_image $1
         ;;
