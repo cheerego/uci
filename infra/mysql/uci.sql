@@ -1,39 +1,18 @@
-# ************************************************************
-# Sequel Ace SQL dump
-# 版本号： 20046
-#
-# https://sequel-ace.com/
-# https://github.com/Sequel-Ace/Sequel-Ace
-#
-# 主机: 127.0.0.1 (MySQL 8.0.32)
-# 数据库: uci
-# 生成时间: 2023-09-04 14:14:19 +0000
-# ************************************************************
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 SET NAMES utf8mb4;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE='NO_AUTO_VALUE_ON_ZERO', SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 create database uci;
 use uci;
 
-
-# 转储表 admin_menu
-# ------------------------------------------------------------
+DROP TABLE IF EXISTS `admin_menu`;
 
 CREATE TABLE `admin_menu` (
                               `id` int unsigned NOT NULL AUTO_INCREMENT,
                               `parent_id` int NOT NULL DEFAULT '0',
                               `order` int NOT NULL DEFAULT '0',
-                              `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-                              `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-                              `uri` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                              `permission` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                              `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                              `uri` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                              `permission` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                               `created_at` timestamp NULL DEFAULT NULL,
                               `updated_at` timestamp NULL DEFAULT NULL,
                               PRIMARY KEY (`id`)
@@ -60,28 +39,33 @@ UNLOCK TABLES;
 # 转储表 admin_operation_log
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `admin_operation_log`;
+
 CREATE TABLE `admin_operation_log` (
                                        `id` int unsigned NOT NULL AUTO_INCREMENT,
                                        `user_id` int NOT NULL,
-                                       `path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                       `method` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                       `ip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                       `input` text COLLATE utf8mb4_unicode_ci NOT NULL,
+                                       `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                       `method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                       `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                       `input` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                                        `created_at` timestamp NULL DEFAULT NULL,
                                        `updated_at` timestamp NULL DEFAULT NULL,
                                        PRIMARY KEY (`id`),
                                        KEY `admin_operation_log_user_id_index` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 # 转储表 admin_permissions
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `admin_permissions`;
+
 CREATE TABLE `admin_permissions` (
                                      `id` int unsigned NOT NULL AUTO_INCREMENT,
-                                     `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                     `slug` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                     `http_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                                     `http_path` text COLLATE utf8mb4_unicode_ci,
+                                     `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                     `slug` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                     `http_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                                     `http_path` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
                                      `created_at` timestamp NULL DEFAULT NULL,
                                      `updated_at` timestamp NULL DEFAULT NULL,
                                      PRIMARY KEY (`id`),
@@ -107,6 +91,8 @@ UNLOCK TABLES;
 # 转储表 admin_role_menu
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `admin_role_menu`;
+
 CREATE TABLE `admin_role_menu` (
                                    `role_id` int NOT NULL,
                                    `menu_id` int NOT NULL,
@@ -129,6 +115,8 @@ UNLOCK TABLES;
 # 转储表 admin_role_permissions
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `admin_role_permissions`;
+
 CREATE TABLE `admin_role_permissions` (
                                           `role_id` int NOT NULL,
                                           `permission_id` int NOT NULL,
@@ -150,6 +138,8 @@ UNLOCK TABLES;
 
 # 转储表 admin_role_users
 # ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `admin_role_users`;
 
 CREATE TABLE `admin_role_users` (
                                     `role_id` int NOT NULL,
@@ -175,10 +165,12 @@ UNLOCK TABLES;
 # 转储表 admin_roles
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `admin_roles`;
+
 CREATE TABLE `admin_roles` (
                                `id` int unsigned NOT NULL AUTO_INCREMENT,
-                               `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `slug` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `slug` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                                `created_at` timestamp NULL DEFAULT NULL,
                                `updated_at` timestamp NULL DEFAULT NULL,
                                PRIMARY KEY (`id`),
@@ -200,6 +192,8 @@ UNLOCK TABLES;
 # 转储表 admin_user_permissions
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `admin_user_permissions`;
+
 CREATE TABLE `admin_user_permissions` (
                                           `user_id` int NOT NULL,
                                           `permission_id` int NOT NULL,
@@ -213,13 +207,15 @@ CREATE TABLE `admin_user_permissions` (
 # 转储表 admin_users
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `admin_users`;
+
 CREATE TABLE `admin_users` (
                                `id` int unsigned NOT NULL AUTO_INCREMENT,
-                               `username` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `password` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                               `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `username` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `password` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                               `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                                `created_at` timestamp NULL DEFAULT NULL,
                                `updated_at` timestamp NULL DEFAULT NULL,
                                PRIMARY KEY (`id`),
@@ -240,13 +236,15 @@ UNLOCK TABLES;
 # 转储表 failed_jobs
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `failed_jobs`;
+
 CREATE TABLE `failed_jobs` (
                                `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                               `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-                               `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                               `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                                `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                PRIMARY KEY (`id`),
                                UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
@@ -257,9 +255,11 @@ CREATE TABLE `failed_jobs` (
 # 转储表 migrations
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `migrations`;
+
 CREATE TABLE `migrations` (
                               `id` int unsigned NOT NULL AUTO_INCREMENT,
-                              `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+                              `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                               `batch` int NOT NULL,
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -276,7 +276,7 @@ VALUES
     (5,'2019_12_14_000001_create_personal_access_tokens_table',1),
     (6,'2022_04_29_075932_create_workflows_table',1),
     (7,'2022_05_28_020537_create_pipelines_table',1),
-    (8,'2022_06_11_142611_create_runners_table',1);
+    (9,'2022_06_11_142611_create_runners_table',2);
 
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -285,9 +285,11 @@ UNLOCK TABLES;
 # 转储表 password_resets
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `password_resets`;
+
 CREATE TABLE `password_resets` (
-                                   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                   `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+                                   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                                    `created_at` timestamp NULL DEFAULT NULL,
                                    KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -297,13 +299,15 @@ CREATE TABLE `password_resets` (
 # 转储表 personal_access_tokens
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `personal_access_tokens`;
+
 CREATE TABLE `personal_access_tokens` (
                                           `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                                          `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+                                          `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                                           `tokenable_id` bigint unsigned NOT NULL,
-                                          `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                          `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-                                          `abilities` text COLLATE utf8mb4_unicode_ci,
+                                          `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                          `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                                          `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
                                           `last_used_at` timestamp NULL DEFAULT NULL,
                                           `created_at` timestamp NULL DEFAULT NULL,
                                           `updated_at` timestamp NULL DEFAULT NULL,
@@ -317,19 +321,21 @@ CREATE TABLE `personal_access_tokens` (
 # 转储表 pipelines
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `pipelines`;
+
 CREATE TABLE `pipelines` (
                              `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                              `workflow_id` int NOT NULL,
                              `number` int NOT NULL DEFAULT '0',
-                             `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-                             `salt` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-                             `yaml` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                             `triggered_cause` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                             `failed_cause` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                             `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'BUILD_QUEUING',
-                             `status_message` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+                             `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+                             `salt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+                             `yaml` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `triggered_cause` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `failed_cause` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'BUILD_QUEUING',
+                             `status_message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
                              `last_status_changed_at` timestamp NULL DEFAULT NULL,
-                             `envs` text COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `envs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                              `runner_id` int NOT NULL DEFAULT '0',
                              `first_borrow_runner_at` timestamp NULL DEFAULT NULL,
                              `borrow_runner_succeed_at` timestamp NULL DEFAULT NULL,
@@ -337,8 +343,8 @@ CREATE TABLE `pipelines` (
                              `started_at` timestamp NULL DEFAULT NULL,
                              `closed_at` timestamp NULL DEFAULT NULL,
                              `duration` int NOT NULL DEFAULT '0',
-                             `raw_log` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                             `prepare_log` text COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `raw_log` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `prepare_log` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                              `dispatch_times` int NOT NULL DEFAULT '0',
                              `first_dispatched_at` timestamp NULL DEFAULT NULL,
                              `last_dispatched_at` timestamp NULL DEFAULT NULL,
@@ -355,14 +361,13 @@ CREATE TABLE `pipelines` (
 # 转储表 runners
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `runners`;
+
 CREATE TABLE `runners` (
                            `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                           `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-                           `salt` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-                           `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-                           `last_connected_at` timestamp NULL DEFAULT NULL,
-                           `last_disconnected_at` timestamp NULL DEFAULT NULL,
-                           `last_dispatched_at` timestamp NULL DEFAULT NULL,
+                           `host` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+                           `port` int NOT NULL DEFAULT '8080',
+                           `enable` int NOT NULL DEFAULT '0',
                            `created_at` timestamp NULL DEFAULT NULL,
                            `updated_at` timestamp NULL DEFAULT NULL,
                            `deleted_at` timestamp NULL DEFAULT NULL,
@@ -374,13 +379,15 @@ CREATE TABLE `runners` (
 # 转储表 users
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `users`;
+
 CREATE TABLE `users` (
                          `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                         `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                         `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+                         `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                         `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                          `email_verified_at` timestamp NULL DEFAULT NULL,
-                         `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                         `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                         `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                         `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                          `created_at` timestamp NULL DEFAULT NULL,
                          `updated_at` timestamp NULL DEFAULT NULL,
                          PRIMARY KEY (`id`),
@@ -392,12 +399,14 @@ CREATE TABLE `users` (
 # 转储表 workflows
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `workflows`;
+
 CREATE TABLE `workflows` (
                              `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                             `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                             `yaml` text COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `yaml` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                              `creator_id` int NOT NULL,
-                             `envs` text COLLATE utf8mb4_unicode_ci NOT NULL,
+                             `envs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                              `latest_pipeline_id` int NOT NULL DEFAULT '0' COMMENT '最后一次流水线 ID',
                              `latest_success_pipeline_id` int NOT NULL DEFAULT '0' COMMENT '最后一次成功构建流水线 ID',
                              `max_concurrent` int NOT NULL DEFAULT '5',
