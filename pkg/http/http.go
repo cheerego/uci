@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -25,7 +26,12 @@ func NewEcho() *echo.Echo {
 		LogLevel:        log.ERROR,
 		DisableStackAll: false,
 	}))
-
+	e.Use(echoprometheus.NewMiddlewareWithConfig(echoprometheus.MiddlewareConfig{
+		Skipper: func(c echo.Context) bool {
+			return c.Request().URL.Path == "/metrics"
+		},
+	}))
+	e.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
 	e.Use(middleware.RequestIDWithConfig(middleware.RequestIDConfig{
 		Generator: func() string {
 			return uuid.NewV4().String()
