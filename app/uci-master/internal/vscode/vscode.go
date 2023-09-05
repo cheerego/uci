@@ -51,10 +51,6 @@ func VsCode(c echo.Context) error {
 	if c.IsWebSocket() {
 		scheme = "ws"
 	}
-	httpAgent := func(r *http.Request) (*url.URL, error) {
-		return url.Parse(fmt.Sprintf("%s://localhost:8081", "http"))
-	}
-
 	containerIP, err := provider.Redis().Get(c.Request().Context(), fmt.Sprintf("%s_container_ip", taskName)).Result()
 	if err != nil {
 		return err
@@ -62,6 +58,9 @@ func VsCode(c echo.Context) error {
 	runnerAddr, err := provider.Redis().Get(c.Request().Context(), fmt.Sprintf("%s_runner_addr", taskName)).Result()
 	if err != nil {
 		return err
+	}
+	httpAgent := func(r *http.Request) (*url.URL, error) {
+		return url.Parse(fmt.Sprintf("%s://%s", "http", runnerAddr))
 	}
 
 	targetUrl, _ := url.Parse(fmt.Sprintf("%s://%s", scheme, runnerAddr))

@@ -33,7 +33,7 @@ git clone %s://%s:%s@%s%s %s
 		}
 		log.Info("git clone log", zap.String("log", gitCloneLog))
 
-		exec, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=:8080`, taskName, codeDir), 10)
+		exec, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=0.0.0.0:8080`, taskName, codeDir), 10)
 		if err != nil {
 			return errors.WithMessage(err, exec)
 		}
