@@ -9,22 +9,18 @@ import (
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"net"
-	"net/http"
-	"time"
 )
 
 var Providers *Provider
 
 type Provider struct {
-	masterDB     *gorm.DB
-	redis        *redis.Client
-	godisson     *godisson.Godisson
-	runnerClient *http.Client
+	masterDB *gorm.DB
+	redis    *redis.Client
+	godisson *godisson.Godisson
 }
 
-func NewProvider(masterDB *gorm.DB, redis *redis.Client, godisson *godisson.Godisson, runnerHttpClient *http.Client) *Provider {
-	return &Provider{masterDB: masterDB, redis: redis, godisson: godisson, runnerClient: runnerHttpClient}
+func NewProvider(masterDB *gorm.DB, redis *redis.Client, godisson *godisson.Godisson) *Provider {
+	return &Provider{masterDB: masterDB, redis: redis, godisson: godisson}
 }
 
 func MasterDB() *gorm.DB {
@@ -37,9 +33,6 @@ func Redis() *redis.Client {
 
 func Godisson() *godisson.Godisson {
 	return Providers.godisson
-}
-func RunnerClient() *http.Client {
-	return Providers.runnerClient
 }
 
 func Register() error {
@@ -81,21 +74,4 @@ func initRedis() (*redis.Client, *godisson.Godisson, error) {
 	}
 	newGodisson := godisson.NewGodisson(rdb)
 	return rdb, newGodisson, nil
-}
-
-func initRunnerHttpClient() *http.Client {
-	return &http.Client{
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				//	建立握手的超时事件
-				Timeout:   10 * time.Second,
-				KeepAlive: 100 * time.Second,
-			}).Dial,
-			//TLSHandshakeTimeout:   10 * time.Second,
-			//ResponseHeaderTimeout: 10 * time.Second,
-			//ExpectContinueTimeout: 1 * time.Second,
-		},
-		Timeout: 0,
-	}
-
 }

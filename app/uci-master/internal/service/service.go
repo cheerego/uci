@@ -7,17 +7,19 @@ import (
 var Services *Service
 
 type Service struct {
-	RunnerService *RunnerService
+	RunnerService       *RunnerService
+	RunnerClientService *RunnerClientService
 }
 
-func NewService(runnerService *RunnerService) *Service {
-	return &Service{RunnerService: runnerService}
+func NewService(runnerService *RunnerService, runnerClientService *RunnerClientService) *Service {
+	return &Service{RunnerService: runnerService, RunnerClientService: runnerClientService}
 }
 
 func Register() error {
 	repository.Register()
 	Services = NewService(
 		NewRunnerService(),
+		NewRunnerClientService(),
 	)
 	return nil
 }
