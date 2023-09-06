@@ -1,8 +1,8 @@
 package uci_master
 
 import (
-	"github.com/cheerego/uci/app/uci-master/internal/start"
-	"github.com/cheerego/uci/app/uci-master/internal/vscode"
+	"github.com/cheerego/uci/app/uci-master/internal/web/start"
+	"github.com/cheerego/uci/app/uci-master/internal/web/vscode"
 	"github.com/labstack/echo/v4"
 )
 

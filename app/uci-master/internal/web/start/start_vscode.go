@@ -3,7 +3,7 @@ package start
 import (
 	"fmt"
 	"github.com/cheerego/uci/app/uci-master/internal/provider"
-	"github.com/cheerego/uci/app/uci-master/internal/runner"
+	"github.com/cheerego/uci/app/uci-master/internal/service"
 	"github.com/cheerego/uci/app/uci-master/internal/types"
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
@@ -27,18 +27,18 @@ func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
 git clone %s://%s:%s@%s%s %s
 
 `, urlParser.Scheme, cc.GitUsername, cc.GitPassword, urlParser.Host, urlParser.Path, codeDir)
-		gitCloneLog, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, script, 100)
+		gitCloneLog, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port, script, 100)
 		if err != nil {
 			return errors.WithMessage(err, gitCloneLog)
 		}
 		log.Info("git clone log", zap.String("log", gitCloneLog))
 
-		exec, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=0.0.0.0:8080`, taskName, codeDir), 10)
+		exec, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=0.0.0.0:8080`, taskName, codeDir), 10)
 		if err != nil {
 			return errors.WithMessage(err, exec)
 		}
 
-		s, err := runner.Exec(taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf("docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' %s", taskName), 10)
+		s, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf("docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' %s", taskName), 10)
 		if err != nil {
 			return errors.WithMessage(err, "获取容器 IP 报错")
 		}
