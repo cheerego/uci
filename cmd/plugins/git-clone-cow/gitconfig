@@ -1,0 +1,20 @@
+[user]
+  name = uci
+  email = uci@uci.com
+[credential]
+  helper = /app/env-credential-helper.sh
+  useHttpPath = true
+[filter "lfs"]
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+[core]
+  quotepath = false
+  autocrlf = false
+[i18n]
+  commitencoding = utf-8
+[merge]
+  directoryRenames = false
+[gc]
+  auto = 0
