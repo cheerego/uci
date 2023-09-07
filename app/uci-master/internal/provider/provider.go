@@ -46,9 +46,7 @@ func Register() error {
 		return err
 	}
 
-	client := initRunnerHttpClient()
-
-	Providers = NewProvider(db, rdb, g, client)
+	Providers = NewProvider(db, rdb, g)
 	return nil
 }
 
