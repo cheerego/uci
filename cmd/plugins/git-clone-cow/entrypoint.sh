@@ -22,6 +22,7 @@ echo work=$work
 echo merged=$merged
 bash git-clone.sh
 
+mount -t overlay overlay -o lowerdir=.$lower,upperdir=$upper,workdir=$work $merged
 
 
 
