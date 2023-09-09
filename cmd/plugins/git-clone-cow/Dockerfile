@@ -9,5 +9,3 @@ RUN sed -i 's#http://deb.debian.org#https://mirrors.cloud.tencent.com#g' /etc/ap
     apt-get install -y git git-lfs
 
 ADD . .
-
-CMD  ./git-clone-cow run

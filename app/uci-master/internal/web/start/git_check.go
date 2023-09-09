@@ -1,25 +1,35 @@
 package start
 
 import (
+	"fmt"
 	"github.com/cheerego/uci/app/uci-master/internal/types"
+	"github.com/cheerego/uci/pkg/log"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 	"go.uber.org/zap"
+	"net/url"
+	"strings"
 )
 
 func GitCheck(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cc := types.StartContextFromContext(c)
-		if lo.IsNotEmpty(cc.StartRequest.GitHttpUrl) &&
-			lo.IsNotEmpty(cc.StartRequest.GitUsername) &&
-			lo.IsNotEmpty(cc.StartRequest.GitPassword) {
-			cc.GitHttpUrl = cc.StartRequest.GitHttpUrl
-			cc.GitUsername = cc.StartRequest.GitUsername
-			cc.GitPassword = cc.StartRequest.GitPassword
+		if lo.IsNotEmpty(cc.StartRequest.GitRepoUrl) &&
+			lo.IsNotEmpty(cc.StartRequest.GitRepoUsername) &&
+			lo.IsNotEmpty(cc.StartRequest.GitRepoPassword) {
+			cc.GitRepoUrl = cc.StartRequest.GitRepoUrl
+			cc.GitRepoUsername = cc.StartRequest.GitRepoUsername
+			cc.GitRepoPassword = cc.StartRequest.GitRepoPassword
+			gitRepoUrlParse, err := url.Parse(cc.StartRequest.GitRepoUrl)
+			if err != nil {
+				return err
+			}
+			log.Info("hahahahaahah")
+			cc.GitRepoName = strings.ReplaceAll(fmt.Sprintf("%s%s", gitRepoUrlParse.Host, gitRepoUrlParse.Path), "/", "~")
 			cc.WithGit = true
 		}
 
-		zap.L().Info("cc", zap.Any("cc", cc))
+		log.Info("cc", zap.Any("cc", cc))
 		return next(cc)
 	}
 }

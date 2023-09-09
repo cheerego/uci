@@ -13,11 +13,14 @@ type StartContext struct {
 
 	Event EventType
 
-	WithGit     bool
-	GitUsername string
-	GitPassword string
-	GitHttpUrl  string
-	Runner      *model.Runner
+	Envs Envs
+
+	WithGit         bool
+	GitRepoUsername string
+	GitRepoPassword string
+	GitRepoUrl      string
+	GitRepoName     string
+	Runner          *model.Runner
 }
 
 func StartContextFromContext(c echo.Context) *StartContext {

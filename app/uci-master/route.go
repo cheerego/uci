@@ -10,6 +10,6 @@ func Routes(engine *echo.Echo) {
 	engine.GET("/", func(c echo.Context) error {
 		return c.String(200, "uci-master")
 	})
-	engine.Group("/api/start", start.WithContext, start.EventInit, start.GitCheck, start.PickRunner, start.StartVsCode)
+	engine.Group("/api/start", start.WithContext, start.EventInit, start.GitCheck, start.EnvInit, start.PickRunner, start.StartVsCode)
 	engine.Any("/vscode/*", vscode.VsCode)
 }

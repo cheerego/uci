@@ -9,7 +9,6 @@ import (
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
-	"net/url"
 	"strings"
 )
 
@@ -17,23 +16,50 @@ func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cc := types.StartContextFromContext(c)
 		taskName := cc.TaskName
+		log.Info("task envs", zap.String("taskName", cc.TaskName), zap.String("repoName", cc.GitRepoName), zap.Any("envs", cc.Envs))
 
-		urlParser, err := url.Parse(cc.GitHttpUrl)
+		containerName := fmt.Sprintf("%s-git-clone-cow", taskName)
+
+		join := strings.Join([]string{
+			"docker run -d --rm",
+			fmt.Sprintf("--name %s", containerName),
+			fmt.Sprintf("-v /Users/crush/uci/git/persistence/%s:/git/%s/lower", cc.GitRepoName, cc.TaskName),
+			fmt.Sprintf("-v /Users/crush/uci/git/workspace/%s:/git/%s/merged", cc.TaskName, cc.TaskName),
+			cc.Envs.ToDocker(),
+			"--privileged=true",
+			"git-clone-cow:latest",
+			"sleep 2000",
+		}, " ")
+
+		log.Infof("git-clone-cow taskName %s script %s", taskName, join)
+		runCowLong, err := service.Services.RunnerClientService.Exec(
+			c.Request().Context(),
+			taskName,
+			cc.Runner.Host,
+			cc.Runner.Port,
+			join, 100)
 		if err != nil {
-			return err
+			return errors.WithMessage(err, runCowLong)
 		}
-		codeDir := fmt.Sprintf("/Users/crush/.uci/git/%s", cc.TaskName)
-		script := fmt.Sprintf(`mkdir -p /Users/crush/.uci/git
-git clone %s://%s:%s@%s%s %s
+		log.Info("run cow log", zap.String("log", runCowLong))
 
-`, urlParser.Scheme, cc.GitUsername, cc.GitPassword, urlParser.Host, urlParser.Path, codeDir)
-		gitCloneLog, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port, script, 100)
+		runCloneLog, err := service.Services.RunnerClientService.Exec(c.Request().Context(),
+			taskName,
+			cc.Runner.Host,
+			cc.Runner.Port,
+			strings.Join([]string{
+				"docker exec -i",
+				containerName,
+				"/app/entrypoint.sh",
+			}, " "),
+			1000)
 		if err != nil {
-			return errors.WithMessage(err, gitCloneLog)
+			return errors.WithMessage(err, runCloneLog)
 		}
-		log.Info("git clone log", zap.String("log", gitCloneLog))
 
-		exec, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port, fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=0.0.0.0:8080`, taskName, codeDir), 10)
+		exec, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port,
+			fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=0.0.0.0:8080`, taskName, fmt.Sprintf("/Users/crush/uci/git/workspace/%s", taskName)),
+			10)
 		if err != nil {
 			return errors.WithMessage(err, exec)
 		}

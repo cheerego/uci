@@ -25,6 +25,8 @@ func WithContext(next echo.HandlerFunc) echo.HandlerFunc {
 
 		return next(&types.StartContext{Context: c,
 			TaskName:     taskName,
-			StartRequest: req})
+			StartRequest: req,
+			Envs:         make(map[types.Env]string),
+		})
 	}
 }

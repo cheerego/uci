@@ -2,16 +2,31 @@
 
 cur_dir=$(cd $(dirname $0); pwd)
 
+cp ${cur_dir}/gitconfig  /root/.gitconfig
 
-envsubst < /${cur_dir}/gitconfig > /root/.gitconfig
-git config --list
+mkdir -p /git/${TASK_NAME}/lower
+mkdir -p /git/${TASK_NAME}/merged
+mkdir -p /git/${TASK_NAME}/upper
+mkdir -p /git/${TASK_NAME}/woker
+
+
+lower=/git/${TASK_NAME}/lower
+upper=/git/${TASK_NAME}/upper
+work=/git/${TASK_NAME}/work
+merged=/git/${TASK_NAME}/merged
+
+
+echo lower=$lower
+echo upper=$upper
+echo work=$work
+echo merged=$merged
+bash git-clone.sh
 
 
 
-mkdir -p "${PLUGIN_GIT_CACHE}"
 
 
-mkdir -p /yyds/${PLUGIN_WORKSPACE_ID}/upper
-mkdir -p /yyds/${PLUGIN_WORKSPACE_ID}/work
-mkdir -p /yyds/${PLUGIN_WORKSPACE_ID}/${PLUGIN_WORKSPACE_NAME}
-ln -fs /yyds/${PLUGIN_WORKSPACE_ID}/${PLUGIN_WORKSPACE_NAME} /workspace
+
+
+
+
