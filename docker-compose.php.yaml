@@ -4,10 +4,12 @@ version: '2.2'
 services:
   uci-admin-fpm:
     image: cheerego-docker.pkg.coding.net/registry/public/php:8-fpm-20220409
+    restart: always
     volumes:
       - ./app/uci-admin:/var/www/html/
   uci-admin-nginx:
     image: nginx:1.25.2
+    restart: always
     environment:
       - TZ=Asia/Shanghai
     volumes:

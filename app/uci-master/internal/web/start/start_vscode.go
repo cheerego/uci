@@ -23,8 +23,8 @@ func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
 		join := strings.Join([]string{
 			"docker run -d --rm",
 			fmt.Sprintf("--name %s", containerName),
-			fmt.Sprintf("-v /Users/crush/uci/git/persistence/%s:/git/%s/lower", cc.GitRepoName, cc.TaskName),
-			fmt.Sprintf("-v /Users/crush/uci/git/workspace/%s:/git/%s/merged", cc.TaskName, cc.TaskName),
+			fmt.Sprintf("-v /root/uci/git/persistence/%s:/git/cow/%s/lower", cc.GitRepoName, taskName),
+			fmt.Sprintf("-v /root/uci/git/workspace/%s:/git/cow/%s/merged:rshared", cc.TaskName, taskName),
 			cc.Envs.ToDocker(),
 			"--privileged=true",
 			"git-clone-cow:latest",

@@ -5,6 +5,7 @@ services:
   redis:
     #    https://hub.docker.com/_/redis
     image: redis:5.0.14
+    restart: always
     volumes:
       - redis-data:/data
     expose:
@@ -15,6 +16,7 @@ services:
       - TZ=Asia/Shanghai
   rabbitmq:
     image: rabbitmq:3.9
+    restart: always
     expose:
       - "5672"
     ports:

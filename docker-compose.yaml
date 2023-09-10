@@ -33,6 +33,7 @@ services:
 
   uci-master:
     image: ${UCI_MASTER_IMAGE:-uci-master:latest}
+    restart: always
     expose:
       - 8080
     environment:

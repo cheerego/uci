@@ -1,8 +1,9 @@
 FROM node:14
 
 # install vscode and extension
-RUN curl -fsSL https://code-server.dev/install.sh | sh &&\
-    code-server --install-extension redhat.vscode-yaml &&\
+RUN curl -fsSL https://code-server.dev/install.sh | bash
+
+RUN code-server --install-extension redhat.vscode-yaml &&\
     code-server --install-extension orta.vscode-jest &&\
     code-server --install-extension dbaeumer.vscode-eslint &&\
     code-server --install-extension eamodio.gitlens &&\
