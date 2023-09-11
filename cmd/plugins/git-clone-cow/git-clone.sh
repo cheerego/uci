@@ -1,5 +1,5 @@
 #!/bin/bash
-lower=/git/cow/${TASK_NAME}/merged
+lower=/git/cow/${TASK_NAME}/lower
 echo $lower
 cd $lower
 git init
