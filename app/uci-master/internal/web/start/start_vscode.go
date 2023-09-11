@@ -23,8 +23,8 @@ func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
 		join := strings.Join([]string{
 			"docker run -d --rm",
 			fmt.Sprintf("--name %s", containerName),
-			fmt.Sprintf("-v /root/uci/git/persistence/%s:/git/cow/%s/lower", cc.GitRepoName, taskName),
-			fmt.Sprintf("-v /root/uci/git/workspace/%s:/git/cow/%s/merged:rshared", cc.TaskName, taskName),
+			fmt.Sprintf("-v /root/.uci/git/persistence/%s:/git/cow/%s/lower", cc.GitRepoName, taskName),
+			fmt.Sprintf("-v /root/.uci/git/workspace/%s:/git/cow/%s/merged:rshared", cc.TaskName, taskName),
 			cc.Envs.ToDocker(),
 			"--privileged=true",
 			"git-clone-cow:latest",
@@ -58,7 +58,15 @@ func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		exec, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port,
-			fmt.Sprintf(`docker run --name %s -it -w /root/workspace -v %s:/root/workspace  -d code-server bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=0.0.0.0:8080`, taskName, fmt.Sprintf("/Users/crush/uci/git/workspace/%s", taskName)),
+			strings.Join([]string{
+				"docker run --name",
+				taskName,
+				"-d -it -w /root/workspace",
+				"-v ",
+				fmt.Sprintf("%s:/root/workspace", fmt.Sprintf("/root/.uci/git/workspace/%s", taskName)),
+				"code-server:latest",
+				"bash code-server . --auth=none --disable-update-check --disable-telemetry --disable-workspace-trust --bind-addr=0.0.0.0:8080",
+			}, " "),
 			10)
 		if err != nil {
 			return errors.WithMessage(err, exec)

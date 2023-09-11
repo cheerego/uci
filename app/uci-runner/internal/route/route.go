@@ -7,10 +7,6 @@ import (
 )
 
 func Routes(engine *echo.Echo) {
-	engine.Any("/", func(c echo.Context) error {
-		return c.String(200, "hello runner")
-
-	})
 	engine.Any("/runner/exec", Exec)
 	engine.Any("/*", Proxy)
 	engine.GET("/console", func(c echo.Context) error {
