@@ -57,10 +57,26 @@ func StartVsCode(next echo.HandlerFunc) echo.HandlerFunc {
 			return errors.WithMessage(err, runCloneLog)
 		}
 
+		//24.0.6-dind-rootless
+
+		s2, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port,
+			strings.Join([]string{
+				"docker run --name",
+				fmt.Sprintf("%s-docker", taskName),
+				"--privileged",
+				"docker:24.0.6-dind",
+				"dockerd --rootless",
+			}, " "), 100,
+		)
+
+		if err != nil {
+			return errors.WithMessage(err, s2)
+		}
+
 		exec, err := service.Services.RunnerClientService.Exec(c.Request().Context(), taskName, cc.Runner.Host, cc.Runner.Port,
 			strings.Join([]string{
 				"docker run --name",
-				taskName,
+				fmt.Sprintf("%s-vscode", taskName),
 				"-d -it -w /root/workspace",
 				"-v ",
 				fmt.Sprintf("%s:/root/workspace", fmt.Sprintf("/root/.uci/git/workspace/%s", taskName)),

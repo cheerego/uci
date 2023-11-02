@@ -8,6 +8,7 @@ import (
 	"github.com/cheerego/uci/pkg/log"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 	"io"
 	"os/exec"
 	"time"
@@ -26,6 +27,7 @@ func Exec(ctx echo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+	log.Info("[EXEC] ", zap.Any("form", form))
 
 	timeout, _ := context.WithTimeout(context.Background(), time.Duration(form.Timeout)*time.Second)
 	cmd := exec.CommandContext(timeout, "bash", "-c", "-e", form.Script)
