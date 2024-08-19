@@ -67,8 +67,8 @@ func (s *Scheduler) Start() {
 
 func panicHandler(jobName string, e interface{}) {
 	if err, ok := e.(error); ok {
-		log.L().Error("scheduler recover a err", zap.String("jobName", jobName), zap.Error(err), zap.String("stack", string(debug.Stack())))
+		log.Error("scheduler recover a err", zap.String("jobName", jobName), zap.Error(err), zap.String("stack", string(debug.Stack())))
 	} else {
-		log.L().Error("scheduler recover a err", zap.String("jobName", jobName), zap.String("stack", string(debug.Stack())), zap.Any("error", e))
+		log.Error("scheduler recover a err", zap.String("jobName", jobName), zap.String("stack", string(debug.Stack())), zap.Any("error", e))
 	}
 }

@@ -104,6 +104,9 @@ func init() {
 	logger = backend
 	suger = backend.Sugar()
 }
+func Logger() *zap.Logger {
+	return logger
+}
 
 func Info(msg string, fields ...zap.Field) {
 	logger.Info(msg, fields...)

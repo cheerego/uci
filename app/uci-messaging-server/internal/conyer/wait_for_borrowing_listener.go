@@ -31,15 +31,15 @@ func (w *WaitForBorrowingListener) Concurrent() int {
 func (w *WaitForBorrowingListener) Handle(msg amqp.Delivery) {
 	atoi, err := strconv.Atoi(string(msg.Body))
 	if err != nil {
-		log.L().Error("wait for borrowing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
+		log.Error("wait for borrowing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
 		return
 	}
 	ctx := context.TODO()
 
-	err = phase.Phases()[pipeline.WaitForBorrowing].Exec(ctx, uint32(atoi))
+	err = phase.Phases()[pipeline.WaitForBorrowing].Exec(ctx, int64(atoi))
 	if err != nil {
 		if !errors.Is(err, godisson.ErrLockNotObtained) {
-			log.L().Warn("wait for borrowing, phase exec err", zap.Uint32("pipelineId", uint32(atoi)), zap.String("body", string(msg.Body)), zap.String("error", err.Error()))
+			log.Warn("wait for borrowing, phase exec err", zap.Uint32("pipelineId", uint32(atoi)), zap.String("body", string(msg.Body)), zap.String("error", err.Error()))
 		}
 		return
 	}

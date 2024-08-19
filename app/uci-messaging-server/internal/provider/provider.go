@@ -51,7 +51,7 @@ func Register() error {
 }
 
 func initDB() (*gorm.DB, error) {
-	log.L().Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
+	log.Info("master dsn", zap.Any("config", config.Configs.GormMasterDSN))
 	g, err := orm.New(config.Configs.GormMasterDSN, config.Configs.GormMasterPoolConfig)
 	if err != nil {
 		return nil, err

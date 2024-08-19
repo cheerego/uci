@@ -29,14 +29,14 @@ func (w *WaitForDispatchingListener) Concurrent() int {
 func (w *WaitForDispatchingListener) Handle(msg amqp.Delivery) {
 	atoi, err := strconv.Atoi(string(msg.Body))
 	if err != nil {
-		log.L().Error("wait for dispatching consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
+		log.Error("wait for dispatching consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
 		return
 	}
 	ctx := context.TODO()
 
-	err = phase.Phases()[pipeline.WaitForDispatching].Exec(ctx, uint32(atoi))
+	err = phase.Phases()[pipeline.WaitForDispatching].Exec(ctx, int64(atoi))
 	if err != nil {
-		log.L().Error("wait for dispatching, phase exec err", zap.Error(err), zap.Int("pipelineId", atoi))
+		log.Error("wait for dispatching, phase exec err", zap.Error(err), zap.Int("pipelineId", atoi))
 		return
 	}
 }

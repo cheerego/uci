@@ -32,7 +32,7 @@ func (s *SmembersPipelineStatusScheduler) Exec(params ...interface{}) {
 
 	ids, err := snapshot.SMembersSet(ctx, status)
 	if err != nil {
-		log.L().Error("SMembers PipelineStatusScheduler set err", zap.Error(err), zap.String("status", string(status)))
+		log.Error("SMembers PipelineStatusScheduler set err", zap.Error(err), zap.String("status", string(status)))
 		return
 	}
 
@@ -43,7 +43,7 @@ func (s *SmembersPipelineStatusScheduler) Exec(params ...interface{}) {
 			Body:        []byte(strconv.Itoa(int(id))),
 		})
 		if err != nil {
-			log.L().Error("SMembers PipelineStatusScheduler publish err", zap.Error(err), zap.String("status", string(status)), zap.Uint32("id", id))
+			log.Error("SMembers PipelineStatusScheduler publish err", zap.Error(err), zap.String("status", string(status)), zap.Uint32("id", id))
 			continue
 		}
 	}

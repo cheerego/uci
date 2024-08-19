@@ -11,7 +11,7 @@ func (u *Uci) Stop() *cobra.Command {
 		Short: "Stop UCI uci-uci-runner",
 		Long:  "Stop UCI uci-uci-runner",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.L().Info("stop uci uci-uci-runner")
+			log.Info("stop uci uci-uci-runner")
 			return nil
 		},
 	}

@@ -18,7 +18,7 @@ func (r *RunnerService) FindIdles(ctx context.Context) ([]*runner.Runner, error)
 	defaultLimit := 10
 	return repository.Repositories.RunnerRepository.FindIdles(ctx, defaultLimit)
 }
-func (r *RunnerService) FindById(ctx context.Context, runnerId uint32) (*runner.Runner, error) {
+func (r *RunnerService) FindById(ctx context.Context, runnerId int64) (*runner.Runner, error) {
 	return repository.Repositories.RunnerRepository.FindById(ctx, runnerId)
 }
 
@@ -31,7 +31,7 @@ func (r *RunnerService) UpdateStatus(ctx context.Context, runner *runner.Runner,
 	runner.Status = status
 	rows, err := repository.Repositories.RunnerRepository.UpdateStatus(ctx, runner)
 	if err == nil {
-		log.S().Infof("uci-uci-runner %s status %s -> %s", runner.String(), oldStatus, status)
+		log.Infof("uci-uci-runner %s status %s -> %s", runner.String(), oldStatus, status)
 	}
 	return rows, err
 }

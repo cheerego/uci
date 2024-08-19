@@ -26,7 +26,7 @@ func NewBasePhase(IPhaser IPhaser) *BasePhase {
 	return &BasePhase{IPhaser: IPhaser}
 }
 
-func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
+func (b *BasePhase) Exec(ctx context.Context, id int64) error {
 	key := lock.GetPipelineLifecycleLockKey(id)
 	rlock := provider.Godisson().NewRLock(key)
 	err := rlock.TryLock(-1, -1)
@@ -36,7 +36,7 @@ func (b *BasePhase) Exec(ctx context.Context, id uint32) error {
 	defer func() {
 		_, err := rlock.Unlock()
 		if err != nil {
-			log.L().Error("base phase", zap.String("status", string(b.IPhaser.Status())), zap.Uint32("pipelineId", id), zap.Error(err))
+			log.Error("base phase", zap.String("status", string(b.IPhaser.Status())), zap.Int64("pipelineId", id), zap.Error(err))
 		}
 	}()
 	p, err := service.Services.PipelineService.FindById(ctx, id)
@@ -99,7 +99,7 @@ func Remains(status pipeline.Status) []*BasePhase {
 	return remain
 }
 
-func ListExec(ctx context.Context, status pipeline.Status, id uint32) {
+func ListExec(ctx context.Context, status pipeline.Status, id int64) {
 	for _, phase := range PhaseList() {
 		err := phase.Exec(ctx, id)
 		if err != nil {
@@ -108,7 +108,7 @@ func ListExec(ctx context.Context, status pipeline.Status, id uint32) {
 	}
 }
 
-func RemainsExec(ctx context.Context, status pipeline.Status, id uint32) {
+func RemainsExec(ctx context.Context, status pipeline.Status, id int64) {
 	for _, phase := range Remains(status) {
 		err := phase.Exec(ctx, id)
 		if err != nil {

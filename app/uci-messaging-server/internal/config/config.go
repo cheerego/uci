@@ -21,6 +21,6 @@ func Register() error {
 	if err := env.Parse(&Configs); err != nil {
 		return err
 	}
-	log.L().Info("config: ", zap.Any("Config", Configs))
+	log.Info("config: ", zap.Any("Config", Configs))
 	return nil
 }

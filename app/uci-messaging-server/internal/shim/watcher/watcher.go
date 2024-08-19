@@ -47,7 +47,7 @@ func (l *ListWatcher) Load(name string) (any, bool) {
 func (l *ListWatcher) Unsubscribe(name string) {
 	_, loaded := l.subscribers.LoadAndDelete(name)
 	if !loaded {
-		log.L().Warn("取消监听，但监听不存在", zap.String("Name", name))
+		log.Warn("取消监听，但监听不存在", zap.String("Name", name))
 	}
 }
 

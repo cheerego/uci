@@ -16,7 +16,7 @@ func (u *Uci) Up() *cobra.Command {
 		PreRun: func(cmd *cobra.Command, args []string) {
 			err := u.Check()
 			if err != nil {
-				log.S().Fatalf("PreRun Check err %s", err.Error())
+				log.Fatalf("PreRun Check err %s", err.Error())
 			}
 		},
 		Run: func(cmd *cobra.Command, args []string) {
@@ -25,7 +25,7 @@ func (u *Uci) Up() *cobra.Command {
 				u.TerminateCancel()
 			}()
 			if err := u.BaseShimer.Run(u.TerminateContext); err != nil {
-				log.L().Error("uci-uci-runner shim run err", zap.Error(err))
+				log.Error("uci-uci-runner shim run err", zap.Error(err))
 				requests.MessagingUnsubscribe("1")
 			}
 		},

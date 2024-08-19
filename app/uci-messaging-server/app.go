@@ -64,7 +64,7 @@ func (a *Application) Start() error {
 
 func (a *Application) startHttp() error {
 	o := http.NewEcho()
-	o.Use(echozap.ZapLogger(log.L()))
+	o.Use(echozap.ZapLogger(log.Logger()))
 	o.Use(uctx.ContextMiddleware)
 	o.Debug = true
 	o.Validator = NewRequestValidator()
@@ -121,7 +121,7 @@ func (a *Application) startCony() error {
 	for cli.Loop() {
 		select {
 		case err := <-cli.Errors():
-			log.L().Error("cony client err", zap.Error(err))
+			log.Error("cony client err", zap.Error(err))
 		}
 	}
 	return nil

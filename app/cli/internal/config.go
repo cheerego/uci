@@ -92,7 +92,7 @@ func (u *Uci) ConfigDelete() *cobra.Command {
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			log.L().Info("stop uci uci-uci-runner", zap.Any("args", args))
+			log.Info("stop uci uci-uci-runner", zap.Any("args", args))
 		},
 	}
 }

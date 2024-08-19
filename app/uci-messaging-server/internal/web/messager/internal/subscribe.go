@@ -17,7 +17,7 @@ func Subscribe(c echo.Context) error {
 	rid := c.Get(echo.HeaderXRequestID)
 
 	if watch == "true" {
-		log.S().Infof("requestId %s client %s subscribe ing", rid, uuid)
+		log.Infof("requestId %s client %s subscribe ing", rid, uuid)
 		runer, err := service.Services.RunnerService.FindByUuid(c.Request().Context(), uuid)
 		if err != nil {
 			return err
@@ -27,9 +27,9 @@ func Subscribe(c echo.Context) error {
 			return err
 		}
 		defer func() {
-			log.S().Infof("requestId %s uci-uci-runner %s subscribe canceling", rid, runer.String())
+			log.Infof("requestId %s uci-uci-runner %s subscribe canceling", rid, runer.String())
 			shim.Watcher.Unsubscribe(uuid)
-			log.S().Infof("requestId %s runnerr %s subscribe canceled", rid, runer.String())
+			log.Infof("requestId %s runnerr %s subscribe canceled", rid, runer.String())
 		}()
 
 		err = facade.Facades.RunnerFacade.UpdateStatus(c.Request().Context(), runer, runner.Running)
@@ -41,22 +41,22 @@ func Subscribe(c echo.Context) error {
 		c.Response().Write([]byte("\n"))
 		c.Response().Flush()
 
-		log.S().Infof("requestId %s uci-uci-runner %s subscribe success", rid, runer.String())
+		log.Infof("requestId %s uci-uci-runner %s subscribe success", rid, runer.String())
 		for {
 			select {
 
 			case str, ok := <-subscribe:
 				if !ok {
-					log.S().Infof("requestId %s uci-uci-runner %s chan not ok return", rid, runer.String())
+					log.Infof("requestId %s uci-uci-runner %s chan not ok return", rid, runer.String())
 					return nil
 				}
 
 				c.Logger().Info(str)
 				c.Response().Write([]byte(fmt.Sprintf("%s%s", str, "\n")))
 				c.Response().Flush()
-				log.S().Infof("requestId %s uci-uci-runner %s subscribe write message", rid, runer.String())
+				log.Infof("requestId %s uci-uci-runner %s subscribe write message", rid, runer.String())
 			case <-c.Request().Context().Done():
-				log.S().Infof("requestId %s uci-uci-runner %s request done", rid, runer.String())
+				log.Infof("requestId %s uci-uci-runner %s request done", rid, runer.String())
 
 				err = facade.Facades.RunnerFacade.UpdateStatus(c.Request().Context(), runer, runner.FakeRunning)
 				if err != nil {
@@ -65,7 +65,7 @@ func Subscribe(c echo.Context) error {
 
 				return nil
 				//case <-c.Response().Writer.(http.CloseNotifier).CloseNotify():
-				//	log.S().Infof("requestId %s client %s request CloseNotifier", rid, name)
+				//	log.Infof("requestId %s client %s request CloseNotifier", rid, name)
 				//	return nil
 			}
 		}

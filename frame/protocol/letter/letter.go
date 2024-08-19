@@ -14,8 +14,8 @@ type Letter struct {
 }
 
 type StartPipelinePayload struct {
-	WorkflowId uint32            `json:"workflowId"`
-	PipelineId uint32            `json:"pipelineId"`
+	WorkflowId int64             `json:"workflowId"`
+	PipelineId int64             `json:"pipelineId"`
 	Yaml       string            `json:"yaml"`
 	Salt       string            `json:"salt"`
 	Uuid       string            `json:"uuid"`
@@ -27,8 +27,8 @@ func (s *StartPipelinePayload) String() string {
 }
 
 type StopPipelinePayload struct {
-	WorkflowId uint32 `json:"workflowId"`
-	PipelineId uint32 `json:"pipelineId"`
+	WorkflowId int64  `json:"workflowId"`
+	PipelineId int64  `json:"pipelineId"`
 	Salt       string `json:"salt"`
 	Uuid       string `json:"uuid"`
 }

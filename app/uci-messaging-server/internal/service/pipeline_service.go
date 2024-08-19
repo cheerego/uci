@@ -31,7 +31,7 @@ func (p *PipelineService) UpdateEnvs(ctx context.Context, pl *pipeline.Pipeline)
 
 }
 
-func (p *PipelineService) FindById(ctx context.Context, id uint32) (*pipeline.Pipeline, error) {
+func (p *PipelineService) FindById(ctx context.Context, id int64) (*pipeline.Pipeline, error) {
 	return repository.Repositories.PipelineRepository.FindById(ctx, id)
 }
 

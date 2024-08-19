@@ -5,15 +5,15 @@ import (
 	"github.com/cheerego/uci/app/uci-messaging-server/internal/model/pipeline"
 )
 
-func GetPipelineLifecycleLockKey(pipelineId uint32) string {
+func GetPipelineLifecycleLockKey(pipelineId int64) string {
 	return fmt.Sprintf("uci-messaging-server:lock:lifecycle:pipeline-%d", pipelineId)
 }
 
-func GetRunnerBorrowLockKey(runnerId uint32) string {
+func GetRunnerBorrowLockKey(runnerId int64) string {
 	return fmt.Sprintf("uci-messaging-server:lock:borrow:uci-uci-runner-%d", runnerId)
 }
 
-func GetRunnerDiscoveryKey(runnerId uint32) string {
+func GetRunnerDiscoveryKey(runnerId int64) string {
 	return fmt.Sprintf("uci-messaging-server:discovery:uci-uci-runner:%d", runnerId)
 }
 

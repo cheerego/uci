@@ -15,7 +15,7 @@ func Get(c echo.Context) error {
 		return err
 	}
 
-	p, err := service.Services.PipelineService.FindById(c.Request().Context(), pipelineId)
+	p, err := service.Services.PipelineService.FindById(c.Request().Context(), int64(pipelineId))
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func Update(c echo.Context) error {
 		return err
 	}
 
-	p, err := service.Services.PipelineService.FindById(c.Request().Context(), pipelineId)
+	p, err := service.Services.PipelineService.FindById(c.Request().Context(), int64(pipelineId))
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func Stop(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	p, err := service.Services.PipelineService.FindById(c.Request().Context(), pipelineId)
+	p, err := service.Services.PipelineService.FindById(c.Request().Context(), int64(pipelineId))
 	if err != nil {
 		return err
 	}

@@ -21,14 +21,14 @@ func NewBuildQueuingListener() *BuildQueuingListener {
 func (b *BuildQueuingListener) Handle(msg amqp.Delivery) {
 	atoi, err := strconv.Atoi(string(msg.Body))
 	if err != nil {
-		log.L().Error("build queuing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
+		log.Error("build queuing consumer, parseInt err", zap.Error(err), zap.String("value", string(msg.Body)))
 		return
 	}
 	ctx := context.TODO()
 
-	err = phase.Phases()[pipeline.BuildQueuing].Exec(ctx, uint32(atoi))
+	err = phase.Phases()[pipeline.BuildQueuing].Exec(ctx, int64(atoi))
 	if err != nil {
-		log.L().Error("build queuing consumer, phase exec err", zap.Error(err), zap.Int("value", atoi))
+		log.Error("build queuing consumer, phase exec err", zap.Error(err), zap.Int("value", atoi))
 		return
 	}
 }

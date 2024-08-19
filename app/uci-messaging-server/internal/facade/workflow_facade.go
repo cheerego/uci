@@ -47,7 +47,7 @@ func (w *WorkflowFacade) Trigger(ctx context.Context, workflow *workflow.Workflo
 	defer func() {
 		_, err := rlock.Unlock()
 		if err != nil {
-			log.L().Error("queuing phase unlock mutex err", zap.Uint32("pipeline", p.ID), zap.Error(err))
+			log.Error("queuing phase unlock mutex err", zap.Int64("pipeline", p.ID), zap.Error(err))
 		}
 	}()
 

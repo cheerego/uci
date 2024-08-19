@@ -34,7 +34,7 @@ func SMembersSet(ctx context.Context, status pipeline.Status) ([]uint32, error) 
 	return uint32s, nil
 }
 
-func SRem(ctx context.Context, status pipeline.Status, id uint32) (int64, error) {
+func SRem(ctx context.Context, status pipeline.Status, id int64) (int64, error) {
 	return provider.Redis().SRem(ctx, key(status), id).Result()
 }
 

@@ -42,7 +42,7 @@ func (h *HostExecutor) PrepareWorkspace(payload *letter.StartPipelinePayload) (s
 	}
 	err = os.MkdirAll(taskWorkspaceDir, 0755)
 	if err != nil {
-		log.S().Error("mkdir workspace dir err", zap.Error(err))
+		log.Error("mkdir workspace dir err", zap.Error(err))
 		return "", err
 	}
 	return taskWorkspaceDir, nil
@@ -68,21 +68,21 @@ func (h *HostExecutor) Start(stopCtx context.Context, payload *letter.StartPipel
 	if err != nil {
 		return err
 	}
-	log.L().Info("flow ", zap.Any("flow", flower))
+	log.Info("flow ", zap.Any("flow", flower))
 
 	workspaceDir, err := h.PrepareWorkspace(payload)
 	if err != nil {
-		log.L().Error("prepare workspace err", zap.String("pipeline", payload.String()), zap.Error(err))
+		log.Error("prepare workspace err", zap.String("pipeline", payload.String()), zap.Error(err))
 		return err
 	}
 
-	log.S().Infof("pipeline %s workspace %s", payload.String(), workspaceDir)
+	log.Infof("pipeline %s workspace %s", payload.String(), workspaceDir)
 
 	return h.RunFlow(stopCtx, NewRuntime(workspaceDir, payload.Envs, raw), &flower)
 }
 
 func (h *HostExecutor) RunFlow(ctx context.Context, runtime *Runtime, f *flow.Flow) error {
-	log.L().Info("job len", zap.Int("len", len(f.Jobs)))
+	log.Info("job len", zap.Int("len", len(f.Jobs)))
 	for _, job := range f.Jobs {
 		err := h.RunJob(ctx, runtime, f, job)
 		if err != nil {

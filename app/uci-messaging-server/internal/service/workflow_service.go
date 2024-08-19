@@ -13,6 +13,6 @@ func NewWorkflowService() *WorkflowService {
 	return &WorkflowService{}
 }
 
-func (w *WorkflowService) FindById(ctx context.Context, workerflowId uint32) (*workflow.Workflow, error) {
+func (w *WorkflowService) FindById(ctx context.Context, workerflowId int64) (*workflow.Workflow, error) {
 	return repository.Repositories.WorkflowRepository.FindById(ctx, workerflowId)
 }

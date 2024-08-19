@@ -25,14 +25,14 @@ func (d Proxy) CheckDescription() string {
 func (d Proxy) RunCheck() error {
 	config := httpproxy.FromEnvironment()
 	if config.HTTPProxy != "" || config.HTTPSProxy != "" {
-		log.S().Infof("***************************************************************************************************************")
-		log.S().Infof("****  %s                                                                                                   ", d.CheckDescription())
-		log.S().Infof("***************************************************************************************************************")
-		log.S().Infof("****                                                                                                       ****")
-		log.S().Infof("****     UCI Runner web proxy check                                                                                ")
-		log.S().Infof("****     http_proxy: %s   https_proxy: %s   no_proxy: %s                                    ", config.HTTPProxy, config.HTTPSProxy, config.NoProxy)
-		log.S().Infof("****                                                                                                       ****")
-		log.S().Infof("***************************************************************************************************************")
+		log.Infof("***************************************************************************************************************")
+		log.Infof("****  %s                                                                                                   ", d.CheckDescription())
+		log.Infof("***************************************************************************************************************")
+		log.Infof("****                                                                                                       ****")
+		log.Infof("****     UCI Runner web proxy check                                                                                ")
+		log.Infof("****     http_proxy: %s   https_proxy: %s   no_proxy: %s                                    ", config.HTTPProxy, config.HTTPSProxy, config.NoProxy)
+		log.Infof("****                                                                                                       ****")
+		log.Infof("***************************************************************************************************************")
 	}
 	return nil
 }

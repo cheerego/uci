@@ -40,7 +40,7 @@ func WithStatusMessage(msg string) StatusOption {
 
 type Pipeline struct {
 	orm.Model
-	WorkflowId uint32
+	WorkflowId int64
 	Number     uint32
 	Uuid       string
 	Salt       string
@@ -49,16 +49,16 @@ type Pipeline struct {
 	FirstDispatchedAt *time.Time
 	LastDispatchedAt  *time.Time
 	DispatchSucceedAt *time.Time
-	DispatchTimes     uint32
+	DispatchTimes     int64
 
-	RunnerId              uint32
+	RunnerId              int64
 	FirstBorrowRunnerAt   *time.Time
 	BorrowRunnerSucceedAt *time.Time
 	ReleaseRunnerAt       *time.Time
 
 	StartedAt *time.Time
 	ClosedAt  *time.Time
-	Duration  uint32
+	Duration  int64
 
 	TriggeredCause string
 	FailedCause    string

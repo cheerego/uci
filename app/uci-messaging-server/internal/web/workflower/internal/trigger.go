@@ -19,7 +19,7 @@ func Trigger(c echo.Context) error {
 	if err := c.Bind(f); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	workflow, err := service.Services.WorkflowService.FindById(cc.Request().Context(), workflowId)
+	workflow, err := service.Services.WorkflowService.FindById(cc.Request().Context(), int64(workflowId))
 	if err != nil {
 		return err
 	}
